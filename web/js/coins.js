@@ -1,0 +1,126 @@
+$(document).on('click',"#send", function(e) {
+    e.preventDefault();
+    let data = {
+        value1: $('#money').val(),
+        currency1: $('#culture_main').val()
+    };
+    console.log(data);
+
+    $.ajax({
+        type: "POST",
+        url: "/web/coins/create-transaction",
+        data: data,
+        success: function (msg) {
+            console.log(msg);
+            if (msg.msg.result === 'ok') {
+                let answer = $('#payments');
+
+                answer.find('.address').text(msg.msg.address);
+                answer.find('.status_url').attr('href',msg.msg.status_url);
+                answer.find('.qrcode_url').attr('src',msg.msg.qrcode_url);
+                answer.find('.amount1').text(msg.transaction.amount1); // in start curr
+                answer.find('.amount2').text(msg.transaction.amount2); //in BTC
+                answer.find('.currency1').text(msg.transaction.currency1);
+                answer.find('.modal-body').toggleClass('hidden');
+            } else {
+                answer.after(msg.msg);
+            }
+        }
+    })
+});
+
+$(document).on('click',"#send_withdraw", function(e) {
+    e.preventDefault();
+    let data = {
+        value: $('#money_withdraw').val(),
+        currency1: $('#culture_main_withdraw1').val(),
+        currency2: $('#culture_main_withdraw2').val(),
+        user_purse: $('#purse_withdraw').val(),
+    };
+    console.log(data);
+
+    $.ajax({
+        type: "POST",
+        url: "/web/coins/create-withdraw",
+        data: data,
+        success: function (msg) {
+            console.log(msg);
+            if (msg.msg.result === 'ok') {
+                let answer = $('#withdraw');
+
+                answer.find('.address').text(msg.msg.address);
+                answer.find('.status_url').attr('href',msg.msg.status_url);
+                answer.find('.qrcode_url').attr('src',msg.msg.qrcode_url);
+                answer.find('.amount1').text(msg.transaction.amount1); // in start curr
+                answer.find('.amount2').text(msg.transaction.amount2); //in BTC
+                answer.find('.currency1').text(msg.transaction.currency1);
+                answer.find('.modal-body').toggleClass('hidden');
+            } else {
+                answer.after(msg.msg);
+            }
+        }
+    })
+});
+
+$(document).on('click',"#switch_coin", function(e) {
+    e.preventDefault();
+    let data = {
+        value: $('#value_switch').val(),
+        currency1: $('#culture_main_switch1').val(),
+        currency2: $('#culture_main_switch2').val(),
+    };
+    console.log(data);
+
+    $.ajax({
+        type: "POST",
+        url: "/web/coins/change-rate-balance",
+        data: data,
+        success: function (msg) {
+            console.log(msg);
+        }
+    })
+});
+
+function transationDone(transaction_id) {
+        event.preventDefault();
+        let data = {
+            transaction_id: transaction_id,
+        };
+        console.log(data);
+
+        $.ajax({
+            type: "POST",
+            url: "/web/coins/transaction-done",
+            data: data,
+            success: function (msg) {
+                console.log(msg);
+
+            }
+        })
+}
+
+function copyText(_this, text) {
+    if (text !== undefined) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val(text).select();
+        document.execCommand("copy");
+        temp.remove();
+    } else {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(_this).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+    }
+
+    $(_this).tooltip('hide').data('bs.tooltip', false);
+    $(_this).tooltip({
+        trigger: 'manual',
+        placement: 'top',
+        title: 'Copied'
+    }).tooltip('show');
+    setTimeout(function () {
+        $(_this).tooltip('hide');
+    }, 600);
+}

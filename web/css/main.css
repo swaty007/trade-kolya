@@ -1,0 +1,63 @@
+.navbar-top-links {
+    min-height: 60px;
+    padding: 13px 0;
+}
+#side-menu>li>ul>.nav-header {
+    padding: 0;
+}
+.pull-content .panel-heading {
+    padding-bottom: 10px;
+}
+.pull-content .panel-footer {
+    text-align: center;
+    align-self: flex-end;
+    width: 100%;
+}
+.pull-content .panel-footer>button {
+    margin-top: 10px;
+}
+.pull-content .panel-default {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.pull-content .panel-body {
+    flex-grow: 1;
+}
+.style-pull-card {
+    display: block;
+}
+.datepicker.dropdown-menu {
+    z-index: 11111111 !important;
+}
+.row-flex {
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+.col-flex {
+    display: flex;
+    flex-basis: 25%;
+}
+.btn-block-style {
+    margin-bottom: 10px;
+}
+.article-title h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #2f4050;
+}
+.article {
+    font-size: 14px;
+}
+.note-editable {
+    background: white;
+    height: 220px;
+}
+.select-style .input-group {
+    width: 100%;
+}
+.select-style input {
+    width: 100% !important;
+}
