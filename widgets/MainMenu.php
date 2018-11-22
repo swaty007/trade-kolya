@@ -66,6 +66,7 @@ class MainMenu extends \yii\bootstrap\Widget {
                     ->select(['user_marketplace_id', 'name', 'marketplace_name'])
                     ->innerJoin('marketplace', 'marketplace.marketplace_id = user_marketplace.marketplace_id')
                     ->where(['user_id' => $user_id])
+                    ->where('market_id', '!=', 0)
                     ->orderBy('order')
                     ->asArray()
                     ->all();

@@ -65,6 +65,9 @@ $this->title = 'My Yii Application';
                                    user id
                                 </td>
                                 <td>
+                                    user name
+                                </td>
+                                <td>
                                     Manual payout
                                 </td>
                             <?php endif;?>
@@ -95,6 +98,9 @@ $this->title = 'My Yii Application';
                                 <?php if(Yii::$app->user->identity->user_role == "admin"):?>
                                     <td>
                                         <?=$transaction->user_id?>
+                                    </td>
+                                    <td>
+                                        <?=$transaction->user->username?>
                                     </td>
                                     <td>
                                         <?php if($transaction->type === "withdraw" &&  $transaction->status == 0):?>

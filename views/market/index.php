@@ -83,7 +83,7 @@ $this->title = 'Магазин';
                                                 <div class="panel-body">
                                                     <p class="style-pull-card market-type">Тип продукта: <strong><?=$market->type;?></strong></p>
                                                     <p class="style-pull-card market-description">Описание продукта: <span><?=$market->description;?></span></p>
-                                                    <p class="style-pull-card market-cost">Стоимость продукта: <strong><?=$market->cost;?></strong></p>
+                                                    <p class="style-pull-card market-cost">Стоимость продукта: <strong><?=(double)$market->cost;?></strong></p>
                                                     <p class="style-pull-card market-end">Срок действия апи(в днях): <strong><?=$market->time_action;?></strong></p>
                                                     <p class="style-pull-card market-count_api">Количество апи: <strong><?= $market->count_api?></strong></p>
                                                     <p class="style-pull-card market-date_create">Дата создание: <strong><?= $market->date_create?></strong></p>
@@ -102,29 +102,25 @@ $this->title = 'Магазин';
 
                             <div id="tab-3" class="tab-pane">
                                 <div class="row">
-                                    <?php foreach ($markets_user as $market):?>
+                                    <?php foreach ($markets_user as $market) :?>
                                         <div class="col-lg-3">
                                             <div class="widget navy-bg p-xl">
 
                                                 <h2>
-                                                    <?= $info_pools[$u_pool['pool_id']]['name']?>
+                                                    <?=$market->title;?>
                                                 </h2>
                                                 <ul class="list-unstyled m-t-md">
                                                     <li>
-                                                        <label>Статус:</label>
-                                                        <?= $info_pools[$u_pool['pool_id']]['status']?>
+                                                        <label>Стоимость продукта:</label>
+                                                        <?=(double)$market->cost;?>
                                                     </li>
                                                     <li>
-                                                        <label>Старт пула:</label>
-                                                        <?= $info_pools[$u_pool['pool_id']]['date_start']?>
+                                                        <label>Срок действия апи(в днях):</label>
+                                                        <?=$market->time_action;?>
                                                     </li>
                                                     <li>
-                                                        <label>Окончание пула:</label>
-                                                        <?= $info_pools[$u_pool['pool_id']]['date_end']?>
-                                                    </li>
-                                                    <li>
-                                                        <label>Ивестирование в пул:</label>
-                                                        <?= (double)$u_pool['invest'].' '.$pool['invest_method']?>
+                                                        <label>Количество апи:</label>
+                                                        <?= $market->count_api?>
                                                     </li>
                                                 </ul>
 

@@ -28,6 +28,7 @@ class UserMenu extends Model
         $user_id = Yii::$app->user->getId();
         $UserMarketplace = UserMarketplace::find()
                     ->where(['user_id' => $user_id])
+                    ->where('market_id', '!=', 0)
                 ->orderBy('order')
                 ->asArray()
                 ->all();

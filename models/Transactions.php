@@ -5,7 +5,7 @@ namespace app\models;
 use yii;
 use app\models\api\CoinPayments;
 use yii\db\ActiveRecord;
-
+use app\models\User;
 /**
  * This is the model class for table "transactions".
  *
@@ -136,8 +136,9 @@ class Transactions extends ActiveRecord
             return 'Error: '.$result['error']."\n";
         }
     }
-    public function createWithdraw()
-    {
 
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 }

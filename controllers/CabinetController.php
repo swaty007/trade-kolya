@@ -109,7 +109,7 @@ class CabinetController extends Controller {
         $user_id = Yii::$app->user->getId();
         $data['user_id'] = $user_id;
         $data['user_marketplace'] = UserMarketplace::find()
-                ->select(['user_marketplace_id', 'name', 'marketplace_name'])
+                ->select(['user_marketplace_id', 'name', 'marketplace_name', 'market_id', 'market_date_end'])
                 ->innerJoin('marketplace', 'marketplace.marketplace_id = user_marketplace.marketplace_id')
                 ->where(['user_id' => $user_id])
                 ->orderBy('order')
