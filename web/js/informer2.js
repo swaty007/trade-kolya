@@ -174,7 +174,6 @@ $('#informer_filter_category,#informer_filter_tags').on('change',function(){
 
 
 function filterSubCategoies(parent_select,children_select) {
-    console.log('change')
     let selectCategory = $(parent_select).val();
     $(children_select+' option').each(function () {
         if( $(this).attr('data-parent-id') !== selectCategory) {
