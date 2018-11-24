@@ -50,6 +50,9 @@ class InformerController extends Controller
 
         $tag = Yii::$app->request->get('tag', null);
         $category_id = Yii::$app->request->get('category', null);
+        $n = Yii::$app->request->get('n', 0);
+
+        $data['pagination'] = $n;
 
         $informers = $data['informers'] = Informer::find()->joinWith('category')->joinWith('tag');
 
@@ -64,6 +67,12 @@ class InformerController extends Controller
             $data['select']->category = $category_id;
         }
 
+        $data['informers'] = $informers->limit(10)->offset(10*$n)->orderBy('date DESC')->all();
+        $data['informers_count'] = 0;
+
+        foreach ($data['informers'] as $number) {
+            $data['informers_count'] += 1;
+        }
         $data['informers'] = $informers->orderBy('date DESC')->all();
 
         $data['categories']     = Categories::find()->where(['parent_id' => null])->all();

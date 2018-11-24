@@ -87,6 +87,26 @@ $this->title = 'Информер';
     </div>
 </div>
 <?php endforeach;?>
+<?php if($informers_count > 10):?>
+    <div class="paging_simple_numbers">
+        <ul id="pagination" class="pagination">
+            <li class="paginate_button page-item previous ">
+                <a onclick="informerPostParametrs(<?=$pagination - 1?>)" class="page-link">Previous</a>
+            </li>
+            <?php
+            while ($i <= $informers_count):
+                $i++; if(!($i%10)):;?>
+
+                <li class="paginate_button page-item <?php if ($pagination == ($i/10)-1) {echo 'active';}?>">
+                    <a onclick="informerPostParametrs(<?=($i/10)-1;?>)" data-page="<?=($i/10)-1;?>" class="page-link"><?=$i/10;?></a>
+                </li>
+            <?php endif; endwhile; ?>
+            <li class="paginate_button page-item next">
+                <a onclick="informerPostParametrs(<?=$pagination+1?>)"  class="page-link">Next</a>
+            </li>
+        </ul>
+    </div>
+<?php endif;?>
 <a id="informer_pjax_link" href="/web/informer/?tag=5"></a>
 <?php \yii\widgets\Pjax::end(); ?>
 
