@@ -70,11 +70,11 @@ class InformerController extends Controller
 //        echo '<pre>'.var_dump($informers->all()).'</pre>';exit;
         $countQuery = clone $informers;
         $data['informers'] = $informers->limit(10)->offset(10*$n)->orderBy('date DESC')->all();
-        $data['informers_count'] = 0;
+        $data['informers_count'] = $countQuery->count();
 
-        foreach ($countQuery->orderBy('date DESC')->asArray()->all() as $number) {
-            $data['informers_count'] += 1;
-        }
+//        foreach ($countQuery->orderBy('date DESC')->asArray()->all() as $number) {
+//            $data['informers_count'] += 1;
+//        }
 
         $data['categories']     = Categories::find()->where(['parent_id' => null])->all();
         $data['sub_categories']  = Categories::find()->where(['not', ['parent_id' => null]])->all();
