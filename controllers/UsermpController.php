@@ -53,7 +53,7 @@ class UsermpController extends Controller {
         $this->view->registerJsFile('/js/trade.js', ['depends' => ['yii\web\JqueryAsset']]);
         
         $user_id = Yii::$app->user->getId();
-        $UserMarketplaces = UserMarketplace::findAll(['user_id' => $user_id]);
+        $UserMarketplaces = UserMarketplace::find()->where(['user_id' => $user_id])->orderBy('order')->all();
 
         $data = array();
         

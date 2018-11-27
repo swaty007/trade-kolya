@@ -11,7 +11,6 @@ use app\models\UserMarketplace;
 use app\models\UserMarketplceForm;
 use app\models\Currency;
 use app\models\CurrencyExchange;
-use app\models\Transactions;
 use yii\helpers\Url;
 use yii\web\Response;
 use app\models\UserMenu;
@@ -109,7 +108,7 @@ class CabinetController extends Controller {
         $user_id = Yii::$app->user->getId();
         $data['user_id'] = $user_id;
         $data['user_marketplace'] = UserMarketplace::find()
-                ->select(['user_marketplace_id', 'name', 'marketplace_name', 'market_id', 'market_date_end'])
+                ->select(['user_marketplace_id', 'name', 'marketplace_name', 'order',  'market_id', 'market_date_end'])
                 ->innerJoin('marketplace', 'marketplace.marketplace_id = user_marketplace.marketplace_id')
                 ->where(['user_id' => $user_id])
                 ->orderBy('order')
@@ -127,12 +126,8 @@ class CabinetController extends Controller {
         $data['add'] = Url::to(['cabinet/account']);
         ///print_r($data['user_marketplace']);
         //exit;
-        $transactions = Transactions::find()->where(['user_id' => $user_id])->all();
-        foreach ($transactions as $transaction) {
-            $data['transactions'][] = $transaction;
-        }
 
-        return $this->render('accounts',  $data);
+        return $this->render('accounts', $data);
     }
 
     public function actionAccount() {
@@ -216,3 +211,4 @@ class CabinetController extends Controller {
     }
 
 }
+

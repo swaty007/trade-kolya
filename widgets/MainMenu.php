@@ -6,6 +6,7 @@ use Yii;
 use app\models\UserMarketplace;
 use yii\helpers\Url;
 use yii\widgets\Menu;
+use yii\bootstrap\Widget;
 
 /**
  * Alert widget renders a message from session flash. All flash messages are displayed
@@ -26,17 +27,19 @@ use yii\widgets\Menu;
  * @author Kartik Visweswaran <kartikv2@gmail.com>
  * @author Alexander Makarov <sam@rmcreative.ru>
  */
-class MainMenu extends \yii\bootstrap\Widget {
+class MainMenu extends Widget
+{
 
     public $menu = [];
 
-    public function run() {
+    public function run()
+    {
 
         $this->menu[] = array(
             'label' => Yii::$app->user->identity->username,
             'class' => Url::to(['cabinet/accounts']),
             'template' => '<div class="dropdown profile-element"> <span>                             
-                                <img alt="image" class="img-circle user-icon" src="/../web/image/user_icon.png" />
+                                <img alt="image" class="img-circle user-icon" src="../image/user_icon.png" />
                                  </span>
                                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                                 <span class="clear"><span class="block m-t-xs"><strong class="font-bold">{label}</strong><b class="caret"></b>
@@ -57,37 +60,32 @@ class MainMenu extends \yii\bootstrap\Widget {
 
         );
 
-        if (Yii::$app->user->isGuest) {
-            
-        } else {
+        $user_id = Yii::$app->user->getId();
+        $user_marketplace = UserMarketplace::find()
+                ->select(['user_marketplace_id', 'name', 'marketplace_name'])
+                ->innerJoin('marketplace', 'marketplace.marketplace_id = user_marketplace.marketplace_id')
+                ->where(['user_id' => $user_id])
+                ->where(['!=', 'market_id', 0])
+                ->orderBy('order')
+                ->asArray()
+                ->all();
 
-            $user_id = Yii::$app->user->getId();
-            $user_marketplace = UserMarketplace::find()
-                    ->select(['user_marketplace_id', 'name', 'marketplace_name'])
-                    ->innerJoin('marketplace', 'marketplace.marketplace_id = user_marketplace.marketplace_id')
-                    ->where(['user_id' => $user_id])
-                    ->where('market_id', '!=', 0)
-                    ->orderBy('order')
-                    ->asArray()
-                    ->all();
-
-            $subMenu = array();
-            foreach ($user_marketplace as $value) {
-                $subMenu[] = array(
-                    'label' => $value['name'],
-                    'url' => Url::to(['usermp/account', 'user_marketplace_id' => $value['user_marketplace_id']])
-                );
-            }
-
-            $this->menu[] = array(
-                'label' => 'Трейдинг',
-                'class' => 'fa-area-chart',
-                'template' => '<a href="{url}"><i class="fa fa-tasks"></i> <span class="nav-label">{label}</span><span class="fa arrow"></span></a>',
-                'url' => Url::to(['cabinet/accounts']),
-                'active' => Yii::$app->controller->module->requestedRoute == 'trader/top',
-                'items' => $subMenu
+        $subMenu = array();
+        foreach ($user_marketplace as $value) {
+            $subMenu[] = array(
+                'label' => $value['name'],
+                'url' => Url::to(['usermp/account', 'user_marketplace_id' => $value['user_marketplace_id']])
             );
         }
+
+        $this->menu[] = array(
+            'label' => 'Трейдинг',
+            'class' => 'fa-area-chart',
+            'template' => '<a href="{url}"><i class="fa fa-tasks"></i> <span class="nav-label">{label}</span><span class="fa arrow"></span></a>',
+            'url' => Url::to(['cabinet/accounts']),
+            'active' => Yii::$app->controller->module->requestedRoute == '',
+            'items' => $subMenu
+        );
 
         $this->menu[] = array(
             'label' => 'Статистика',
@@ -101,7 +99,8 @@ class MainMenu extends \yii\bootstrap\Widget {
             'label' => 'Лучшие трейдеры',
             'class' => 'fa-users',
             'template' => '<a href="{url}"><i class="fa fa-users"></i> <span class="nav-label">{label}</span></a>',
-            'url' => Url::to(['trader/top'])
+            'url' => Url::to(['trader/top']),
+            'active' => Yii::$app->controller->module->requestedRoute == 'trader/top'
         );
 
 //        $this->menu[] = array(
@@ -123,6 +122,7 @@ class MainMenu extends \yii\bootstrap\Widget {
             'label' => 'Инвестпул',
             'class' => 'fa-info-circle',
             'template' => '<a href="{url}"><i class="fa fa-database"></i> <span class="nav-label">{label}</span></a>',
+            'active' => Yii::$app->controller->module->requestedRoute == 'pool/index',
             'url' => Url::to(['pool/index'])
         );
 
@@ -130,22 +130,27 @@ class MainMenu extends \yii\bootstrap\Widget {
             'label' => 'Транзакции',
             'class' => 'fa-info-circle',
             'template' => '<a href="{url}"><i class="fa fa-money"></i> <span class="nav-label">{label}</span></a>',
+            'active' => Yii::$app->controller->module->requestedRoute == 'coins/transactions',
             'url' => Url::to(['coins/transactions'])
-        );
-
-        $this->menu[] = array(
-            'label' => 'Администрирование',
-            'class' => 'fa-info-circle',
-            'template' => '<a href="{url}"><i class="fa fa-gear"></i> <span class="nav-label">{label}</span></a>',
-            'url' => Url::to(['admin/index'])
         );
 
         $this->menu[] = array(
             'label' => 'Магазин',
             'class' => 'fa-info-circle',
             'template' => '<a href="{url}"><i class="fa fa-gear"></i> <span class="nav-label">{label}</span></a>',
+            'active' => Yii::$app->controller->module->requestedRoute == 'market/index',
             'url' => Url::to(['market/index'])
         );
+
+        if (Yii::$app->user->identity->user_role == "admin") {
+            $this->menu[] = array(
+                'label' => 'Администрирование',
+                'class' => 'fa-info-circle',
+                'template' => '<a href="{url}"><i class="fa fa-gear"></i> <span class="nav-label">{label}</span></a>',
+                'active' => Yii::$app->controller->module->requestedRoute == 'admin/index',
+                'url' => Url::to(['admin/index'])
+            );
+        }
 
         echo Menu::widget([
             'items' => $this->menu,
@@ -157,5 +162,4 @@ class MainMenu extends \yii\bootstrap\Widget {
 
             'submenuTemplate' => "\n<ul class='nav nav-second-level collapse' role='menu'>\n{items}\n</ul>\n",]);
     }
-
 }

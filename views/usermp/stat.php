@@ -43,9 +43,26 @@ foreach ($marketplaces as $marketplace) {
                         </div>
                     </div>
                     <div class="col-lg-8">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <td class="col-lg-3">Валюта</td>
+                                    <td class="col-lg-3">Количество</td>
+                                    <td class="col-lg-3">Количество в ордерах</td>
+                                    <td class="col-lg-3">В долларовом эквиваленте</td>
+                                </tr>
+                            </thead>
+                            <tbody>
                         <?php foreach ($marketplace['balance'] as $key => $value) { ?>
-                          <div><?php echo $key; ?>: <?php echo $value['available']; ?></div>
+                                <tr>
+                                    <td><?php echo $key; ?></td>
+                                    <td><?php echo $value['available']; ?></td>
+                                    <td><?php echo $value['onOrder']; ?></td>
+                                    <td><?php echo $value['usd']; ?></td>
+                                </tr>
                         <?php } ?>
+                          </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -58,5 +75,5 @@ foreach ($marketplaces as $marketplace) {
 </script>
 
 <?php
-print_r($marketplaces);
+//print_r($marketplaces);
 ?>

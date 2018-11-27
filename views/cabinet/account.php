@@ -1,9 +1,4 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
@@ -22,36 +17,7 @@ $this->title = 'My Yii Application';
 
 <div class="wrapper wrapper-content animated fadeInRight">     
     <div class="row">
-        <div class="col-lg-4">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>Меню</h5>
-                    <div class="ibox-tools">
-                        <a class="collapse-link">
-                            <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-user">
-                            <li><a href="#">Config option 1</a>
-                            </li>
-                            <li><a href="#">Config option 2</a>
-                            </li>
-                        </ul>
-                        <a class="close-link">
-                            <i class="fa fa-times"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="ibox-content">
-                    <nav>
-                        <?php echo $menu; ?>
-                    </nav>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-8">
+        <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>Редактирование</h5>
@@ -105,6 +71,7 @@ $this->title = 'My Yii Application';
                 <div class="form-group">
                     <div class="col-lg-offset-2 col-lg-4">
                         <?php echo Html::submitButton('Сохранить', ['class' => 'btn btn-primary', 'name' => 'UserMarketplce-button']); ?>
+                        <a class="btn btn-default" href="/cabinet/accounts"> Отмена </a>
                     </div>
                     <div class="col-sm-4">
                         <button type="button" class="btn btn-warning" id="SlaveClear" onclick="$('#usermarketplceform-slave').val(0);">Очистить</button>
@@ -115,7 +82,7 @@ $this->title = 'My Yii Application';
                 </div>
             </div>
         </div>
-        <div class="col-lg-8 col-lg-offset-4">
+        <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>Редактирование</h5>

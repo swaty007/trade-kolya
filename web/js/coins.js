@@ -8,7 +8,7 @@ $(document).on('click',"#send", function(e) {
 
     $.ajax({
         type: "POST",
-        url: "/web/coins/create-transaction",
+        url: "/coins/create-transaction",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -41,7 +41,7 @@ $(document).on('click',"#send_withdraw", function(e) {
 
     $.ajax({
         type: "POST",
-        url: "/web/coins/create-withdraw",
+        url: "/coins/create-withdraw",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -73,7 +73,7 @@ $(document).on('click',"#switch_coin", function(e) {
 
     $.ajax({
         type: "POST",
-        url: "/web/coins/change-rate-balance",
+        url: "/coins/change-rate-balance",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -90,7 +90,7 @@ function transationDone(transaction_id) {
 
         $.ajax({
             type: "POST",
-            url: "/web/coins/transaction-done",
+            url: "/coins/transaction-done",
             data: data,
             success: function (msg) {
                 console.log(msg);

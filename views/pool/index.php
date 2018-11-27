@@ -59,7 +59,7 @@ $this->title = 'My Yii Application';
                                                 <p class="style-pull-card pull-profit">Процент: <strong><?= $pool_new['profit']?></strong>%</p>
                                                 <p class="style-pull-card pull-diversification">Количество выплат: <strong><?= $pool_new['diversification']?></strong></p>
                                                 <p class="style-pull-card pull-invest">Минимальный вклад: <strong><?=(double)$pool_new['min_invest'].' '.$pool_new['invest_method'];?></strong></p>
-                                                <p class="style-pull-card pull-invest">Уже в пуле всего: <strong><?= (double)$info_pools[$pool_new['id']]['sum_invest'].' '.$pool_new['invest_method']?></strong></p>
+                                                <p class="style-pull-card pull-invest">Уже в пуле всего: <strong><?php if(isset($info_pools[$pool_new['id']]['sum_invest'])) (double)$info_pools[$pool_new['id']]['sum_invest'].' '.$pool_new['invest_method']?></strong></p>
                                                 <p class="style-pull-card pull-invest">Минимальная общая сумма: <strong><?= (double)$pool_new['min_size_invest'].' '.$pool_new['invest_method']?></strong></p>
                                                 <p class="style-pull-card pull-invest">Максимальная общая сумма: <strong><?= (double)$pool_new['max_size_invest'].' '.$pool_new['invest_method']?></strong></p>
                                                 <ul class="list-group">
@@ -76,7 +76,7 @@ $this->title = 'My Yii Application';
                                                     <?php endforeach;?>
                                                 </ul>
                                                 <?php if( Yii::$app->user->identity->user_role == "admin"):?>
-                                                    <?php if($admin_pools[$pool_new['id']]):?>
+                                                    <?php if(isset($admin_pools[$pool_new['id']])):?>
                                                         <table class="table table-bordered">
                                                             <thead>
                                                             <tr>
@@ -308,7 +308,7 @@ $this->title = 'My Yii Application';
                                             </li>
                                             <li>
                                                 <label>Ивестирование в пул:</label>
-                                                <?= (double)$u_pool['invest'].' '.$pool['invest_method']?>
+                                                <?= (double)$u_pool['invest'].' '.$info_pools[$u_pool['pool_id']]['invest_method']?>
                                             </li>
                                         </ul>
 

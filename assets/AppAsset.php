@@ -20,7 +20,6 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        //'css/site.css',
         "css/bootstrap.min.css",
         "css/font-awesome.min.css",
         "css/plugins/datapicker/datepicker3.css",
@@ -38,7 +37,6 @@ class AppAsset extends AssetBundle
         "css/plugins/summernote/summernote-bs3.css",
     ];
     public $js = [
-        //'js/jquery-2.1.1.js',
         "js/plugins/jquery-ui/jquery-ui.min.js",
         'js/bootstrap.min.js',
         "js/plugins/metisMenu/jquery.metisMenu.js",
@@ -71,7 +69,5 @@ class AppAsset extends AssetBundle
     ];
     public $depends = [
         'yii\web\YiiAsset',
-        //'yii\bootstrap\BootstrapAsset',
-        //'yii\bootstrap\BootstrapPluginAsset',
     ];
 }

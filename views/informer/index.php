@@ -1,15 +1,8 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 use yii\helpers\Html;
 
 $this->title = 'Информер';
 ?>
-
 
 <div class="row wrapper border-bottom white-bg">
     <div class="col-lg-10">
@@ -19,32 +12,45 @@ $this->title = 'Информер';
         <h3>Информер</h3>
     </div>
     <div class="col-lg-10">
-        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#informer-create" style="margin-bottom: 10px">Создать новость</button>
-
-            <select id="informer_filter_category"
-                    data-placeholder="Выбор категорий"
-                    multiple
-                    class="chosen-select"
-                    tabindex="2">
-                <?php foreach ($full_categories as $category) :?>
-                    <option value="<?=$category['id']?>" <?php if (in_array($category['id'],$select->category)) echo 'selected' ?>><?=$category['cat_name']?></option>
-                <?php endforeach;?>
-            </select>
-            <select id="informer_filter_tags"
-                    data-placeholder="Выбор тегов"
-                    multiple
-                    class="chosen-select"
-                    tabindex="2">
-                <?php foreach ($full_tags as $tag) :?>
-                    <option value="<?=$tag['id']?>" <?php if (in_array($tag['id'],$select->tag)) echo 'selected' ?>><?=$tag['tag_name']?></option>
-                <?php endforeach;?>
-            </select>
+        <div class="row">
+            <?php if( Yii::$app->user->identity->user_role == "admin") :?>
+            <div class="col-lg-3">
+                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#informer-create" style="margin-bottom: 10px">Создать новость</button>
+            </div>
+            <?php endif;?>
+            <div class="col-lg-3">
+                <select id="informer_filter_category"
+                        data-placeholder="Выбор категорий"
+                        multiple
+                        class="chosen-select"
+                        tabindex="2">
+                    <?php foreach ($full_categories as $category) :?>
+                        <option value="<?=$category['id']?>" <?php if (isset($select->category)) if (in_array($category['id'],$select->category)) echo 'selected' ?>><?=$category['cat_name']?></option>
+                    <?php endforeach;?>
+                </select>
+            </div>
+            <div class="col-lg-3">
+                <select id="informer_filter_tags"
+                        data-placeholder="Выбор тегов"
+                        multiple
+                        class="chosen-select"
+                        tabindex="2">
+                    <?php foreach ($full_tags as $tag) :?>
+                        <option value="<?=$tag['id']?>" <?php if (isset($select->tag)) if (in_array($tag['id'],$select->tag)) echo 'selected' ?>><?=$tag['tag_name']?></option>
+                    <?php endforeach;?>
+                </select>
+            </div>
+        </div>
     </div>
 </div>
 <?php \yii\widgets\Pjax::begin(); ?>
 <?php if (!$informers) echo 'Не найденно ни одной записи' ?>
+
+<?=$informers_count?><br>
+<?=!(10%10)?>
+
 <?php foreach ($informers as $informer) :?>
-<!--    <pre>--><?php //var_dump($informer)?><!--</pre>-->
+
 <div class="wrapper wrapper-content animated fadeIn">
     <div class="row">
         <div class="col-lg-10 col-lg-offset-1">
@@ -87,6 +93,8 @@ $this->title = 'Информер';
     </div>
 </div>
 <?php endforeach;?>
+
+
 <?php if($informers_count > 10):?>
     <div class="paging_simple_numbers">
         <ul id="pagination" class="pagination">
@@ -94,10 +102,11 @@ $this->title = 'Информер';
                 <a onclick="informerPostParametrs(<?=$pagination - 1?>)" class="page-link">Previous</a>
             </li>
             <?php
+            $i=0;
             while ($i <= $informers_count):
-                $i++; if(!($i%10)):;?>
+                $i++; if(!($i%10) == 1):;?>
 
-                <li class="paginate_button page-item <?php if ($pagination == ($i/10)-1) {echo 'active';}?>">
+                <li class="paginate_button page-item <?php if ($pagination == !($i/10)-1) {echo 'active';}?>">
                     <a onclick="informerPostParametrs(<?=($i/10)-1;?>)" data-page="<?=($i/10)-1;?>" class="page-link"><?=$i/10;?></a>
                 </li>
             <?php endif; endwhile; ?>
@@ -107,10 +116,9 @@ $this->title = 'Информер';
         </ul>
     </div>
 <?php endif;?>
-<a id="informer_pjax_link" href="/web/informer/?tag=5"></a>
+
+<a id="informer_pjax_link" class="hidden" href="/informer/?tag=5"></a>
 <?php \yii\widgets\Pjax::end(); ?>
-
-
 <?php echo $this->render('modals',['categories'=>$categories,'sub_categories'=>$sub_categories,'tags'=>$tags]) ?>
 
 

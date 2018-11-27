@@ -6,13 +6,13 @@ $(document).on('click',"#create_market", function(e) {
         description: $('#market_description').val(),
         cost: $('#market_cost').val(),
         time_action: $('#market_time_action').val(),
-        count_api: $('#market_count_api').val(),
+        count_api: $('#market_count_api').val()
     };
     console.log(data);
 
     $.ajax({
         type: "POST",
-        url: "/web/market/create-market",
+        url: "/market/create-market",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -29,13 +29,13 @@ $(document).on('click',"#update_market", function(e) {
         cost: $('#market_cost_edit').val(),
         time_action: $('#market_time_action_edit').val(),
         count_api: $('#market_count_api_edit').val(),
-        market_id: Number($(this).attr('data-id')),
+        market_id: Number($(this).attr('data-id'))
     };
     console.log(data);
 
     $.ajax({
         type: "POST",
-        url: "/web/market/update-market",
+        url: "/market/update-market",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -71,7 +71,7 @@ function deleteMarket(id,_this) {
 
     $.ajax({
         type: "POST",
-        url: "/web/market/delete-market",
+        url: "/market/delete-market",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -93,7 +93,7 @@ $(document).on('click',"#buy_market", function(e) {
 
     $.ajax({
         type: "POST",
-        url: "/web/market/buy-marketplace",
+        url: "/market/buy-marketplace",
         data: data,
         success: function (msg) {
             console.log(msg);

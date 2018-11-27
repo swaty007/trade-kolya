@@ -81,7 +81,7 @@ $this->title = 'My Yii Application';
                                 2=>'Начисленно',
                         ] ?>
                         <?php foreach ($transactions as $n=>$transaction):?>
-                            <tr class="<?php//($transaction->status == 1 ) ? "success" : "warning"?>">
+                            <tr class="">
                                 <td><?=$n?></td>
                                 <td class="<?php if ($transaction->type == "deposit" ) {echo "text-danger"; }
                                 else if ($transaction->type == "withdraw") {echo "text-success"; } ?>">

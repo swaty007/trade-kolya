@@ -21,13 +21,13 @@ class Bittrex extends exchange {
 
     public function symbolFormat() {
         $num = func_num_args();
-        
-        $symbols = array();                
-        for($i=0; $i<$num && $i<2; $i++){
+
+        $symbols = array();
+        for ($i = 0; $i < $num && $i < 2; $i++) {
             $symbols[] = func_get_arg($i);
         }
 
-        return join('_', $symbols);
+        return join('-', $symbols);
         /*
           $symbols = explode('_', $symbol);
 
@@ -37,7 +37,11 @@ class Bittrex extends exchange {
     }
 
     public function getExchangeSymbol($symbol1, $symbol2) {
-        return $this->symbolFormat($symbol1, $symbol2);
+        return $this->symbolFormat($symbol2, $symbol1);
+    }
+    
+    public function getUSD() {
+        return 'USDT';
     }
 
     private function getApi() {
@@ -63,7 +67,7 @@ class Bittrex extends exchange {
             $data[] = array(
                 'name' => $currency->MarketName,
                 'tradingview' => join('', array_reverse(explode('-', $currency->MarketName)))
-                );
+            );
         }
 
         return $data;
@@ -121,15 +125,19 @@ class Bittrex extends exchange {
 
         $api = $this->getApi();
         $Balance = $api->getBalances();
-
+        
+        //print_r($Balance); exit;
+        
         $data = array();
         foreach ($Balance as $key => $value) {
-            $data[$key] = array(
-                'available' => $value,
-                'onOrder' => 0,
-                'btcValue' => 0,
-                'btcTotal' => 0,
-            );
+            if (!$empty || $value->Balance > 0) {
+                $data[$value->Currency] = array(
+                    'available' => (float) $value->Balance,
+                    'onOrder' => 0,
+                    'btcValue' => 0,
+                    'btcTotal' => 0,
+                );
+            }
         }
 
         return $data;
@@ -140,12 +148,16 @@ class Bittrex extends exchange {
 
         $balances = $this->getBalances(true);
 
+
         $data = array();
         foreach ($balances as $symbol => $balance) {
-
+            //print_r($balance);
+            //exit;
             $data[$symbol] = $balance;
             $data[$symbol]['usd'] = $this->getValueUSD($balance['available'] + $balance['onOrder'], $symbol);
         }
+        
+        //print_r($data);  exit;
 
         return $data;
     }
@@ -158,50 +170,52 @@ class Bittrex extends exchange {
         }
 
         $paire = $this->getExchangeSymbol($symbol, $this->getUSD());
-
+        
         if (isset($rate[$paire])) {
             return $value * $rate[$paire];
         } else {
-            return false;
+            return 0;
         }
     }
 
-public function get24h($symbol = null){
-        
+    public function get24h($symbol = null) {
+
         $api = $this->getApi();
-        
-        
+
+
         $ticker = $api->getMarketSummary($symbol);
-        
+
         //print_r($ticker); exit;
-        
+
         $data = array();
-        if (isset($ticker[0])){
+        if (isset($ticker[0])) {
             $result = $ticker[0];
             $data['symbol'] = $result->MarketName;
-            $data['lastPrice'] = (float)$result->Last; // последняя цена
-            $data['percentChange'] = (float)$result->PrevDay; // $result['percentChange']; // изменение цены за сутки в процентах
-            $data['lowestAsk'] = (float)$result->Ask; //$result['lowestAsk']; //  Лучшая цена продажи
-            $data['highestBid'] = (float)$result->Bid; //$result['highestBid']; // Лучшая цена покупки
-            $data['baseVolume'] = (float)$result->BaseVolume; //$result['baseVolume']; // Объем торгов в базовой валюте
-            $data['quoteVolume'] = (float)$result->Volume; //$result['quoteVolume']; // Объем торгов в квотируемой валюте
-            $data['high24hr'] = (float)$result->High; //$result['high24hr']; // последняя цена
-            $data['low24hr'] = (float)$result->Low; //$result['low24hr']; // последняя цена
-            
+            $data['lastPrice'] = (float) $result->Last; // последняя цена
+            $data['percentChange'] = (float) $result->PrevDay; // $result['percentChange']; // изменение цены за сутки в процентах
+            $data['lowestAsk'] = (float) $result->Ask; //$result['lowestAsk']; //  Лучшая цена продажи
+            $data['highestBid'] = (float) $result->Bid; //$result['highestBid']; // Лучшая цена покупки
+            $data['baseVolume'] = (float) $result->BaseVolume; //$result['baseVolume']; // Объем торгов в базовой валюте
+            $data['quoteVolume'] = (float) $result->Volume; //$result['quoteVolume']; // Объем торгов в квотируемой валюте
+            $data['high24hr'] = (float) $result->High; //$result['high24hr']; // последняя цена
+            $data['low24hr'] = (float) $result->Low; //$result['low24hr']; // последняя цена
         }
-        
+
         return $data;
     }
-    
+
     // Курсы валют текущие ()
     public function getRates() {
 
         $api = $this->getApi();
-        $Currencies = $api->getMarkets();
-
-        print_r($Currencies);
-        exit;
-        return $ticker;
+        $Currencies = $api->getMarketSummaries();
+        
+        $data = array();
+        foreach ($Currencies as $value) {
+            $data[$value->MarketName] = $value->Last;
+        }
+        
+        return $data;
     }
 
     // текущие предложения спрос по валютной паре

@@ -12,7 +12,7 @@ $(document).on('click',"#create_informer", function(e) {
 
     $.ajax({
         type: "POST",
-        url: "/web/informer/create-informer",
+        url: "/informer/create-informer",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -34,7 +34,7 @@ $(document).on('click',"#update_informer", function(e) {
 
     $.ajax({
         type: "POST",
-        url: "/web/informer/update-informer",
+        url: "/informer/update-informer",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -45,15 +45,15 @@ $(document).on('click',"#update_informer", function(e) {
 function editInformer(id,_this) {
     $.ajax({
         type: "POST",
-        url: "/web/informer/get-informer",
+        url: "/informer/get-informer",
         data: {id:id},
         success: function (msg) {
             console.log(msg);
             if (msg.msg === 'ok') {
-               let informer =  msg.informer,
-                   tags = informer.tag,
-                   category = informer.category,
-                   tag_str = "";
+                let informer =  msg.informer,
+                    tags = informer.tag,
+                    category = informer.category,
+                    tag_str = "";
 
                 $('#update_informer').attr('data-id',informer.id);
                 $('#informer_name_req').val(informer.title);
@@ -62,7 +62,7 @@ function editInformer(id,_this) {
 
                 $.each(category, function (index, value) {
                     $('#informer_category_req option').each(function () {
-                       if( $(this).val() == value.id) {$(this).prop("selected", true)}
+                        if( $(this).val() == value.id) {$(this).prop("selected", true)}
                     });
                     $('#informer_under_category_req option').each(function () {
                         if( $(this).val() == value.id) {$(this).prop("selected", true)}
@@ -93,7 +93,7 @@ function deleteInformer(id,_this) {
 
     $.ajax({
         type: "POST",
-        url: "/web/informer/delete-informer",
+        url: "/informer/delete-informer",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -112,7 +112,7 @@ $(document).on('click',"#create_inf_category", function(e) {
 
     $.ajax({
         type: "POST",
-        url: "/web/informer/create-category",
+        url: "/informer/create-category",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -130,7 +130,7 @@ $(document).on('click',"#update_inf_category", function(e) {
 
     $.ajax({
         type: "POST",
-        url: "/web/informer/update-category",
+        url: "/informer/update-category",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -146,7 +146,7 @@ function deleteInfCategory(id,_this) {
 
     $.ajax({
         type: "POST",
-        url: "/web/informer/delete-category",
+        url: "/informer/delete-category",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -183,6 +183,7 @@ function informerPostParametrs(pagi_n) {
     link.click();
 }
 $('#informer_filter_category,#informer_filter_tags').on('change',function(){
+    console.log(1);
     informerPostParametrs();
 });
 $(document).on('click','#pagination a',function () {

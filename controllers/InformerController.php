@@ -54,8 +54,9 @@ class InformerController extends Controller
 
         $data['pagination'] = $n;
 
-        $informers = $data['informers'] = Informer::find()->joinWith('category')->joinWith('tag');
+        $informers = Informer::find()->joinWith(['category','tag'])->distinct();
 
+        $data['select'] = new \stdClass();
         if ($tag !== null) {
             $tag = explode(',',$tag);
             $informers = $informers->where(['IN','tag_id',$tag]);
@@ -66,17 +67,17 @@ class InformerController extends Controller
             $informers = $informers->orWhere(['IN','category_id',$category_id]);
             $data['select']->category = $category_id;
         }
-
-        $data['informers'] = $informers->limit(10)->offset(10*$n)->orderBy('date DESC')->all();
+//        echo '<pre>'.var_dump($informers->all()).'</pre>';exit;
+        $countQuery = clone $informers;
+        $data['informers'] = $informers->offset(10*$n)->orderBy('date DESC')->all();
         $data['informers_count'] = 0;
 
-        foreach ($data['informers'] as $number) {
+        foreach ($countQuery->offset(10*$n)->orderBy('date DESC')->asArray()->all() as $number) {
             $data['informers_count'] += 1;
         }
-        $data['informers'] = $informers->orderBy('date DESC')->all();
 
         $data['categories']     = Categories::find()->where(['parent_id' => null])->all();
-        $data['sub_categories'] = Categories::find()->where('parent_id', '!=', null)->all();
+        $data['sub_categories']  = Categories::find()->where(['not', ['parent_id' => null]])->all();
         $data['full_categories']     = Categories::find()->all();
         $data['full_tags']           = Tags::find()->all();
         //$data['tags']           = Tags::find()->all();
@@ -351,23 +352,26 @@ class InformerController extends Controller
     }
     private static function createIformerTag ($tag,$informer_id)
     {
-        if(!($info_tags = Tags::findOne(['tag_name'=>$tag]) )) {
-            $info_tags = new Tags();
-            $info_tags->tag_name = $tag;
-            if(!$info_tags->save()) {
+        if ($tag !== '') {
+            if(!($info_tags = Tags::findOne(['tag_name'=>$tag]) )) {
+                $info_tags = new Tags();
+                $info_tags->tag_name = $tag;
+                if(!$info_tags->save()) {
+                    return ['msg' => 'error', 'status' => "Don't save tags"];
+                }
+            }
+
+            $info_tag = new InformerTag();
+            $info_tag->tag_id = $info_tags->id;
+            $info_tag->informer_id = $informer_id;
+
+            if(!$info_tag->save()) {
+                InformerTag::deleteAll(['informer_id'=>$informer_id]);
+                InformerCategory::deleteAll(['informer_id'=>$informer_id]);
                 return ['msg' => 'error', 'status' => "Don't save tags"];
             }
         }
 
-        $info_tag = new InformerTag();
-        $info_tag->tag_id = $info_tags->id;
-        $info_tag->informer_id = $informer_id;
-
-        if(!$info_tag->save()) {
-            InformerTag::deleteAll(['informer_id'=>$informer_id]);
-            InformerCategory::deleteAll(['informer_id'=>$informer_id]);
-            return ['msg' => 'error', 'status' => "Don't save tags"];
-        }
         return true;
     }
 

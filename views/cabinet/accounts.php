@@ -1,3 +1,4 @@
+
 <?php
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -47,9 +48,10 @@ $this->title = 'My Yii Application';
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th>#</td>
                                     <th>Название</th>
                                     <th>Биржа</th>
+                                    <th>Сортировка</th>
                                     <th>Статус</th>
                                     <th>Дата окончания</th>
                                     <th>Редактировать</th>
@@ -59,9 +61,22 @@ $this->title = 'My Yii Application';
                                 <?php foreach ($user_marketplace as $value) { ?>
                                     <tr>
                                         <td><input type="checkbox" name="user_marketplace_id[]" value="<?php echo $value["user_marketplace_id"]; ?>"></td>
-                                        <td><a href='<?php $value["market_id"] != 0 ? $value['open'] : ""?>'><?php echo $value["name"]; ?></a></td>
+                                        <td>
+                                            <?php if ($value["market_id"] == 0) :?>
+                                            <p><?php echo $value["name"]; ?></p>
+                                            <?php else :?>
+                                                <a href='<?php echo $value['open']?>'><?php echo $value["name"]; ?></a>
+                                            <?php endif;?>
+                                        </td>
                                         <td><?php echo $value["marketplace_name"]; ?></td>
-                                        <td><?php if($value["market_id"] != 0) :?> Активный <?php endif;?></td>
+                                        <td><?php echo $value["order"]; ?></td>
+                                        <td>
+                                            <?php if ($value["market_id"] == 0) :?>
+                                                Не активный
+                                            <?php else :?>
+                                                Активный
+                                            <?php endif;?>
+                                        </td>
                                         <td><?php echo $value["market_date_end"]; ?></td>
                                         <td><a href='<?php echo $value['edit']; ?>'><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
                                             <!--a href='<?php echo $value['delete']; ?>'>удалить</a--></td>
@@ -79,3 +94,4 @@ $this->title = 'My Yii Application';
         </div>
     </div>
 </div>
+

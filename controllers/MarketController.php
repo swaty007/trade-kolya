@@ -46,15 +46,13 @@ class MarketController extends \yii\web\Controller
         ];
     }
 
-
-
     public function actionCron()
     {
         $today = date('Y-m-d');
         foreach (UserMarketplace::find()->where(['<>', 'market_id', 0])->all() as $marketplace) {
             if ($today > $marketplace->market_date_end) {
                 $marketplace->market_id = 0;
-                if($marketplace->save()) {
+                if ($marketplace->save()) {
                     Yii::trace("Status changed");
                 } else {
                     Yii::error("Status changed ERROR");
@@ -87,16 +85,12 @@ class MarketController extends \yii\web\Controller
             ->asArray()
             ->all();
 
-
         return $this->render('index', $data);
     }
 
-
-
-
-    public function actionCreateMarket() {
-        if (Yii::$app->request->isAjax)
-        {
+    public function actionCreateMarket()
+    {
+        if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = 'json';
             $id = Yii::$app->user->getId();
 
@@ -115,20 +109,18 @@ class MarketController extends \yii\web\Controller
             $market->time_action = $time_action;
             $market->count_api = $count_api;
 
-            if($market->save()) {
+            if ($market->save()) {
                 return ['msg' => 'ok', 'market' => $market];
             } else {
                 return ['msg' => 'error', 'market' => $market];
             }
-
         }
     }
     public function actionUpdateMarket()
     {
-        if (Yii::$app->request->isAjax)
-        {
+        if (Yii::$app->request->isAjax) {
             $id = Yii::$app->user->getId();
-            if(User::canAdmin()) {
+            if (User::canAdmin()) {
                 Yii::$app->response->format = 'json';
 
                 $market_id = (int)Yii::$app->request->post('market_id', '');
@@ -139,7 +131,7 @@ class MarketController extends \yii\web\Controller
                 $time_action = (int)Yii::$app->request->post('time_action', '');
                 $count_api = (int)Yii::$app->request->post('count_api', '');
 
-                if(!($market = Markets::findOne(['id'=>$market_id]) )) {
+                if (!($market = Markets::findOne(['id'=>$market_id]) )) {
                     return ['msg' => 'error', 'status' => "No Market finded"];
                 }
 
@@ -150,8 +142,7 @@ class MarketController extends \yii\web\Controller
                 $market->time_action = $time_action;
                 $market->count_api = $count_api;
 
-
-                if($market->save()) {
+                if ($market->save()) {
                     return ['msg' => 'ok', 'status' => "Market updated"];
                 } else {
                     return ['msg' => 'error', 'status' => "Market don't updated"];
@@ -161,33 +152,31 @@ class MarketController extends \yii\web\Controller
             }
         }
     }
-    public function actionDeleteMarket() {
-        if (Yii::$app->request->isAjax)
-        {
+    public function actionDeleteMarket()
+    {
+        if (Yii::$app->request->isAjax) {
             $id = Yii::$app->user->getId();
-            if(User::canAdmin()) {
+            if (User::canAdmin()) {
                 Yii::$app->response->format = 'json';
-
                 $market_id = (int)Yii::$app->request->post('market_id', '');
 
-                if(!($market = Markets::findOne(['id'=>$market_id]) )) {
+                if (!($market = Markets::findOne(['id'=>$market_id]) )) {
                     return ['msg' => 'error', 'status' => "No market finded"];
                 }
 
-                if(Markets::haveInvest($market->id)) {
+                if (Markets::haveInvest($market->id)) {
                     $market->status = 'archive';
-                    if(!($market->save())) {
+                    if (!($market->save())) {
                         return ['msg' => 'error', 'status' => "Market don't saved"];
                     }
                     return ['msg' => 'error', 'status' => 'Have money in invest => moved to archive'];
                 } else {
-                    if($market->delete()) {
+                    if ($market->delete()) {
                         return ['msg' => 'ok', 'status' => "Market deleted"];
                     } else {
                         return ['msg' => 'error', 'status' => "Market don't deleted"];
                     }
                 }
-
             } else {
                 return ['msg' => 'error', 'status' => "Dont have asses"];
             }
@@ -195,9 +184,9 @@ class MarketController extends \yii\web\Controller
     }
 
 
-    public function actionBuyMarketplace() {
-        if (Yii::$app->request->isAjax)
-        {
+    public function actionBuyMarketplace()
+    {
+        if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = 'json';
             $id = Yii::$app->user->getId();
 
@@ -206,7 +195,7 @@ class MarketController extends \yii\web\Controller
             $invest_method = "USDT";
             $today = date('Y-m-d');
 
-            if(!($market = Markets::findOne(['id'=>$market_id]) )) {
+            if (!($market = Markets::findOne(['id'=>$market_id]) )) {
                 return ['msg' => 'error', 'status' => "No Market finded"];
             }
 
@@ -215,15 +204,20 @@ class MarketController extends \yii\web\Controller
             if ($market->status === 'archive') {
                 return ['msg' => 'error', 'status' => "Archive Market"];
             }
-
 //            $marketplaces = explode(",", $marketplaces);
 
-            $user_marketplaces_count = UserMarketplace::find()->where(['user_id' => $id])->andWhere(['IN','user_marketplace_id',$marketplaces])->andWhere(['market_id' => 0])->count();
-            if ((int)count($marketplaces) !== (int)$market->count_api || (int)$user_marketplaces_count !== (int)count($marketplaces)) {
+            $user_marketplaces_count = UserMarketplace::find()
+                                                        ->where(['user_id' => $id])
+                                                        ->andWhere(['IN','user_marketplace_id',$marketplaces])
+                                                        ->andWhere(['market_id' => 0])
+                                                        ->count();
+            if ((int)count($marketplaces) !== (int)$market->count_api
+                || (int)$user_marketplaces_count !== (int)count($marketplaces)
+            ) {
                 return ['msg' => 'error', 'status' => "False count API or Marketplace"];
             }
 
-            if(User::allowedCurrency($invest_method)) {
+            if (User::allowedCurrency($invest_method)) {
                 if ($user->{$invest_method.'_money'} < $market->cost) {
                     return ['msg' => 'error', 'status' => "Don't have balance"];
                 }
@@ -231,18 +225,22 @@ class MarketController extends \yii\web\Controller
             } else {
                 return ['msg' => 'error', 'status' => "Failed currency"];
             }
+
             if (!$user->save()) {
                 return ['msg' => 'error', 'status' => "User don't save"];
             }
 
             $days_with_action = (int)(strtotime($today) + ($market->time_action*(60*60*24)));
             foreach ($marketplaces as $marketplace) {
-                $u_marketplace = UserMarketplace::find()->where(['user_id' => $id])->andWhere(['market_id' => 0])->andWhere(['user_marketplace_id'=>$marketplace])->one();
+                $u_marketplace = UserMarketplace::find()
+                                                    ->where(['user_id' => $id])
+                                                    ->andWhere(['market_id' => 0])
+                                                    ->andWhere(['user_marketplace_id'=>$marketplace])
+                                                    ->one();
                 $u_marketplace->market_id = $market_id;
+                $u_marketplace->market_date_end = date('Y-m-d', $days_with_action);
 
-                $u_marketplace->market_date_end = date('Y-m-d',$days_with_action);
-
-                if(!$u_marketplace->save()) {
+                if (!$u_marketplace->save()) {
                     $user->{$invest_method.'_money'} += $market->cost;
                     $user->save();
                     return ['msg' => 'error', 'status' => "Don't save marketplace"];
@@ -262,5 +260,4 @@ class MarketController extends \yii\web\Controller
             return ['msg' => 'ok', 'status' => 'Marketplace buyed'];
         }
     }
-
 }

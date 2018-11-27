@@ -25,7 +25,7 @@ $(document).on('click',"#create_pool", function(e) {
 
     $.ajax({
         type: "POST",
-        url: "/web/pool/create-pool",
+        url: "/pool/create-pool",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -52,7 +52,7 @@ $(document).on('click',"#update_pool", function(e) {
 
     $.ajax({
         type: "POST",
-        url: "/web/pool/update-pool",
+        url: "/pool/update-pool",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -100,7 +100,7 @@ function deletePool(id,_this) {
 
     $.ajax({
         type: "POST",
-        url: "/web/pool/delete-pool",
+        url: "/pool/delete-pool",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -118,7 +118,7 @@ function investPool(id,_this) {
 
     $.ajax({
         type: "POST",
-        url: "/web/pool/create-user-pool",
+        url: "/pool/create-user-pool",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -135,7 +135,7 @@ function returnUserMoney(id,_this) {
 
     $.ajax({
         type: "POST",
-        url: "/web/pool/return-user-money",
+        url: "/pool/return-user-money",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -153,7 +153,7 @@ function createPoolComment(id,_this) {
 
     $.ajax({
         type: "POST",
-        url: "/web/pool/create-comment",
+        url: "/pool/create-comment",
         data: data,
         success: function (msg) {
             console.log(msg);
@@ -171,7 +171,7 @@ function deletePoolComment(id,_this) {
 
     $.ajax({
         type: "POST",
-        url: "/web/pool/delete-comment",
+        url: "/pool/delete-comment",
         data: data,
         success: function (msg) {
             console.log(msg);

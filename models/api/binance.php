@@ -126,6 +126,8 @@ class Binance extends exchange {
         
         $balances = $this->getBalances(true);
         
+        //print_r($balances); exit;
+        
         $data = array();
         foreach ($balances as $symbol => $balance){
             
@@ -186,6 +188,15 @@ class Binance extends exchange {
 
         $api = new Api($this->key, $this->secret);
         $ticker = $api->prices();
+        //print_r($ticker); exit;
+        /*
+         * Array
+                (
+                    [ETHBTC] => 0.03455900
+                    [LTCBTC] => 0.00909900
+                    [BNBBTC] => 0.00152340 ....
+                )
+         */
         return $ticker;
     }
 

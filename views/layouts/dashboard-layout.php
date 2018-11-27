@@ -42,15 +42,15 @@ AppAsset::register($this);
                         <ul class="nav navbar-top-links navbar-right">
                             <li>
                                 Ваш баланс:
-                                <span class="text-muted welcome-message"><?= (double)Yii::$app->user->identity->BTC_money; ?></span> <i class="fa fa-btc"></i>
+                                <span class="text-muted welcome-message"><?= (double)Yii::$app->user->identity->BTC_money; ?></span><i class="fa fa-btc"></i>
                             </li>
                             <li style="margin-left: 10px">
                                 Ваш баланс:
-                                <span class="text-muted welcome-message"><?= (double)Yii::$app->user->identity->ETH_money; ?></span> <i class="fa fa-gbp"></i>
+                                <span class="text-muted welcome-message"><?= (double)Yii::$app->user->identity->ETH_money; ?></span><i class="fa fa-eth"></i>
                             </li>
                             <li style="margin-left: 10px">
                                 Ваш баланс:
-                                <span class="text-muted welcome-message"><?= (double)Yii::$app->user->identity->USDT_money; ?></span> <i class="fa fa-usd"></i>
+                                <span class="text-muted welcome-message"><?= (double)Yii::$app->user->identity->USDT_money; ?></span><i class="fa fa-usd"></i>
                             </li>
                             <li style="margin-left: 10px">
                                 <button type="button" class="btn btn-w-m btn-primary" data-toggle="modal" data-target="#payments">Пополнить</button>
