@@ -69,10 +69,10 @@ class InformerController extends Controller
         }
 //        echo '<pre>'.var_dump($informers->all()).'</pre>';exit;
         $countQuery = clone $informers;
-        $data['informers'] = $informers->offset(10*$n)->orderBy('date DESC')->all();
+        $data['informers'] = $informers->limit(10)->offset(10*$n)->orderBy('date DESC')->all();
         $data['informers_count'] = 0;
 
-        foreach ($countQuery->offset(10*$n)->orderBy('date DESC')->asArray()->all() as $number) {
+        foreach ($countQuery->orderBy('date DESC')->asArray()->all() as $number) {
             $data['informers_count'] += 1;
         }
 

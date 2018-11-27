@@ -46,9 +46,6 @@ $this->title = 'Информер';
 <?php \yii\widgets\Pjax::begin(); ?>
 <?php if (!$informers) echo 'Не найденно ни одной записи' ?>
 
-<?=$informers_count?><br>
-<?=!(10%10)?>
-
 <?php foreach ($informers as $informer) :?>
 
 <div class="wrapper wrapper-content animated fadeIn">
@@ -106,10 +103,13 @@ $this->title = 'Информер';
             while ($i <= $informers_count):
                 $i++; if(!($i%10) == 1):;?>
 
-                <li class="paginate_button page-item <?php if ($pagination == !($i/10)-1) {echo 'active';}?>">
+                <li class="paginate_button page-item <?php if ($pagination == ($i/10)-1) {echo 'active';}?>">
                     <a onclick="informerPostParametrs(<?=($i/10)-1;?>)" data-page="<?=($i/10)-1;?>" class="page-link"><?=$i/10;?></a>
                 </li>
             <?php endif; endwhile; ?>
+            <li class="paginate_button page-item <?php if ($pagination == ceil($i/10)-1) {echo 'active';}?>">
+                <a onclick="informerPostParametrs(<?=$pagination+1?>)" data-page="<?=$pagination+1?>" class="page-link"><?=ceil($i/10);?></a>
+            </li>
             <li class="paginate_button page-item next">
                 <a onclick="informerPostParametrs(<?=$pagination+1?>)"  class="page-link">Next</a>
             </li>
