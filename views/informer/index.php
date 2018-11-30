@@ -121,7 +121,7 @@ $this->title = 'Информер';
                     <?php else :?>
                         onclick="informerPostParametrs(<?=$pagination+1?>)"
                     <?php endif;?>
-                class="page-link">Next1</a>
+                class="page-link">Next</a>
             </li>
         </ul>
     </div>

@@ -56,8 +56,6 @@ $this->title = 'Магазин';
                                                     <p class="style-pull-card market-cost">Стоимость продукта: <strong><?=(double)$market->cost;?></strong></p>
                                                     <p class="style-pull-card market-end">Срок действия апи(в днях): <strong><?=$market->time_action;?></strong></p>
                                                     <p class="style-pull-card market-count_api">Количество апи: <strong><?= $market->count_api?></strong></p>
-                                                    <p class="style-pull-card market-date_create">Дата создание: <strong><?= $market->date_create?></strong></p>
-                                                    <p class="style-pull-card market-date_update">Дата обновления: <strong><?= $market->date_update?></strong></p>
                                                 </div>
                                                 <div class="panel-footer">
                                                     <button class="btn btn-primary" type="button" onclick="buyMarket(<?=$market->id;?>,this)">Купить</button>
@@ -86,8 +84,6 @@ $this->title = 'Магазин';
                                                     <p class="style-pull-card market-cost">Стоимость продукта: <strong><?=(double)$market->cost;?></strong></p>
                                                     <p class="style-pull-card market-end">Срок действия апи(в днях): <strong><?=$market->time_action;?></strong></p>
                                                     <p class="style-pull-card market-count_api">Количество апи: <strong><?= $market->count_api?></strong></p>
-                                                    <p class="style-pull-card market-date_create">Дата создание: <strong><?= $market->date_create?></strong></p>
-                                                    <p class="style-pull-card market-date_update">Дата обновления: <strong><?= $market->date_update?></strong></p>
                                                 </div>
                                                 <div class="panel-footer">
                                                     <?php if( Yii::$app->user->identity->user_role == "admin"):?>
