@@ -82,10 +82,6 @@ $(function () {
          */
     });
 
-    (function () {
-
-    });
-
     // cabinet/account
     $("#BtnFindMaster").click(function () {
         $("#Masters").load('/cabinet/masters', {'marketplace_id': $("#usermarketplceform-marketplace_id").val()}, function(){

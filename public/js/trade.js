@@ -194,7 +194,7 @@ function userBalance(){
     $.ajax({
         type: "GET",
         url: "/usermp/balance",
-        data: "user_marketplace_id=" + user_marketplace_id, // + "&symbol=" + symbol,
+        data: "user_marketplace_id=" + user_marketplace_id + "&symbol=" + symbol,
         dataType: "json",
         success: function (json) {
             var from = $("#currencyFrom").val();
@@ -391,7 +391,7 @@ $(function () {
                    //$("#exampleModalCenter .modal-body").html(json.message.join("<br>"));
                    //$("#exampleModalCenter").modal({'show':true});
                }
-               console.dir(json);
+               //console.dir(json);
            }
          });
         

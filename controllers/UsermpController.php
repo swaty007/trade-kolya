@@ -48,17 +48,17 @@ class UsermpController extends Controller {
     }
 
     public function actionStat() {
-        
+
         $this->view->registerJsFile('/js/flotr2/flotr2.js', ['depends' => ['yii\web\JqueryAsset']]);
         $this->view->registerJsFile('/js/trade.js', ['depends' => ['yii\web\JqueryAsset']]);
-        
+
         $user_id = Yii::$app->user->getId();
         $UserMarketplaces = UserMarketplace::find()->where(['user_id' => $user_id])->orderBy('order')->all();
 
         $data = array();
-        
+
         $data["flotr_data"] = array();
-        
+
         foreach ($UserMarketplaces as $UserMarketplace) {
             $api = $this->getClassApi($UserMarketplace->marketplace_id, $UserMarketplace->key, $UserMarketplace->secret);
 
@@ -82,7 +82,7 @@ class UsermpController extends Controller {
             $Marketplace['data'] = $d;
 
             $data['marketplaces'][] = $Marketplace;
-            
+
             $data["flotr_data"][] = array(
                 'user_marketplace_id' => $UserMarketplace->user_marketplace_id,
                 'data' => $d
@@ -130,10 +130,12 @@ class UsermpController extends Controller {
         $symbol = Yii::$app->request->get('symbol', 'BNBUSDT');
 
         $UserMarketplace = UserMarketplace::findOne(['user_marketplace_id' => $user_marketplace_id, 'user_id' => $user_id])->toArray();
+        $api = $this->getClassApi($UserMarketplace['marketplace_id'], $UserMarketplace['key'], $UserMarketplace['secret']);
 
-        $api = new Api($UserMarketplace['key'], $UserMarketplace['secret']);
 
-        $orders = $api->openOrders($symbol);
+        //$api = new Api($UserMarketplace['key'], $UserMarketplace['secret']);
+
+        $orders = $api->getOpenorders($symbol);
 
         //print_r($orders);
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -149,11 +151,12 @@ class UsermpController extends Controller {
 
         $UserMarketplace = UserMarketplace::findOne(['user_marketplace_id' => $user_marketplace_id, 'user_id' => $user_id])->toArray();
 
-        $api = new Api($UserMarketplace['key'], $UserMarketplace['secret']);
+        $api = $this->getClassApi($UserMarketplace['marketplace_id'], $UserMarketplace['key'], $UserMarketplace['secret']);
 
-        $orders = $api->orders($symbol);
-
-        //print_r($orders);
+        $orders = $api->getOrders($symbol);
+        //$api = new Api($UserMarketplace['key'], $UserMarketplace['secret']);
+        //$orders = $api->orders($symbol);
+        //print_r($orders); exit;
         Yii::$app->response->format = Response::FORMAT_JSON;
         return $orders;
     }
@@ -166,10 +169,12 @@ class UsermpController extends Controller {
         $orderId = Yii::$app->request->get('orderId', '');
 
         $UserMarketplace = UserMarketplace::findOne(['user_marketplace_id' => $user_marketplace_id, 'user_id' => $user_id])->toArray();
+        $api = $this->getClassApi($UserMarketplace['marketplace_id'], $UserMarketplace['key'], $UserMarketplace['secret']);
 
-        $api = new Api($UserMarketplace['key'], $UserMarketplace['secret']);
+        $order = $api->cancelOrder($symbol, $orderId);
 
-        $order = $api->cancel($symbol, $orderId);
+        //$api = new Api($UserMarketplace['key'], $UserMarketplace['secret']);
+        // $order = $api->cancel($symbol, $orderId);
         Yii::$app->response->format = Response::FORMAT_JSON;
         return $order;
     }
@@ -232,6 +237,7 @@ class UsermpController extends Controller {
 
     public function actionBalance() {
 
+        $symbol = Yii::$app->request->get('symbol', '');
         $user_id = Yii::$app->user->getId();
         $user_marketplace_id = Yii::$app->request->get('user_marketplace_id', 0);
 
@@ -240,12 +246,40 @@ class UsermpController extends Controller {
 
         //$api = new Api($UserMarketplace['key'], $UserMarketplace['secret']);
         //$balance = $api->balances();
-        $balance = $api->getBalances();
+
+        $result = array();
+
+        $balance = $api->getBalances($symbol);
+        
+        // другие аккаунты
+        $AllUserMarketplace = UserMarketplace::find()->where(['marketplace_id' => $UserMarketplace['marketplace_id'], 'user_id' => $user_id])->orderBy('order')->all();
+        
+        $result['accounts'] = [];
+        $result['accounts'][$user_marketplace_id] = $balance;
+        
+        foreach ($AllUserMarketplace as $mp) {
+            if ($mp->user_marketplace_id == $user_marketplace_id) {
+                continue;
+            }
+            
+            $api = $this->getClassApi($mp->marketplace_id, $mp->key, $mp->secret);
+            $b = $api->getBalances($symbol);
+            if (!$api->error){ 
+                $result['accounts'][$mp->user_marketplace_id] = $b;
+            }
+        }
+
+        if ($balance) {
+            $result['success'] = true;
+            $result['balance'] = $balance;
+        } else {
+            $result['success'] = false;
+        }
 
         Yii::$app->response->format = Response::FORMAT_JSON;
-        return $balance;
+        return $result;
     }
-    
+
     public function action24h() {
 
         $user_id = Yii::$app->user->getId();
@@ -262,7 +296,6 @@ class UsermpController extends Controller {
 
         Yii::$app->response->format = Response::FORMAT_JSON;
         return $balance;
-        
     }
 
     private function getActionConfigDefault() {
@@ -359,15 +392,70 @@ class UsermpController extends Controller {
 
         return $order;
     }
+    
+    private function executeRecuest($user_marketplace_id, $user_id, $config) {
+        $UserMarketplace = UserMarketplace::findOne(['user_marketplace_id' => $user_marketplace_id, 'user_id' => $user_id])->toArray();
+        
+        if (!$UserMarketplace) {
+            $this->setError('No marketplace for user');
+        }
+        
+        if (!$this->error) {
+            $api = $this->getClassApi($UserMarketplace['marketplace_id'], $UserMarketplace['key'], $UserMarketplace['secret']);
+            $order = $api->addOrder($config['symbol'], $config);
+            if ($api->error) {
+                $this->setError($api->error['msg']);
+            }
+                        
+            if (!$order) {
+                $this->setError('addOrder Error');
+            }
+            
+        }else{
+            $order = false;
+        }
+        
+        return $order;
+    }
 
     private function executeActionRequest($config) {
 
         $result = [];
 
         $user_id = Yii::$app->user->getId();
+
         $user_marketplace_id = Yii::$app->request->get('user_marketplace_id', 0);
 
-        if ($this->setActionPostData($config) && $this->setActionKeySecure($config, $user_id, $user_marketplace_id)) {
+        $this->setActionPostData($config);
+        
+        $result['order'] = $this->executeRecuest($user_marketplace_id, $user_id, $config);
+        
+        $sub_marketplaces = Yii::$app->request->post('account_quantity', []);
+        foreach ($sub_marketplaces as $mp_id => $quantity){
+            $mp_id = (int)$mp_id;
+            $quantity = (float)$quantity;
+            
+            if ($quantity) {
+                $new_config = $config;
+                $new_config['quantity'] = (float)$quantity;
+                $o = $this->executeRecuest($mp_id, $user_id, $new_config);
+                $result['account'][$mp_id]['order'] = $o;
+                $this->writeTask($new_config, $result, $user_id, $mp_id, 0, 0);
+            }
+        }
+        
+        if ($this->error) {
+            $result['success'] = false;
+            $result['message'] = $this->error;
+        } else {
+            $result['success'] = true;
+            $TaskId = $this->writeTask($config, $result, $user_id, $user_marketplace_id, 0, 0);
+            //$this->executeActionSlave($TaskId);
+        }
+        
+        
+/*
+        if ($this->setActionKeySecure($config, $user_id, $user_marketplace_id)) {
             $result['order'] = $this->executeAction($config);
             if (isset($result['order']['msg'])) {
                 $this->setError($result['order']['msg']);
@@ -382,7 +470,7 @@ class UsermpController extends Controller {
             $TaskId = $this->writeTask($config, $result, $user_id, $user_marketplace_id, 0, 0);
             $this->executeActionSlave($TaskId);
         }
-
+*/
         Yii::$app->response->format = Response::FORMAT_JSON;
         return $result;
     }
@@ -435,10 +523,10 @@ class UsermpController extends Controller {
 
         $Task->config = json_encode($config);
         $Task->result = json_encode($result);
-        $Task->succcess = (isset($result['success']) && $result['success']) ? 1 : 0;
+        $Task->success = (isset($result['success']) && $result['success']) ? 1 : 0;
 
-        $Task->date_create = new Expression('NOW()');
-        $Task->date_edit = new Expression('NOW()');
+        $Task->date_create = new Expression('CURRENT_TIMESTAMP');
+        $Task->date_edit = new Expression('CURRENT_TIMESTAMP');
 
         $Task->save();
 
@@ -625,23 +713,39 @@ class UsermpController extends Controller {
         $user_marketplace_id = Yii::$app->request->get('user_marketplace_id', 0);
 
         // надо проверить подключение....
-        
+
         $data['user_marketplace_id'] = $user_marketplace_id;
 
         $data['currency'] = $this->htmlStatusBar();
 
         $UserMarketplace = UserMarketplace::findOne(['user_marketplace_id' => $user_marketplace_id, 'user_id' => $user_id])->toArray();
         $api = $this->getClassApi($UserMarketplace['marketplace_id'], $UserMarketplace['key'], $UserMarketplace['secret']);
-        
+
         $Marketplace = Marketplace::findOne(['marketplace_id' => $UserMarketplace['marketplace_id']])->toArray();
-        
+
         $data['name'] = $UserMarketplace['name'];
         $data['tradingview_market_name'] = strtoupper($Marketplace['marketplace_class']);
-            
+        
+        // другие аккаунты
+        $AllUserMarketplace = UserMarketplace::find()->where(['marketplace_id' => $UserMarketplace['marketplace_id'], 'user_id' => $user_id])->orderBy('order')->all();
+        
+        $data['accounts'] = [];
+        foreach ($AllUserMarketplace as $mp) {
+            if ($mp->user_marketplace_id == $user_marketplace_id) {
+                continue;
+            }
+            $data['accounts'][] = array(
+                'user_marketplace_id' => $mp->user_marketplace_id,
+                'name' => $mp->name
+            );
+        }
+        
+        //print_r($data['accounts']); exit;
+        
         $symbols = $api->getSymbols();
         $names = array_column($symbols, 'name');
         array_multisort($symbols, SORT_ASC, $names);
-        
+
         $data['symbols'] = $symbols;
 
         $data['menu'] = UserMenu::get();

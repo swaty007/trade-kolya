@@ -16,6 +16,7 @@ class Api{
 	protected $chartQueue = [];
 	protected $charts = [];
 	protected $info = ["timeOffset"=>0];
+        public $error = [];
 	public $balances = [];
 	public $btc_value = 0.00; // value of available assets
 	public $btc_total = 0.00; // value of available + onOrder assets
@@ -103,7 +104,7 @@ class Api{
 		$this->info[$symbol]['firstUpdate'] = $json['lastUpdateId'];
 		return $this->depthData($symbol, $json);
 	}
-	public function balances($priceData = false) {
+	public function balances($priceData = false) {  
 		return $this->balanceData($this->signedRequest("v3/account"),$priceData);
 	}
 
@@ -153,7 +154,11 @@ class Api{
 		}
 		$json = json_decode($data, true);
 		if ( isset($json['msg']) ) {
-			echo "signedRequest error: {$data}".PHP_EOL;
+                    $this->error[] = array(
+                        'code' => isset($json['code']) ? $json['code'] : 0,
+                        'msg' => $json['msg']
+                    );
+			//echo "signedRequest error: {$data}".PHP_EOL;
 		}
 		return $json;
 	}
@@ -215,9 +220,13 @@ class Api{
 	// If priceData is passed from $api->prices() it will add btcValue & btcTotal to each symbol
 	// This function sets $btc_value which is your estimated BTC value of all assets combined and $btc_total which includes amount on order
 	private function balanceData($array, $priceData = false) {
+                if ($this->error) {
+                    return [];
+                }
 		if ( $priceData ) $btc_value = $btc_total = 0.00;
 		$balances = [];
 		if ( empty($array) || empty($array['balances']) ) {
+                        //debug_print_backtrace(); exit;
 			echo "balanceData error: Please make sure your system time is synchronized, or pass the useServerTime option.".PHP_EOL;
 			return [];
 		}

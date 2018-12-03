@@ -61,3 +61,61 @@
 .select-style input {
     width: 100% !important;
 }
+.navbar-top-links .img-circle {
+    width: 32px;
+    display: inline-block;
+}
+
+.navbar-top-links .styling-settings {
+    padding: 0;
+    min-height: 32px;
+    line-height: 32px;
+    margin-left: 5px;
+    display: inline-block;
+}
+.navbar-top-links .open>.styling-settings:hover, .navbar-top-links .open>.styling-settings:focus {
+    background-color: transparent;
+}
+.nav.navbar-top-links>li>a:focus, .nav.navbar-top-links>li>a:hover {
+    background: transparent;
+}
+
+.navbar-top-links .count-info {
+    padding: 0 10px 0 0;
+    min-height: 32px;
+}
+
+.count-info .label {
+    top: -7px;
+}
+.nav-header {
+    padding: 9px 25px;
+}
+.nav-header .profile-element {
+    width: 170px;
+}
+.profile-element .font-bold {
+    color: #ffffff;
+    font-size: 20px;
+    display: inline-block;
+    margin-top: 10px;
+}
+.profile-element .user-icon {
+    margin-top: -10px;
+}
+.new-navbar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    top: 0;
+}
+.logo-element {
+    padding: 0;
+}
+body.mini-navbar .nav-header {
+    padding: 9px 0;
+}
+
+
+
+

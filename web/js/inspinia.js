@@ -39,12 +39,20 @@ $(document).ready(function () {
         $('body').append(data);
     });
     */
- 
-    // minimalize menu
-    $('.navbar-minimalize:not(.binded)').addClass("binded").click(function () {
+
+    $('.new-navbar').hover(function () {
+        console.log(1);
         $("body").toggleClass("mini-navbar");
         SmoothlyMenu();
-    })
+    });
+
+
+    // minimalize menu
+    // $('.navbar-minimalize:not(.binded)').addClass("binded").click(function () {
+    //     console.log(1);
+    //     $("body").toggleClass("mini-navbar");
+    //     SmoothlyMenu();
+    // })
  
     // tooltips
     $('.tooltip-demo').tooltip({

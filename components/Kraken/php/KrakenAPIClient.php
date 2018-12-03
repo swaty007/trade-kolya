@@ -148,11 +148,20 @@ class KrakenAPI
         //print_r($result);
         
         // decode results
-        $result = json_decode($result, true);
-        //print_r(is_array($result)); exit;
-        if(!is_array($result))
-            throw new KrakenAPIException('JSON decode error');
+        //print_r($result);
+        $decode = json_decode($result, true);
+        //print_r($result); exit;
+        if(!is_array($decode)) {
+            $decode = array(
+                'error' => array(
+                    'JSON decode error',
+                    $result
+                ),
+                'result' => ''
+            );
+            //throw new KrakenAPIException('JSON decode error');
+        }
 
-        return $result;
+        return $decode;
     }
 }

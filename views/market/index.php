@@ -10,11 +10,13 @@ $this->title = 'Магазин';
 ?>
 <div class="row wrapper border-bottom white-bg">
     <div class="col-lg-10">
-        <h2>Take Profit</h2>
+        <h2><strong>Магазин</strong></h2>
     </div>
-    <div class="col-lg-10">
-        <h3>Магазин</h3>
+<?php if( Yii::$app->user->identity->user_role == "admin"):?>
+    <div class="col-lg-10 btn-block-style">
+        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#market-create"><strong>Создать продукт</strong></button>
     </div>
+<?php endif;?>
 </div>
 
 <div class="wrapper wrapper-content animated fadeIn">
@@ -23,12 +25,6 @@ $this->title = 'Магазин';
                 <div class="panel blank-panel">
 
                     <div class="panel-heading">
-                        <div class="panel-title m-b-md">
-                            <h4>Пулы</h4>
-                            <?php if( Yii::$app->user->identity->user_role == "admin"):?>
-                                <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#market-create"><strong>Создать продукт</strong></button>
-                            <?php endif;?>
-                        </div>
                         <div class="panel-options">
 
                             <ul class="nav nav-tabs">

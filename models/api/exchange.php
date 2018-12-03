@@ -19,6 +19,7 @@ abstract class exchange {
     
     protected $key = null;
     protected $secret = null;
+    public $error = [];
     
     public function __construct($key = null, $secret = null) {
          // initialization code

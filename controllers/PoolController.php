@@ -239,9 +239,7 @@ class PoolController extends Controller
                 if (InvestPools::haveInvest($pool->id)) {
                     return ['msg' => 'error', 'status' => 'Have money in invest'];
                 }
-
                 CommentsPools::deleteAll(['pool_id'=>$pool_id]);
-
                 if ($pool->delete()) {
                     return ['msg' => 'ok', 'status' => "Pool deleted"];
                 } else {

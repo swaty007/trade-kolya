@@ -10,11 +10,13 @@ $this->title = 'My Yii Application';
 ?>
 <div class="row wrapper border-bottom white-bg">
     <div class="col-lg-10">
-        <h2>Take Profit</h2>
+        <h2><strong>Инвестпул</strong></h2>
     </div>
-    <div class="col-lg-10">
-        <h3>Инвестпул</h3>
+    <?php if( Yii::$app->user->identity->user_role == "admin"):?>
+    <div class="col-lg-10 btn-block-style">
+        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#pull"><strong>Создать новый пул</strong></button>
     </div>
+    <?php endif;?>
 </div>
 
 <div class="wrapper wrapper-content animated fadeIn">
@@ -24,12 +26,6 @@ $this->title = 'My Yii Application';
             <div class="panel blank-panel">
 
                 <div class="panel-heading">
-                    <div class="panel-title m-b-md">
-                        <h4>Пулы</h4>
-                        <?php if( Yii::$app->user->identity->user_role == "admin"):?>
-                            <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#pull"><strong>Создать новый пул</strong></button>
-                        <?php endif;?>
-                    </div>
                     <div class="panel-options">
 
                         <ul class="nav nav-tabs">
@@ -59,7 +55,7 @@ $this->title = 'My Yii Application';
                                                 <p class="style-pull-card pull-profit">Процент: <strong><?= $pool_new['profit']?></strong>%</p>
                                                 <p class="style-pull-card pull-diversification">Количество выплат: <strong><?= $pool_new['diversification']?></strong></p>
                                                 <p class="style-pull-card pull-invest">Минимальный вклад: <strong><?=(double)$pool_new['min_invest'].' '.$pool_new['invest_method'];?></strong></p>
-                                                <p class="style-pull-card pull-invest">Уже в пуле всего: <strong><?php if(isset($info_pools[$pool_new['id']]['sum_invest'])) (double)$info_pools[$pool_new['id']]['sum_invest'].' '.$pool_new['invest_method']?></strong></p>
+                                                <p class="style-pull-card pull-invest">Уже в пуле всего: <strong><?php if(isset($info_pools[$pool_new['id']]['sum_invest'])) echo (double)$info_pools[$pool_new['id']]['sum_invest'].' '.$pool_new['invest_method']?></strong></p>
                                                 <p class="style-pull-card pull-invest">Минимальная общая сумма: <strong><?= (double)$pool_new['min_size_invest'].' '.$pool_new['invest_method']?></strong></p>
                                                 <p class="style-pull-card pull-invest">Максимальная общая сумма: <strong><?= (double)$pool_new['max_size_invest'].' '.$pool_new['invest_method']?></strong></p>
                                                 <ul class="list-group">
@@ -146,7 +142,7 @@ $this->title = 'My Yii Application';
                                                 <p class="style-pull-card pull-profit">Процент: <strong><?= $pool_a['profit']?>%</strong></p>
                                                 <p class="style-pull-card pull-diversification">Количество выплат: <strong><?= $pool_a['diversification']?></strong></p>
                                                 <p class="style-pull-card pull-invest">Минимальный вклад: <strong><?=(double)$pool_a['min_invest'].' '.$pool_a['invest_method'];?></strong></p>
-                                                <p class="style-pull-card pull-invest">Уже в пуле всего: <strong><?= (double)$info_pools[$pool_a['id']]['sum_invest'].' '.$pool_a['invest_method']?></strong></p>
+                                                <p class="style-pull-card pull-invest">Уже в пуле всего: <strong><?php if(isset($info_pools[$pool_a['id']]['sum_invest'])) echo (double)$info_pools[$pool_a['id']]['sum_invest'].' '.$pool_a['invest_method']?></strong></p>
                                                 <p class="style-pull-card pull-invest">Минимальная общая сумма: <strong><?= (double)$pool_a['min_size_invest'].' '.$pool_a['invest_method']?></strong></p>
                                                 <p class="style-pull-card pull-invest">Максимальная общая сумма: <strong><?= (double)$pool_a['max_size_invest'].' '.$pool_a['invest_method']?></strong></p>
                                                 <ul class="list-group">

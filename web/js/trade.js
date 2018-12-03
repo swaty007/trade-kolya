@@ -179,7 +179,7 @@ function showTrade() {
             });
             var p = data.pop();
             document.title = p[4] + ' ' + $("#currencyFrom").val() + ' / ' + $("#currencyTo").val() + ' TakeProfit';
-            if (setPrice) {
+            if (setPrice && !$("[input-price-value]").val()) {
                 $("[input-price-value]").val(p[1]);
                 setPrice = false;
             }
@@ -199,15 +199,61 @@ function userBalance() {
     }
 
     user_marketplace_id = $("#user_marketplace_id").val();
-    $("[input-symbol]").val($("#currencyFrom").val() + $("#currencyTo").val());
+    $("[input-symbol]").val(symbol);
     setPrice = true;
 
     $.ajax({
         type: "GET",
         url: "/usermp/balance",
-        data: "user_marketplace_id=" + user_marketplace_id, // + "&symbol=" + symbol,
+        data: "user_marketplace_id=" + user_marketplace_id + "&symbol=" + symbol,
         dataType: "json",
         success: function (json) {
+            //console.dir(json);
+            if (json.success){
+                var i = 0, to, from;
+                $.each(json.balance, function(key, value) {
+                    //console.dir(value);
+                    if (i==0){
+                        from = key;
+                        $("[currency-from]").html(key);
+                        $("[currency-from-value]").html(value.available);
+                    }else{
+                        to = key;
+                        $("[currency-to]").html(key);
+                        $("[currency-to-value]").html(value.available);                        
+                    }
+                    i++;
+                });
+                
+                $("[accounts-to-value]").each(function() {
+                    var user_marketplace_id = $(this).attr('accounts-to-value');
+                    if (json.accounts[user_marketplace_id] != undefined) {
+                        $(this).html(json.accounts[user_marketplace_id][to]['available']);
+                    }
+                });
+                
+                $("[accounts-to]").each(function() {
+                    var user_marketplace_id = $(this).attr('accounts-to');
+                    if (json.accounts[user_marketplace_id] != undefined) {
+                        $(this).attr('value-max', json.accounts[user_marketplace_id][to]['available']);
+                    }
+                });
+                
+                $("[accounts-from-value]").each(function() {
+                    var user_marketplace_id = $(this).attr('accounts-from-value');
+                    if (json.accounts[user_marketplace_id] != undefined) {
+                        $(this).html(json.accounts[user_marketplace_id][from]['available']);
+                    }
+                });
+                
+                $("[accounts-from]").each(function() {
+                    var user_marketplace_id = $(this).attr('accounts-from');
+                    if (json.accounts[user_marketplace_id] != undefined) {
+                        $(this).attr('value-max', json.accounts[user_marketplace_id][from]['available']);
+                    }
+                });
+            }
+            /*
             var from = $("#currencyFrom").val();
             var to = $("#currencyTo").val();
             var fromValue = json[from]["available"];
@@ -216,6 +262,7 @@ function userBalance() {
             $("[currency-from]").html(from);
             $("[currency-to-value]").html(toValue);
             $("[currency-from-value]").html(fromValue);
+            */
             //setPrice = true;
         }
     });
@@ -236,7 +283,7 @@ function getStat24h(){
         data: "user_marketplace_id=" + user_marketplace_id + "&symbol=" + symbol,
         dataType: "json",
         success: function (json) {
-            console.dir(json);
+            //console.dir(json);
             $("#legend_symbol").html(json.symbol);
             $("#legend_lastPrice").html(json.lastPrice);
             $("#legend_percentChange").html(json.percentChange);
@@ -395,6 +442,17 @@ function orderHistory() {
 
 $(function () {
     
+    $("[button-set-percent]").on('click', function(){
+       var f = $(this).closest('form'),
+       p = $(this).attr('button-set-percent'),
+       o = $("[value-max]", f);
+       $(o).each(function(){
+           
+           $(this).val((Math.floor($(this).attr('value-max') * p) / 100).toFixed(2));
+       });
+       
+    });
+    
     $("#Symbol").select2();
     
     $("[data-course]").each(function () {
@@ -421,8 +479,10 @@ $(function () {
             
             var symbol = getSymbol();
             if (symbol) {
+                $("[input-symbol]").val(symbol);
                 StartTradingView(symbol);
             }else{
+                $("[input-symbol]").val('');
                 StopTradingView();
             }
 

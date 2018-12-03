@@ -10,14 +10,11 @@ $this->title = 'My Yii Application';
 ?>
 <div class="row wrapper border-bottom white-bg">
     <div class="col-lg-10">
-        <h2>Take Profit</h2>
-    </div>
-    <div class="col-lg-10">
-        <h3>Транзакции</h3>
+        <h2><strong>Транзакции</strong></h2>
     </div>
     <div class="col-lg-10 btn-block-style">
-        <button type="button" class="btn btn-w-m btn-primary" data-toggle="modal" data-target="#switchRate">Обмен средств</button>
-        <button type="button" class="btn btn-w-m btn-primary" data-toggle="modal" data-target="#withdraw">Вывести</button>
+        <button type="button" class="btn btn-w-m btn-primary" data-toggle="modal" data-target="#switchRate"><strong>Обмен средств</strong></button>
+        <button type="button" class="btn btn-w-m btn-primary" data-toggle="modal" data-target="#withdraw"><strong>Вывести</strong></button>
     </div>
 </div>
 

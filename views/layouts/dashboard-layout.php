@@ -27,10 +27,10 @@ AppAsset::register($this);
         <?php $this->head() ?>
     </head>
 
-    <body class="">
+    <body class="mini-navbar">
         <?php $this->beginBody() ?>
         <div id="wrapper">
-            <nav class="navbar-default navbar-static-side" role="navigation">
+            <nav class="navbar-default navbar-static-side new-navbar" role="navigation">
                 <div class="sidebar-collapse">
                     <?php echo  MainMenu::widget(); ?>
                 </div>
@@ -40,20 +40,106 @@ AppAsset::register($this);
                 <div class="row border-bottom">
                     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
                         <ul class="nav navbar-top-links navbar-right">
-                            <li>
-                                Ваш баланс:
-                                <span class="text-muted welcome-message"><?= (double)Yii::$app->user->identity->BTC_money; ?></span><i class="fa fa-btc"></i>
-                            </li>
-                            <li style="margin-left: 10px">
-                                Ваш баланс:
-                                <span class="text-muted welcome-message"><?= (double)Yii::$app->user->identity->ETH_money; ?></span><i class="fa fa-eth"></i>
-                            </li>
-                            <li style="margin-left: 10px">
-                                Ваш баланс:
-                                <span class="text-muted welcome-message"><?= (double)Yii::$app->user->identity->USDT_money; ?></span><i class="fa fa-usd"></i>
+                            <li class="dropdown" style="margin-left: 10px">
+                                <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                                    USDT: <strong><?= (double)Yii::$app->user->identity->USDT_money; ?></strong> <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu dropdown-alerts">
+                                    <li>
+                                        <a>
+                                            <div>
+                                                <i class="fa fa-usd fa-fw"></i> USDT: <strong><?= (double)Yii::$app->user->identity->USDT_money; ?></strong>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a>
+                                            <div>
+                                                <i class="fa fa-btc fa-fw"></i> BTC: <strong><?= (double)Yii::$app->user->identity->BTC_money; ?></strong>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a>
+                                            <div>
+                                                <i class="fa fa-gbp fa-fw"></i> ETH: <strong><?= (double)Yii::$app->user->identity->ETH_money; ?></strong>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <div class="text-center link-block">
+                                            <button type="button" class="btn btn-w-m btn-primary" data-toggle="modal" data-target="#switchRate">Обмен средств</button>
+                                        </div>
+                                    </li>
+                                </ul>
                             </li>
                             <li style="margin-left: 10px">
                                 <button type="button" class="btn btn-w-m btn-primary" data-toggle="modal" data-target="#payments">Пополнить</button>
+                            </li>
+                            <li class="dropdown" style="margin-left: 10px">
+                                <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                                    <i class="fa fa-bell"></i>  <span class="label label-primary">8</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-alerts">
+                                    <li>
+                                        <a href="mailbox.html">
+                                            <div>
+                                                <i class="fa fa-envelope fa-fw"></i> You have 16 messages
+                                                <span class="pull-right text-muted small">4 minutes ago</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a href="profile.html">
+                                            <div>
+                                                <i class="fa fa-twitter fa-fw"></i> 3 New Followers
+                                                <span class="pull-right text-muted small">12 minutes ago</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a href="grid_options.html">
+                                            <div>
+                                                <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                                                <span class="pull-right text-muted small">4 minutes ago</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <div class="text-center link-block">
+                                            <a href="notifications.html">
+                                                <strong>Просмотреть все уведомления</strong>
+                                                <i class="fa fa-angle-right"></i>
+                                            </a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li style="margin-left: 10px">
+                                <div class="dropdown">
+                                    <img alt="image" class="img-circle" src="../image/user_icon.png" />
+                                    <a data-toggle="dropdown" class="dropdown-toggle styling-settings" href="#">
+                                        <span class="text-muted text-xs block"><?php echo Yii::$app->user->identity->username ?><b class="caret"></b></span>
+                                    </a>
+                                    <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                        <li><a href="profile.html">Настройки</a></li>
+                                        <li><a href="contacts.html">Двухфакторная авторизация</a></li>
+                                        <li><a href="mailbox.html">Мои биржи</a></li>
+                                        <li><a href="mailbox.html">Транзакции</a></li>
+                                        <li><a href="mailbox.html">Уведомления</a></li>
+                                        <li class="divider"></li>
+                                        <li><form action="/site/logout" method="post">
+                                                <input type="hidden" name="_csrf" value="3IVWs-2LhwVxDCcOrB3_EPNO5Fkx7VnyIsypYStsDrzrtwWG29nKVAlBQUHBSpRAsCWtMEOlFIF4u4QVGyZJ1Q=="><button type="submit" class="btn btn-link logout"><i class="fa fa-sign-out"></i>  Выйти</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
                             </li>
                         </ul>
                     </nav>

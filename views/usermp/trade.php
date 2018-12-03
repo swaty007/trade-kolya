@@ -54,6 +54,12 @@ $this->title = 'Trade';
         padding: 8px 16px;;
         font-weight: normal;
     }
+
+    .button-small button{
+        margin: 3px;
+        padding: 3px;
+        font-size: 10px;
+    }
 </style>
 
 <div class="row wrapper border-bottom white-bg">
@@ -106,10 +112,10 @@ $this->title = 'Trade';
                                 <div class="col-lg-9">
                                     <select id="Symbol" class="select2-dropdown">
                                         <option value="">Валютная пара</option>
-                                <?php foreach ($symbols as $symbol) { ?>
-                                    <option value="<?php echo $symbol['name']; ?>" tradingview='<?php echo $symbol['tradingview']; ?>'><?php echo $symbol['name']; ?></option>
-                                <?php } ?>
-                            </select>
+                                        <?php foreach ($symbols as $symbol) { ?>
+                                            <option value="<?php echo $symbol['name']; ?>" tradingview='<?php echo $symbol['tradingview']; ?>'><?php echo $symbol['name']; ?></option>
+                                        <?php } ?>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -147,7 +153,7 @@ $this->title = 'Trade';
                         padding: 5px 0; 
                         margin: 5px
                     }
-                    
+
                     .legend .header {
                         line-height: 24px;
                         white-space: nowrap;
@@ -228,34 +234,34 @@ $this->title = 'Trade';
         </div>
 
         <!-- TradingView Widget BEGIN -->
-            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-            <script type="text/javascript">
-                            var tradingview_market_name = '<?php echo $tradingview_market_name; ?>';
-                                  function StartTradingView() {
-                                      symbol = $("#Symbol option:selected").attr("tradingview").replace(/[^a-zA-Z]/gi,'');
-                                      console.log(tradingview_market_name + ':' + symbol);
-                                      new TradingView.widget(
-                                              {
-                                                  "autosize": true,
-                                                  "symbol": tradingview_market_name + ':' + symbol,
-                                                  "interval": "1",
-                                                  "timezone": "Etc/UTC",
-                                                  "theme": "Light",
-                                                  "style": "1",
-                                                  "locale": "ru",
-                                                  "toolbar_bg": "#f1f3f6",
-                                                  "enable_publishing": false,
-                                                  "hide_side_toolbar": false,
-                                                  "container_id": "tradingview_graf"
-                                              }
-                                      );
-                                  }
+        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+        <script type="text/javascript">
+            var tradingview_market_name = '<?php echo $tradingview_market_name; ?>';
+            function StartTradingView() {
+                symbol = $("#Symbol option:selected").attr("tradingview").replace(/[^a-zA-Z]/gi, '');
+                //console.log(tradingview_market_name + ':' + symbol);
+                new TradingView.widget(
+                        {
+                            "autosize": true,
+                            "symbol": tradingview_market_name + ':' + symbol,
+                            "interval": "1",
+                            "timezone": "Etc/UTC",
+                            "theme": "Light",
+                            "style": "1",
+                            "locale": "ru",
+                            "toolbar_bg": "#f1f3f6",
+                            "enable_publishing": false,
+                            "hide_side_toolbar": false,
+                            "container_id": "tradingview_graf"
+                        }
+                );
+            }
 
-                                  function StopTradingView(){
-                                      $("#tradingview_graf").html('');
-                                  }
+            function StopTradingView() {
+                $("#tradingview_graf").html('');
+            }
 
-            </script>
+        </script>
 
         <div class="col-lg-3">
             <div class="ibox float-e-margins">
@@ -411,8 +417,31 @@ $this->title = 'Trade';
                                             </div>
                                             <div class="form-group">
                                                 <label for="count">Количество:</label>
-                                                <input type="number" name="quantity" step="0.01" min="0" class="form-control" id="count" required>
+                                                <input type="number" name="quantity" step="0.01" min="0" accounts-to="<?php echo $user_marketplace_id; ?>" class="form-control" id="count" required>
                                             </div>
+                                            <?php if ($accounts) { ?>
+                                                <div>
+                                                    <button type="button" class="btn btn-dropbox" data-toggle="collapse" data-target="#form1">Другие аккаунты</button>
+                                                </div>
+                                                <div id="form1" class="collapse">
+                                                    <div class="row button-small">
+                                                        <div class="col-md-6"></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="25">25%</button></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="50">50%</button></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="75">75%</button></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="100">100%</button></div>
+                                                    </div>
+                                                    <?php foreach ($accounts as $account) { ?>
+                                                        <div class="form-group row">
+                                                            <label for="count" class="col-md-5"><?php echo $account['name'] ?>:</label>
+                                                            <div class="col-md-1"><span accounts-to-value="<?php echo $account['user_marketplace_id'] ?>"></span><span currency-to></span></div>
+                                                            <div class="col-md-6">
+                                                                <input type="number" accounts-to="<?php echo $account['user_marketplace_id'] ?>" name="account_quantity[<?php echo $account['user_marketplace_id'] ?>]" step="0.01" min="0" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
+                                                </div>
+                                            <?php } ?>
                                             <div class="form-group">
                                                 <label for="count">Сумма:</label>
                                                 <input type="text" name="summ" step="0.01" min="0" class="form-control" id="count">
@@ -429,8 +458,31 @@ $this->title = 'Trade';
                                             </div>
                                             <div class="form-group">
                                                 <label for="count">Количество:</label>
-                                                <input type="number" name="quantity" step="0.01" min="0" class="form-control" id="count" required>
+                                                <input type="number" name="quantity" step="0.01" min="0" accounts-from="<?php echo $user_marketplace_id; ?>" class="form-control" id="count" required>
                                             </div>
+                                            <?php if ($accounts) { ?>
+                                                <div>
+                                                    <button type="button" class="btn btn-dropbox" data-toggle="collapse" data-target="#form2">Другие аккаунты</button>
+                                                </div>
+                                                <div id="form2" class="collapse">
+                                                    <div class="row button-small">
+                                                        <div class="col-md-6"></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="25">25%</button></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="50">50%</button></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="75">75%</button></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="100">100%</button></div>
+                                                    </div>
+                                                    <?php foreach ($accounts as $account) { ?>
+                                                        <div class="form-group row">
+                                                            <label for="count" class="col-md-5"><?php echo $account['name'] ?>:</label>
+                                                            <div class="col-md-1" accounts-from-value="<?php echo $account['user_marketplace_id'] ?>">-</div>
+                                                            <div class="col-md-6">
+                                                                <input type="number" accounts-from="<?php echo $account['user_marketplace_id'] ?>" name="account_quantity[<?php echo $account['user_marketplace_id'] ?>]" step="0.01" min="0" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
+                                                </div>
+                                            <?php } ?>
                                             <div class="form-group">
                                                 <label for="count">Сумма:</label>
                                                 <input type="text" name="summ" step="0.01" min="0" class="form-control" id="count">
@@ -452,8 +504,31 @@ $this->title = 'Trade';
                                             </div>
                                             <div class="form-group">
                                                 <label for="count">Количество:</label>
-                                                <input type="number" name="quantity" step="0.01" min="0" class="form-control" id="count" required>
+                                                <input type="number" name="quantity" accounts-to="<?php echo $user_marketplace_id; ?>" step="0.01" min="0" class="form-control" id="count" required>
                                             </div>
+                                            <?php if ($accounts) { ?>
+                                                <div>
+                                                    <button type="button" class="btn btn-dropbox" data-toggle="collapse" data-target="#form11">Другие аккаунты</button>
+                                                </div>
+                                                <div id="form11" class="collapse">
+                                                    <div class="row button-small">
+                                                        <div class="col-md-6"></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="25">25%</button></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="50">50%</button></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="75">75%</button></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="100">100%</button></div>
+                                                    </div>
+                                                    <?php foreach ($accounts as $account) { ?>
+                                                        <div class="form-group row">
+                                                            <label for="count" class="col-md-5"><?php echo $account['name'] ?>:</label>
+                                                            <div class="col-md-1" accounts-to-value="<?php echo $account['user_marketplace_id'] ?>">-</div>
+                                                            <div class="col-md-6">
+                                                                <input type="number" accounts-to="<?php echo $account['user_marketplace_id'] ?>" name="account_quantity[<?php echo $account['user_marketplace_id'] ?>]" step="0.01" min="0" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
+                                                </div>
+                                            <?php } ?>
                                             <button type="submit" button-submit class="btn btn-success">Купить</button>
                                         </form>
                                     </div>
@@ -466,8 +541,31 @@ $this->title = 'Trade';
                                             </div>
                                             <div class="form-group">
                                                 <label for="count">Количество:</label>
-                                                <input type="number" name="quantity" step="0.01" min="0" class="form-control" id="count" required>
+                                                <input type="number" name="quantity" accounts-from="<?php echo $user_marketplace_id ?>" step="0.01" min="0" class="form-control" id="count" required>
                                             </div>
+                                            <?php if ($accounts) { ?>
+                                                <div>
+                                                    <button type="button" class="btn btn-dropbox" data-toggle="collapse" data-target="#form22">Другие аккаунты</button>
+                                                </div>
+                                                <div id="form22" class="collapse">
+                                                    <div class="row button-small">
+                                                        <div class="col-md-6"></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="25">25%</button></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="50">50%</button></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="75">75%</button></div>
+                                                        <div class="col-md-1"><button type="button" class="btn btn-secondary" button-set-percent="100">100%</button></div>
+                                                    </div>
+                                                    <?php foreach ($accounts as $account) { ?>
+                                                        <div class="form-group row">
+                                                            <label for="count" class="col-md-5"><?php echo $account['name'] ?>:</label>
+                                                            <div class="col-md-1" accounts-from-value="<?php echo $account['user_marketplace_id'] ?>">-</div>
+                                                            <div class="col-md-6">
+                                                                <input type="number" accounts-from="<?php echo $account['user_marketplace_id'] ?>" name="account_quantity[<?php echo $account['user_marketplace_id'] ?>]" step="0.01" min="0" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
+                                                </div>
+                                            <?php } ?>
                                             <button type="submit" button-submit class="btn btn-info">Продать</button>
                                         </form>
                                     </div>

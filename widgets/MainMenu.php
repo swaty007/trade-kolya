@@ -36,25 +36,14 @@ class MainMenu extends Widget
     {
 
         $this->menu[] = array(
-            'label' => Yii::$app->user->identity->username,
+            'label' => 'TAKEPROFIT',
             'class' => Url::to(['cabinet/accounts']),
-            'template' => '<div class="dropdown profile-element"> <span>                             
+            'template' => '<div class="dropdown profile-element">                             
                                 <img alt="image" class="img-circle user-icon" src="../image/user_icon.png" />
-                                 </span>
-                                <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                                <span class="clear"><span class="block m-t-xs"><strong class="font-bold">{label}</strong><b class="caret"></b>
-                                 </span></span> </a>
-                                <ul class="dropdown-menu animated fadeInRight m-t-xs">                               
-                                    <li><a href="{url}">Личный кабинет</a></li>
-                                    <li class="divider"></li>
-                                    <li><form action="/site/logout" method="post">
-                                            <input type="hidden" name="_csrf" value="3IVWs-2LhwVxDCcOrB3_EPNO5Fkx7VnyIsypYStsDrzrtwWG29nKVAlBQUHBSpRAsCWtMEOlFIF4u4QVGyZJ1Q=="><button type="submit" class="btn btn-link logout"><i class="fa fa-sign-out"></i>  Выйти</button>
-                                        </form>
-                                    </li>
-                                </ul>
+                                <strong class="font-bold">{label}</strong>                              
                             </div>
                             <div class="logo-element">
-                                IN+
+                                 <img alt="image" class="img-circle user-icon" src="../image/user_icon.png" />
                             </div>',
             'url' => Url::to(['cabinet/accounts']),
 
@@ -127,24 +116,23 @@ class MainMenu extends Widget
         );
 
         $this->menu[] = array(
-            'label' => 'Транзакции',
-            'class' => 'fa-info-circle',
-            'template' => '<a href="{url}"><i class="fa fa-money"></i> <span class="nav-label">{label}</span></a>',
-            'active' => Yii::$app->controller->module->requestedRoute == 'coins/transactions',
-            'url' => Url::to(['coins/transactions'])
-        );
-
-        $this->menu[] = array(
             'label' => 'Магазин',
             'class' => 'fa-info-circle',
-            'template' => '<a href="{url}"><i class="fa fa-gear"></i> <span class="nav-label">{label}</span></a>',
+            'template' => '<a href="{url}"><i class="fa fa-shopping-cart"></i> <span class="nav-label">{label}</span></a>',
             'active' => Yii::$app->controller->module->requestedRoute == 'market/index',
             'url' => Url::to(['market/index'])
         );
 
         if (Yii::$app->user->identity->user_role == "admin") {
             $this->menu[] = array(
-                'label' => 'Администрирование',
+                'label' => 'Транзакции',
+                'class' => 'fa-info-circle',
+                'template' => '<a href="{url}"><i class="fa fa-money"></i> <span class="nav-label">{label}</span></a>',
+                'active' => Yii::$app->controller->module->requestedRoute == 'coins/transactions',
+                'url' => Url::to(['coins/transactions'])
+            );
+            $this->menu[] = array(
+                'label' => 'Админка',
                 'class' => 'fa-info-circle',
                 'template' => '<a href="{url}"><i class="fa fa-gear"></i> <span class="nav-label">{label}</span></a>',
                 'active' => Yii::$app->controller->module->requestedRoute == 'admin/index',

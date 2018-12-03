@@ -26,6 +26,7 @@ class UserMenu extends Model
         //$marketplace = new Marketplace();
         $records = Marketplace::find()->all();
         $user_id = Yii::$app->user->getId();
+        
         $UserMarketplace = UserMarketplace::find()
                     ->where(['user_id' => $user_id])
                 ->orderBy('order')
@@ -39,7 +40,7 @@ class UserMenu extends Model
                 'url' => Url::to(['usermp/account', 'user_marketplace_id' => $marketplace['user_marketplace_id']])
             ];
         }
-        
+        /*
         $menu_marketplace = [];
         foreach ($records as $record){
             $menu_marketplace[] = [
@@ -47,12 +48,17 @@ class UserMenu extends Model
                 'url' => Url::to(['cabinet/marketplace', 'marketplace_id' => $record['marketplace_id']])
             ];
         }
+         * 
+         */
 
         $menu = [
             'items' => [
+                /*
                 ['label' => 'Биржи', 'url' => '#', 
                         'items' => $menu_marketplace
                     ],
+                 * 
+                 */
                 ['label' => 'Мои аккаунты', 'url' => Url::to(['cabinet/accounts']),
                     'items' => $user_marketplace
                 ],
