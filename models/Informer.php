@@ -6,18 +6,19 @@ use Yii;
 
 /**
  * This is the model class for table "informer".
- *
  * @property int $id
  * @property string $title
  * @property string $html
  * @property string $link
  * @property string $date
- *
+ * @property string $src
  * @property InformerCategory[] $informerCategories
  * @property InformerTag[] $informerTags
  */
+
 class Informer extends \yii\db\ActiveRecord
 {
+    public $file;
     /**
      * {@inheritdoc}
      */
@@ -33,6 +34,7 @@ class Informer extends \yii\db\ActiveRecord
     {
         return [
             [['title', 'link'], 'string', 'max' => 50],
+            [['file'], 'file', 'extensions' => 'png, jpg'],
         ];
     }
 

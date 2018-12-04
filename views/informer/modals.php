@@ -22,6 +22,10 @@
                     <label class="main-label">Ссылка</label>
                     <input id="informer_link" type="text" class="form-control">
                 </div>
+                <div class="form-group">
+                    <label class="main-label">Картинка</label>
+                    <input id="informer_file" type="file" class="form-control">
+                </div>
                 <div class="form-group select-style">
                     <label class="main-label">Категории</label>
                     <div class="input-group">

@@ -6,14 +6,29 @@ $(document).on('click',"#create_informer", function(e) {
         tags: $('#informer_tags').val(),
         sub_category_ids: $('#informer_under_category').val(),
         category_id: $('#informer_category').val(),
-        link: $('#informer_link').val()
+        link: $('#informer_link').val(),
+        file: $("#informer_file")[0].files[0]//$('#informer_file').prop('files')[0],
     };
+    let formData = new FormData();
+    formData.append("file", data.file);
+    formData.append("title", data.title);
+    formData.append("html", data.html);
+    formData.append("tags", data.tags);
+    formData.append("sub_category_ids", data.sub_category_ids);
+    formData.append("category_id", data.category_id);
+    formData.append("link", data.link);
+
+
     console.log(data);
 
     $.ajax({
         type: "POST",
         url: "/informer/create-informer",
-        data: data,
+        cache : false,
+        processData: false,
+        dataType: 'json',
+        contentType: false,
+        data: formData,
         success: function (msg) {
             console.log(msg);
         }

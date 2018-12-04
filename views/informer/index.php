@@ -126,7 +126,7 @@ $this->title = 'Информер';
     <div class="paging_simple_numbers">
         <ul id="pagination" class="pagination">
             <li class="paginate_button page-item previous <?php if($pagination == 0){echo 'active';} ?>" >
-                <a <?php if($pagination == ceil($i/10)-1) :?>
+                <a <?php if( $pagination == 0) :?>
                     disabled
                 <?php else :?>
                     onclick="informerPostParametrs(<?=$pagination - 1?>)"
@@ -135,7 +135,7 @@ $this->title = 'Информер';
             </li>
             <?php
             $i=0;
-            while ($i <= $informers_count):
+            while ($i <= $informers_count-1):
                 $i++; if(!($i%10) == 1):;?>
 
                 <li class="paginate_button page-item <?php if ($pagination == ($i/10)-1) {echo 'active';}?>">
@@ -143,7 +143,7 @@ $this->title = 'Информер';
                 </li>
             <?php endif; endwhile; ?>
             <li class="paginate_button page-item <?php if ($pagination == ceil($i/10)-1) {echo 'active';}?>">
-                <a onclick="informerPostParametrs(<?=$pagination+1?>)" data-page="<?=$pagination+1?>" class="page-link"><?=ceil($i/10);?></a>
+                <a onclick="informerPostParametrs(<?=ceil($i/10)-1?>)" data-page="<?=ceil($i/10)-1?>" class="page-link"><?=ceil($i/10);?></a>
             </li>
             <li class="paginate_button page-item next <?php if($pagination == ceil($i/10)-1){echo 'active';} ?>">
                 <a <?php if($pagination == ceil($i/10)-1) :?>
