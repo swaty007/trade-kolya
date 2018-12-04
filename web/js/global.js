@@ -13,3 +13,22 @@ let config = {
 for (let selector in config) {
     $(selector).chosen(config[selector]);
 }
+
+//toast
+toastr.options = {
+    closeButton: true,
+    debug: false,
+    progressBar: true,
+    preventDuplicates: false,
+    positionClass: 'toast-top-right',
+    onclick: null
+};
+toastr.options.showDuration = 400;
+toastr.options.hideDuration = 1000;
+toastr.options.timeOut = 7000;
+toastr.options.extendedTimeOut = 1000;
+toastr.options.showEasing = 'swing';
+toastr.options.hideEasing = 'linear';
+toastr.options.showMethod = 'fadeIn';
+toastr.options.hideMethod = 'fadeOut';
+//error,warning,info,success;

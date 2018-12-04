@@ -86,6 +86,19 @@
                     <label class="main-label">Ссылка</label>
                     <input id="informer_link_req" type="text" class="form-control">
                 </div>
+                <div class="form-group">
+                    <div class="text-center">
+                        <img id="image_src" alt="image" class="m-t-xs img-responsive" src="" style="width: 200px; margin-left: calc(50% - 100px);">
+                    </div>
+                    <label class="main-label">Картинка</label>
+                    <input id="informer_file_update" type="file" class="form-control">
+                </div>
+                <div class="form-group" id="data_1">
+                    <label class="main-label">Дата Начала</label>
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input id="datepicker1" type="text" class="form-control" value="">
+                    </div>
+                </div>
                 <div class="form-group select-style">
                     <label class="main-label">Категории</label>
                     <div class="input-group">

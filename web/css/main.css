@@ -116,6 +116,21 @@ body.mini-navbar .nav-header {
     padding: 9px 0;
 }
 
+.contact-box:hover {
+    cursor: pointer;
+}
 
+.navbar-static-top {
+    background: #ffffff;
+}
+
+.wrapper {
+    margin-top: 10px;
+}
+.clip {
+    white-space: nowrap; /* Запрещаем перенос строк */
+    overflow: hidden; /* Обрезаем все, что не помещается в область */
+    text-overflow: ellipsis; /* Добавляем многоточие */
+}
 
 

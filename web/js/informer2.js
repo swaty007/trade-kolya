@@ -34,6 +34,12 @@ $(document).on('click',"#create_informer", function(e) {
         }
     });
 });
+
+$(document).on('click', '.contact-box', function () {
+    let id = $(this).attr('data-id');
+    location.href = '/informer/show?id=' + id;
+});
+
 $(document).on('click',"#update_informer", function(e) {
     e.preventDefault();
     let data = {
@@ -43,14 +49,32 @@ $(document).on('click',"#update_informer", function(e) {
         tags: $('#informer_tags_req').val(),
         sub_category_ids: $('#informer_under_category_req').val(),
         category_id: $('#informer_category_req').val(),
-        link: $('#informer_link_req').val()
+        link: $('#informer_link_req').val(),
+        date: $('#datepicker1').val(),
+        file: $("#informer_file_update")[0].files[0]
     };
+
+    let formData = new FormData();
+    formData.append("informer_id", data.informer_id);
+    formData.append("file", data.file);
+    formData.append("title", data.title);
+    formData.append("html", data.html);
+    formData.append("tags", data.tags);
+    formData.append("sub_category_ids", data.sub_category_ids);
+    formData.append("category_id", data.category_id);
+    formData.append("link", data.link);
+    formData.append("date", data.date);
+
     console.log(data);
 
     $.ajax({
         type: "POST",
         url: "/informer/update-informer",
-        data: data,
+        cache : false,
+        processData: false,
+        dataType: 'json',
+        contentType: false,
+        data: formData,
         success: function (msg) {
             console.log(msg);
         }
@@ -74,6 +98,8 @@ function editInformer(id,_this) {
                 $('#informer_name_req').val(informer.title);
                 $('#informer_summernote_req').parent().find('div.note-editable').html(informer.html);
                 $('#informer_link_req').val(informer.link);
+                $('#datepicker1').val(informer.date);
+                $('#image_src').attr('src', informer.src);
 
                 $.each(category, function (index, value) {
                     $('#informer_category_req option').each(function () {

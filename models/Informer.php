@@ -60,13 +60,11 @@ class Informer extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Tags::className(), ['id' => 'tag_id'])
             ->viaTable('informer_tag', ['informer_id' => 'id']);
-
     }
 
     public function getCategory()
     {
         return $this->hasMany(Categories::className(), ['id' => 'category_id'])
             ->viaTable('informer_category', ['informer_id' => 'id']);
-
     }
 }

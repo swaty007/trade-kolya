@@ -20,51 +20,87 @@ $this->title = 'Информер';
 
     <div class="row">
         <div class="col-lg-3">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>Фильтры</h5>
-                    <div class="ibox-tools">
-                        <a class="collapse-link">
-                            <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-user">
-                            <li><a href="#">Config option 1</a>
-                            </li>
-                            <li><a href="#">Config option 2</a>
-                            </li>
-                        </ul>
-                        <a class="close-link">
-                            <i class="fa fa-times"></i>
-                        </a>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Фильтры</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <i class="fa fa-wrench"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-user">
+                                    <li><a href="#">Config option 1</a>
+                                    </li>
+                                    <li><a href="#">Config option 2</a>
+                                    </li>
+                                </ul>
+                                <a class="close-link">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="row">
+                                <div class="col-lg-12" style="margin-bottom: 10px">
+                                    <select id="informer_filter_category"
+                                            data-placeholder="Выбор категорий"
+                                            multiple
+                                            class="chosen-select"
+                                            tabindex="2"
+                                    >
+                                        <?php foreach ($full_categories as $category) :?>
+                                            <option value="<?=$category['id']?>" <?php if (isset($select->category)) if (in_array($category['id'],$select->category)) echo 'selected' ?>><?=$category['cat_name']?></option>
+                                        <?php endforeach;?>
+                                    </select>
+                                </div>
+                                <div class="col-lg-12">
+                                    <select id="informer_filter_tags"
+                                            data-placeholder="Выбор тегов"
+                                            multiple
+                                            class="chosen-select"
+                                            tabindex="2">
+                                        <?php foreach ($full_tags as $tag) :?>
+                                            <option value="<?=$tag['id']?>" <?php if (isset($select->tag)) if (in_array($tag['id'],$select->tag)) echo 'selected' ?>><?=$tag['tag_name']?></option>
+                                        <?php endforeach;?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="ibox-content">
-                    <div class="row">
-                        <div class="col-lg-12" style="margin-bottom: 10px">
-                            <select id="informer_filter_category"
-                                    data-placeholder="Выбор категорий"
-                                    multiple
-                                    class="chosen-select"
-                                    tabindex="2"
-                                    >
-                                <?php foreach ($full_categories as $category) :?>
-                                    <option value="<?=$category['id']?>" <?php if (isset($select->category)) if (in_array($category['id'],$select->category)) echo 'selected' ?>><?=$category['cat_name']?></option>
-                                <?php endforeach;?>
-                            </select>
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Информация</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <i class="fa fa-wrench"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-user">
+                                    <li><a href="#">Config option 1</a>
+                                    </li>
+                                    <li><a href="#">Config option 2</a>
+                                    </li>
+                                </ul>
+                                <a class="close-link">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
                         </div>
-                        <div class="col-lg-12">
-                            <select id="informer_filter_tags"
-                                    data-placeholder="Выбор тегов"
-                                    multiple
-                                    class="chosen-select"
-                                    tabindex="2">
-                                <?php foreach ($full_tags as $tag) :?>
-                                    <option value="<?=$tag['id']?>" <?php if (isset($select->tag)) if (in_array($tag['id'],$select->tag)) echo 'selected' ?>><?=$tag['tag_name']?></option>
-                                <?php endforeach;?>
-                            </select>
+                        <div class="ibox-content">
+                            <div class="row">
+                                <div class="col-lg-12" style="margin-bottom: 10px">
+                                    <h3><?php echo $information_title->value ?></h3>
+                                    <p><?php echo $information_text->value ?></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -76,41 +112,37 @@ $this->title = 'Информер';
             <div class="row">
                 <?php foreach ($row as $informer) :?>
                     <div class="col-lg-6">
-                        <div class="ibox">
-                            <div class="ibox-content article">
-                                <div class="text-center article-title">
-                                    <span class="text-muted"><i class="fa fa-clock-o"></i> <?=$informer->date?></span>
-                                    <h1 class="header-title"><?=$informer->title?></h1>
+                        <div class="contact-box" data-id="<?=$informer->id?>">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="text-center">
+                                        <img alt="image" class="m-t-xs img-responsive" src="<?= $informer->src?>">
+                                    </div>
                                 </div>
-                                <div class="text-body">
-                                    <?=$informer->html?>
-                                </div>
-                                <hr>
-                                <div class="row">
-
+                                <div class="col-sm-8">
+                                    <h3 class="clip"><strong><?=$informer->title?></strong></h3>
+                                    <p><i class="fa fa-clock-o"></i> <?=$informer->date?></p>
+                                    <p><?=$informer->html?></p>
                                     <?php if (!empty($informer->tag)) :?>
-                                        <div class="col-md-12 tags">
-                                            <h5>Tags:</h5>
-                                            <?php foreach ($informer->tag as $tag) :?>
-                                                <a href="?tag=<?=$tag->id?>" class="btn btn-white btn-xs tag" type="button">
-                                                    <?=$tag->tag_name?>
-                                                </a>
-                                            <?php endforeach;?>
-                                        </div>
+                                    <div class="tags">
+                                        <h5 style="display: inline-block;">Tags:</h5>
+                                        <?php foreach ($informer->tag as $tag) :?>
+                                            <a href="?tag=<?=$tag->id?>" class="btn btn-white btn-xs tag" type="button">
+                                                <?=$tag->tag_name?>
+                                            </a>
+                                        <?php endforeach;?>
+                                    </div>
                                     <?php endif;?>
-                                    <div class="col-md-12">
-                                        <h5>Categories:</h5>
+                                    <?php if (!empty($informer->category)) :?>
+                                    <div class="categories">
+                                        <h5 style="display: inline-block;">Categories:</h5>
                                         <?php foreach ($informer->category as $category) :?>
                                             <a href="?category=<?=$category->id?>" class="btn btn-white btn-xs" type="button">
                                                 <?=$category->cat_name?>
                                             </a>
                                         <?php endforeach;?>
                                     </div>
-                                    <div class="col-md-12">
-                                        <h5>Admins:</h5>
-                                        <button class="btn btn-white btn-xs" onclick="editInformer(<?=$informer->id;?>,this)" type="button">Редактировать</button>
-                                        <button onclick="deleteInformer(<?=$informer->id?>,this)" class="btn btn-white btn-xs" type="button">Удалить</button>
-                                    </div>
+                                    <?php endif;?>
                                 </div>
                             </div>
                         </div>

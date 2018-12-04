@@ -1,10 +1,4 @@
 <?php
-/**
- * @link http://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
- */
-
 namespace app\assets;
 
 use yii\web\AssetBundle;
@@ -48,7 +42,7 @@ class AppAsset extends AssetBundle
         "js/plugins/flot/jquery.flot.pie.js",
         "js/plugins/peity/jquery.peity.min.js",
         "js/inspinia.js",
-        "js/plugins/pace/pace.min.js",
+        //"js/plugins/pace/pace.min.js",
         "js/plugins/gritter/jquery.gritter.min.js",
         "js/plugins/sparkline/jquery.sparkline.min.js",
         "js/plugins/chartJs/Chart.min.js",

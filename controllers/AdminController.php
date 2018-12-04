@@ -73,6 +73,8 @@ class AdminController extends Controller
                 ->asArray()
                 ->all();
 
+            $data['users'] = User::find()->all();
+
             $data['admin_settings'] = AdminSettings::find()->all();
 
             return $this->render('index', $data);

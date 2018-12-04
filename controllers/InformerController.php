@@ -1,6 +1,7 @@
 <?php
 namespace app\controllers;
 
+use app\models\AdminSettings;
 use app\models\Categories;
 use app\models\InformerTag;
 use app\models\InvestPools;
@@ -74,6 +75,8 @@ class InformerController extends Controller
         $data['sub_categories']  = Categories::find()->where(['not', ['parent_id' => null]])->all();
         $data['full_categories'] = Categories::find()->all();
         $data['full_tags']       = Tags::find()->all();
+        $data['information_title'] = AdminSettings::find()->select('value')->where(['id' => 2])->one();
+        $data['information_text'] = AdminSettings::find()->select('value')->where(['id' => 3])->one();
 
         $items = '';
         foreach ($data['full_tags'] as $tag) {
@@ -82,6 +85,23 @@ class InformerController extends Controller
         $data['tags']  = substr($items, 0, (strlen($items)-1));
 
         return $this->render('index', $data);
+    }
+
+    public function actionShow($id)
+    {
+        $data = [];
+        $data['informer'] = Informer::find()->where(['id' => $id])->one();
+        $data['categories']      = Categories::find()->where(['parent_id' => null])->all();
+        $data['sub_categories']  = Categories::find()->where(['not', ['parent_id' => null]])->all();
+        $data['full_tags']       = Tags::find()->all();
+
+        $items = '';
+        foreach ($data['full_tags'] as $tag) {
+            $items .= $tag->tag_name . ',';
+        }
+        $data['tags']  = substr($items, 0, (strlen($items)-1));
+
+        return $this->render('show', $data);
     }
 
     public function actionGetInformer()
@@ -118,7 +138,7 @@ class InformerController extends Controller
                 $html = (string)Yii::$app->request->post('html', '');
                 $tags = (string)Yii::$app->request->post('tags', '');
                 $category_id = (int)Yii::$app->request->post('category_id', '');
-                $sub_category_ids = Yii::$app->request->post('sub_category_ids', '');
+                $sub_category_ids = (array)Yii::$app->request->post('sub_category_ids', '');
                 $link = (string)Yii::$app->request->post('link', '');
                 $file = \yii\web\UploadedFile::getInstanceByName('file');
 
@@ -126,12 +146,12 @@ class InformerController extends Controller
                 $informer->title = $title;
                 $informer->html = $html;
                 $informer->link = $link;
+                $informer->date = date("Y-m-d");
 
                 $tags = explode(",", $tags);
 
                 if ($file) {
-                    if(!is_null($informer->src))
-                    {
+                    if (!is_null($informer->src)) {
                         unlink(Yii::getAlias('@webroot') . $informer->src);
                     }
                     $filePath = '/image/informer/' . time(). $file->baseName . '.' .$file->extension;
@@ -188,9 +208,10 @@ class InformerController extends Controller
                 $html = (string)Yii::$app->request->post('html', '');
                 $tags = (string)Yii::$app->request->post('tags', '');
                 $category_id = (int)Yii::$app->request->post('category_id', '');
-                $sub_category_ids = Yii::$app->request->post('sub_category_ids', '');
+                $sub_category_ids = (array)Yii::$app->request->post('sub_category_ids', '');
                 $link = (string)Yii::$app->request->post('link', '');
                 $file = \yii\web\UploadedFile::getInstanceByName('file');
+                $date = (string)Yii::$app->request->post('date', '');
 
                 if (!($informer = Informer::findOne(['id'=>$informer_id]) )) {
                     return ['msg' => 'error', 'status' => "No Informer finded"];
@@ -199,12 +220,12 @@ class InformerController extends Controller
                 $informer->title = $title;
                 $informer->html = $html;
                 $informer->link = $link;
+                $informer->date = $date;
 
                 $tags = explode(",", $tags);
 
                 if ($file) {
-                    if(!is_null($informer->src))
-                    {
+                    if (!is_null($informer->src)) {
                         unlink(Yii::getAlias('@webroot') . $informer->src);
                     }
                     $filePath = '/image/informer/' . time(). $file->baseName . '.' .$file->extension;
@@ -269,8 +290,7 @@ class InformerController extends Controller
                 if (InformerCategory::deleteAll(['informer_id'=>$informer_id])
                     && InformerTag::deleteAll(['informer_id'=>$informer_id])
                 ) {
-                    if(!is_null($informer->src))
-                    {
+                    if (!is_null($informer->src)) {
                         unlink(Yii::getAlias('@webroot') . $informer->src);
                     }
                     if ($informer->delete()) {
