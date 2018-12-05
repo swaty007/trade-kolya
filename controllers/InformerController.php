@@ -51,7 +51,7 @@ class InformerController extends Controller
         $tag         = Yii::$app->request->get('tag', null);
         $category_id = Yii::$app->request->get('category', null);
         $n           = Yii::$app->request->get('n', 0);
-
+        $id_informer = Yii::$app->request->get('id', null);
         $data['pagination'] = $n;
         $informers = Informer::find()->joinWith(['category','tag'])->distinct();
         $data['select'] = new \stdClass();
@@ -69,39 +69,25 @@ class InformerController extends Controller
         $countQuery = clone $informers;
         $data['informers'] = $informers->limit(10)->offset(10*$n)->orderBy('date DESC')->all();
         $data['informers_count'] = $countQuery->count();
-        $data['informers'] = $informers->orderBy('date DESC')->all();
 
-        $data['categories']      = Categories::find()->where(['parent_id' => null])->all();
-        $data['sub_categories']  = Categories::find()->where(['not', ['parent_id' => null]])->all();
-        $data['full_categories'] = Categories::find()->all();
-        $data['full_tags']       = Tags::find()->all();
+        $data['categories']        = Categories::find()->where(['parent_id' => null])->all();
+        $data['sub_categories']    = Categories::find()->where(['not', ['parent_id' => null]])->all();
+        $data['full_categories']   = Categories::find()->all();
+        $data['full_tags']         = Tags::find()->all();
         $data['information_title'] = AdminSettings::find()->select('value')->where(['id' => 2])->one();
-        $data['information_text'] = AdminSettings::find()->select('value')->where(['id' => 3])->one();
+        $data['information_text']  = AdminSettings::find()->select('value')->where(['id' => 3])->one();
 
         $items = '';
         foreach ($data['full_tags'] as $tag) {
             $items .= $tag->tag_name . ',';
         }
         $data['tags']  = substr($items, 0, (strlen($items)-1));
+
+        if ($id_informer !== null) {
+            $data['informer'] = Informer::find()->where(['id' => $id_informer])->one();
+        }
 
         return $this->render('index', $data);
-    }
-
-    public function actionShow($id)
-    {
-        $data = [];
-        $data['informer'] = Informer::find()->where(['id' => $id])->one();
-        $data['categories']      = Categories::find()->where(['parent_id' => null])->all();
-        $data['sub_categories']  = Categories::find()->where(['not', ['parent_id' => null]])->all();
-        $data['full_tags']       = Tags::find()->all();
-
-        $items = '';
-        foreach ($data['full_tags'] as $tag) {
-            $items .= $tag->tag_name . ',';
-        }
-        $data['tags']  = substr($items, 0, (strlen($items)-1));
-
-        return $this->render('show', $data);
     }
 
     public function actionGetInformer()
@@ -121,7 +107,7 @@ class InformerController extends Controller
                 ) {
                     return ['msg' => 'error', 'status' => "No Informer finded"];
                 }
-                return ['msg' => 'ok', 'informer' => $informer];
+                return ['msg' => 'ok','status'=>'Информер найден',  'informer' => $informer];
 
             } else {
                 return ['msg' => 'error', 'status' => "Dont have asses"];
@@ -189,7 +175,7 @@ class InformerController extends Controller
                         }
                     }
 
-                    return ['msg' => 'ok', 'informer' => $informer];
+                    return ['msg' => 'ok','status'=>'Информер создан',  'informer' => $informer];
                 } else {
                     return ['msg' => 'error', 'status' => "Don't save informer"];
                 }
@@ -322,7 +308,7 @@ class InformerController extends Controller
                 $informerCategory->parent_id = $parent_id;
 
                 if ($informerCategory->save()) {
-                    return ['msg' => 'ok', 'informerCategory' => $informerCategory];
+                    return ['msg' => 'ok','status'=>'Категория создана',  'informerCategory' => $informerCategory];
                 } else {
                     return ['msg' => 'error', 'status' => "Don't save informer Category"];
                 }
@@ -348,7 +334,7 @@ class InformerController extends Controller
                 $category->parent_id = $parent_id;
 
                 if ($category->save()) {
-                    return ['msg' => 'ok', 'Category' => $category];
+                    return ['msg' => 'ok','status'=>'Категория обновлена',  'Category' => $category];
                 } else {
                     return ['msg' => 'error', 'status' => "Don't save informer Category"];
                 }

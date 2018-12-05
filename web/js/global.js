@@ -32,3 +32,11 @@ toastr.options.hideEasing = 'linear';
 toastr.options.showMethod = 'fadeIn';
 toastr.options.hideMethod = 'fadeOut';
 //error,warning,info,success;
+//toastr[shortCutFunction](msg, title);
+function showToastr(msg) {
+    if (msg.msg === 'ok') {
+        toastr['success'](msg.status, '');
+    } else if(msg.msg === 'error'){
+        toastr['error'](msg.status, '');
+    }
+}

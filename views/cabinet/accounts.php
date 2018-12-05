@@ -62,7 +62,7 @@ $this->title = 'My Yii Application';
                                     <tr>
                                         <td><input type="checkbox" name="user_marketplace_id[]" value="<?php echo $value["user_marketplace_id"]; ?>"></td>
                                         <td>
-                                            <?php if ($value["market_id"] == 0) :?>
+                                            <?php if ($value["user_market_id"] == 0) :?>
                                             <p><?php echo $value["name"]; ?></p>
                                             <?php else :?>
                                                 <a href='<?php echo $value['open']?>'><?php echo $value["name"]; ?></a>
@@ -71,7 +71,7 @@ $this->title = 'My Yii Application';
                                         <td><?php echo $value["marketplace_name"]; ?></td>
                                         <td><?php echo $value["order"]; ?></td>
                                         <td>
-                                            <?php if ($value["market_id"] == 0) :?>
+                                            <?php if ($value["user_market_id"] == 0) :?>
                                                 Не активный
                                             <?php else :?>
                                                 Активный

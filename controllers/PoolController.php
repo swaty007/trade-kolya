@@ -216,9 +216,9 @@ class PoolController extends Controller
             $pool->max_size_invest = $max_size;
 
             if ($pool->save()) {
-                return ['msg' => 'ok', 'pool' => $pool];
+                return ['msg' => 'ok', 'status'=>'Пул создан', 'pool' => $pool];
             } else {
-                return ['msg' => 'error', 'pool' => $pool];
+                return ['msg' => 'error', 'status'=>'Пул не сохранен', 'pool' => $pool];
             }
         }
     }
@@ -313,7 +313,7 @@ class PoolController extends Controller
                 $transaction->buyer_email = Yii::$app->user->identity->email;
                 $transaction->save();
 
-                return ['msg' => 'ok', 'status' => $u_pool];
+                return ['msg' => 'ok', 'status'=>'Пул создан', 'pool' => $u_pool];
             } else {
                 return ['msg' => 'error', 'status' => "Don't save pool"];
             }

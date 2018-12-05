@@ -40,19 +40,17 @@ $(document).ready(function () {
     });
     */
 
-    $('.new-navbar').hover(function () {
-        console.log(1);
-        $("body").toggleClass("mini-navbar");
-        SmoothlyMenu();
-    });
+    // $('.new-navbar').hover(function () {
+    //     $("body").toggleClass("mini-navbar");
+    //     SmoothlyMenu();
+    // });
 
 
     // minimalize menu
-    // $('.navbar-minimalize:not(.binded)').addClass("binded").click(function () {
-    //     console.log(1);
-    //     $("body").toggleClass("mini-navbar");
-    //     SmoothlyMenu();
-    // })
+    $('.navbar-minimalize:not(.binded)').addClass("binded").click(function () {
+        $("body").toggleClass("mini-navbar");
+        SmoothlyMenu();
+    });
  
     // tooltips
     $('.tooltip-demo').tooltip({

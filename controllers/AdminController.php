@@ -68,7 +68,7 @@ class AdminController extends Controller
                 ->select(['user_marketplace_id', 'name', 'marketplace_name'])
                 ->innerJoin('marketplace', 'marketplace.marketplace_id = user_marketplace.marketplace_id')
                 ->where(['user_id' => $id])
-                ->andWhere(['market_id' => 0])
+                ->andWhere(['user_market_id' => 0])
                 ->orderBy('order')
                 ->asArray()
                 ->all();
@@ -99,9 +99,9 @@ class AdminController extends Controller
                 $setting->value = $value;
 
                 if ($setting->save()) {
-                    return ['msg' => 'ok', 'setting' => $setting];
+                    return ['msg' => 'ok','status'=>'Настройка сохранена',  'setting' => $setting];
                 } else {
-                    return ['msg' => 'error', 'setting' => $setting];
+                    return ['msg' => 'error','status'=>'При сохранении произошла ошибка',  'setting' => $setting];
                 }
 
             } else {

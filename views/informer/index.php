@@ -14,8 +14,10 @@ $this->title = 'Информер';
         <?php endif;?>
     </div>
 </div>
-<?php \yii\widgets\Pjax::begin(); ?>
 
+<?php if($informer !== null):?>
+    <?php echo $this->render('show',['informer'=>$informer,'categories'=>$categories,'sub_categories'=>$sub_categories,'tags'=>$tags]) ?>
+<?php else :?>
 <div class="wrapper wrapper-content animated fadeIn">
 
     <div class="row">
@@ -106,13 +108,15 @@ $this->title = 'Информер';
                 </div>
             </div>
         </div>
+
         <div class="col-lg-9">
+            <?php \yii\widgets\Pjax::begin(); ?>
             <?php if (!$informers) echo 'Не найденно ни одной записи' ?>
             <?php foreach (array_chunk($informers, 2) as $row) :?>
             <div class="row">
                 <?php foreach ($row as $informer) :?>
                     <div class="col-lg-6">
-                        <div class="contact-box" data-id="<?=$informer->id?>">
+                        <div href="?id=<?=$informer->id?>" class="contact-box" data-id="<?=$informer->id?>">
                             <div class="row">
                                 <div class="col-sm-4">
                                     <div class="text-center">
@@ -150,10 +154,12 @@ $this->title = 'Информер';
                 <?php endforeach;?>
             </div>
             <?php endforeach;?>
+            <?php \yii\widgets\Pjax::end(); ?>
         </div>
+
     </div>
 </div>
-
+    <?php \yii\widgets\Pjax::begin(); ?>
 <?php if($informers_count > 10):?>
     <div class="paging_simple_numbers">
         <ul id="pagination" class="pagination">
@@ -188,9 +194,13 @@ $this->title = 'Информер';
         </ul>
     </div>
 <?php endif;?>
-
 <a id="informer_pjax_link" class="hidden" href="/informer/?tag=5"></a>
-<?php \yii\widgets\Pjax::end(); ?>
+    <script>
+        $.pjax.reload({container: '#p0'});
+    </script>
+    <?php \yii\widgets\Pjax::end(); ?>
+<?php endif;?>
+
 <?php echo $this->render('modals',['categories'=>$categories,'sub_categories'=>$sub_categories,'tags'=>$tags]) ?>
 
 

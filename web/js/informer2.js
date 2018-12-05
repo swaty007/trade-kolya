@@ -31,13 +31,17 @@ $(document).on('click',"#create_informer", function(e) {
         data: formData,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     });
 });
 
-$(document).on('click', '.contact-box', function () {
-    let id = $(this).attr('data-id');
-    location.href = '/informer/show?id=' + id;
+$(document).on('click', '.contact-box', function (e) {
+    if (e.target.tagName === 'A') return;
+    let id = $(this).attr('data-id'),
+    link = $('#informer_pjax_link');
+    link.attr('href','/informer?id='+id);
+    link.click();
 });
 
 $(document).on('click',"#update_informer", function(e) {
@@ -77,6 +81,7 @@ $(document).on('click',"#update_informer", function(e) {
         data: formData,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     })
 });
@@ -88,6 +93,7 @@ function editInformer(id,_this) {
         data: {id:id},
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
             if (msg.msg === 'ok') {
                 let informer =  msg.informer,
                     tags = informer.tag,
@@ -138,6 +144,10 @@ function deleteInformer(id,_this) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
+            if (msg.msg === 'ok') {
+                el.remove();
+            }
         }
     })
 }
@@ -157,6 +167,7 @@ $(document).on('click',"#create_inf_category", function(e) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     })
 });
@@ -175,6 +186,7 @@ $(document).on('click',"#update_inf_category", function(e) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     })
 });
@@ -191,6 +203,7 @@ function deleteInfCategory(id,_this) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     })
 }
@@ -224,7 +237,6 @@ function informerPostParametrs(pagi_n) {
     link.click();
 }
 $('#informer_filter_category,#informer_filter_tags').on('change',function(){
-    console.log(1);
     informerPostParametrs();
 });
 $(document).on('click','#pagination a',function () {

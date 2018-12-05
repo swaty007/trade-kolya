@@ -97,7 +97,6 @@ $this->title = 'Магазин';
                                     <?php foreach ($markets_user as $market) :?>
                                         <div class="col-lg-3">
                                             <div class="widget navy-bg p-xl">
-
                                                 <h2>
                                                     <?=$market->title;?>
                                                 </h2>

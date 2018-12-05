@@ -62,7 +62,7 @@ class Markets extends \yii\db\ActiveRecord
 
     static public function haveInvest($market_id){
 
-        if(UserMarketplace::find()->where(['market_id' => $market_id])->count()) {
+        if(UserMarkets::find()->where(['market_id' => $market_id])->count()) {
             return true;
         } else {
             false;

@@ -16,6 +16,7 @@ $(document).on('click',"#create_market", function(e) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     })
 });
@@ -39,6 +40,7 @@ $(document).on('click',"#update_market", function(e) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     })
 });
@@ -75,6 +77,7 @@ function deleteMarket(id,_this) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     })
 }
@@ -86,7 +89,6 @@ function buyMarket(id,_this) {
 $(document).on('click',"#buy_market", function(e) {
     e.preventDefault();
     let data = {
-        marketplace: $('#market_placeid_buy').val(),
         market_id: Number($(this).attr('data-id')),
     };
     console.log(data);
@@ -97,7 +99,25 @@ $(document).on('click',"#buy_market", function(e) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     })
 });
+$(document).on('click',"#market_to_api", function(e) {
+    e.preventDefault();
+    let data = {
+        marketplace: $('#market_placeid_buy').val(),
+        user_market_id: Number($(this).attr('data-id')),
+    };
+    console.log(data);
 
+    $.ajax({
+        type: "POST",
+        url: "/market/marketplace-to-api",
+        data: data,
+        success: function (msg) {
+            console.log(msg);
+            showToastr(msg);
+        }
+    })
+});

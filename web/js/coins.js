@@ -12,12 +12,13 @@ $(document).on('click',"#send", function(e) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
             if (msg.msg.result === 'ok') {
                 let answer = $('#payments');
 
-                answer.find('.address').text(msg.msg.address);
-                answer.find('.status_url').attr('href',msg.msg.status_url);
-                answer.find('.qrcode_url').attr('src',msg.msg.qrcode_url);
+                answer.find('.address').text(msg.result.address);
+                answer.find('.status_url').attr('href',msg.result.status_url);
+                answer.find('.qrcode_url').attr('src',msg.result.qrcode_url);
                 answer.find('.amount1').text(msg.transaction.amount1); // in start curr
                 answer.find('.amount2').text(msg.transaction.amount2); //in BTC
                 answer.find('.currency1').text(msg.transaction.currency1);
@@ -45,15 +46,14 @@ $(document).on('click',"#send_withdraw", function(e) {
         data: data,
         success: function (msg) {
             console.log(msg);
-            if (msg.msg.result === 'ok') {
+            showToastr(msg);
+            if (msg.msg === 'ok') {
                 let answer = $('#withdraw');
 
-                answer.find('.address').text(msg.msg.address);
-                answer.find('.status_url').attr('href',msg.msg.status_url);
-                answer.find('.qrcode_url').attr('src',msg.msg.qrcode_url);
-                answer.find('.amount1').text(msg.transaction.amount1); // in start curr
-                answer.find('.amount2').text(msg.transaction.amount2); //in BTC
-                answer.find('.currency1').text(msg.transaction.currency1);
+                answer.find('.address').text(msg.result.user_purse);
+                answer.find('.amount1').text(msg.result.amount1); // in start curr
+                answer.find('.amount2').text(msg.result.amount2); //in BTC
+                answer.find('.currency1').text(msg.result.currency1);
                 answer.find('.modal-body').toggleClass('hidden');
             } else {
                 answer.after(msg.msg);
@@ -77,6 +77,7 @@ $(document).on('click',"#switch_coin", function(e) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     })
 });
@@ -94,7 +95,7 @@ function transationDone(transaction_id) {
             data: data,
             success: function (msg) {
                 console.log(msg);
-
+                showToastr(msg);
             }
         })
 }

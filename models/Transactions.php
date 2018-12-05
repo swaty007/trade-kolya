@@ -133,7 +133,7 @@ class Transactions extends ActiveRecord
                 'address' => $result['result']['address']
             ];
         } else {
-            return 'Error: '.$result['error']."\n";
+            return $result['error'];
         }
     }
 

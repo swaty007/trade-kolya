@@ -41,9 +41,9 @@ class CoinsController extends Controller
             $answer = $transaction->createTransaction();
             if ($answer['result'] == 'ok') {
                 $transaction->save();
-                return ['msg' => $answer, 'transaction' => $transaction];
+                return ['msg' => 'ok','status'=>'Транзакция создана успешно','result'=>$answer, 'transaction' => $transaction];
             } else {
-                return ['msg' => $answer];
+                return ['msg' => 'error','status'=>$answer];
             }
         }
     }
@@ -103,7 +103,7 @@ class CoinsController extends Controller
                 $transaction->buyer_email = Yii::$app->user->identity->email;
                 $transaction->save();
 
-                return ['msg' => 'ok','value'=>$user->{$curr2.'_money'},'commission'=>$exchangeCommission];
+                return ['msg' => 'ok','status'=>'Обмен средств выполнен успешно', 'value'=>$user->{$curr2.'_money'},'commission'=>$exchangeCommission];
             } else {
                 return ['msg' => 'error', 'status' => "Don't save transaction"];
             }
@@ -149,7 +149,7 @@ class CoinsController extends Controller
                     $transaction->delete();
                     return ['msg' => 'error', 'status' => "Don't save user"];
                 }
-                return ['msg' => 'ok', 'status' => $transaction];
+                return ['msg' => 'ok', 'status' => 'Транзакция создана успешно','result'=>$transaction];
             } else {
                 return ['msg' => 'error', 'status' => "Don't save transaction"];
             }
@@ -187,7 +187,7 @@ class CoinsController extends Controller
                 $transaction->status = 1;
 
                 if ($transaction->save()) {
-                    return ['msg' => 'ok', 'status' => $transaction];
+                    return ['msg' => 'ok', 'status'=>'Транзакция отмечена выплаченной', 'transaction' => $transaction];
                 } else {
                     return ['msg' => 'error', 'status' => "Don't save transaction"];
                 }

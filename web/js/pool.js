@@ -29,6 +29,7 @@ $(document).on('click',"#create_pool", function(e) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     })
 });
@@ -56,6 +57,7 @@ $(document).on('click',"#update_pool", function(e) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     })
 });
@@ -92,7 +94,7 @@ function editPool(id,_this) {
 }
 
 function deletePool(id,_this) {
-    let el = $(_this).closest('.pool_block'),
+    let el = $(_this).closest('.pool_block.col-flex'),
         data = {
             pool_id: Number(id),
         };
@@ -104,6 +106,10 @@ function deletePool(id,_this) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
+            if (msg.msg === 'ok') {
+                el.remove();
+            }
         }
     })
 }
@@ -122,9 +128,12 @@ function investPool(id,_this) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     })
 }
+
+
 
 function returnUserMoney(id,_this) {
     let el = $(_this).closest('.pool_block'),
@@ -139,6 +148,7 @@ function returnUserMoney(id,_this) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     })
 }
@@ -157,6 +167,7 @@ function createPoolComment(id,_this) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
         }
     })
 }
@@ -175,6 +186,7 @@ function deletePoolComment(id,_this) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            showToastr(msg);
             if (msg.msg === "ok") {
                 el.remove();
             }
