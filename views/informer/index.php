@@ -15,7 +15,7 @@ $this->title = 'Информер';
     </div>
 </div>
 
-<?php if($informer !== null):?>
+<?php if(isset($informer)):?>
     <?php echo $this->render('show',['informer'=>$informer,'categories'=>$categories,'sub_categories'=>$sub_categories,'tags'=>$tags]) ?>
 <?php else :?>
     <div class="wrapper wrapper-content animated fadeIn">
@@ -196,7 +196,7 @@ $this->title = 'Информер';
     <?php endif;?>
     <a id="informer_pjax_link" class="hidden" href="/informer/?tag=5"></a>
     <script>
-        $.pjax.reload({container: '#p0'});
+         $.pjax.reload({container: '#p0'});
     </script>
     <?php \yii\widgets\Pjax::end(); ?>
 <?php endif;?>

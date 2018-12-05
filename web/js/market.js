@@ -17,6 +17,7 @@ $(document).on('click',"#create_market", function(e) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            closeModal($('#market-create'));
         }
     })
 });
@@ -41,17 +42,18 @@ $(document).on('click',"#update_market", function(e) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            closeModal($('#market-edit'));
         }
     })
 });
 function editMarket(market_id,_this) {
-    let block = $(_this).parent().parent('.market_block'),
-        title = block.find('.market-title').text(),
-        description = block.find('.market-description span').text(),
-        type = block.find('.market-type strong').text(),
-        cost = block.find('.market-cost strong').text(),
-        time_action = block.find('.market-end strong').text(),
-        count_api = block.find('.market-count_api strong').text();
+    let block = $(_this).parent().parent(),
+        title = block.parent().find('.market-title').text(),
+        description = block.find('.market-description').text(),
+        type = block.find('.market-type').text(),
+        cost = block.find('.market-cost').text(),
+        time_action = block.find('.market-end').text(),
+        count_api = block.find('.market-count_api').text();
 
     $('#market-edit').find('#market_name_edit').val(title);
     $('#market-edit').find('#market_description_edit').val(description);
@@ -82,7 +84,6 @@ function deleteMarket(id,_this) {
     })
 }
 function buyMarket(id,_this) {
-
     $('#buy_market').attr('data-id', id);
     $('#market-buy').modal('show');
 }
@@ -100,6 +101,7 @@ $(document).on('click',"#buy_market", function(e) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            closeModal($('#market-buy'));
         }
     })
 });

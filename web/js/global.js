@@ -23,9 +23,9 @@ toastr.options = {
     positionClass: 'toast-top-right',
     onclick: null
 };
-toastr.options.showDuration = 400;
+toastr.options.showDuration = 0;
 toastr.options.hideDuration = 1000;
-toastr.options.timeOut = 7000;
+toastr.options.timeOut = 3000;
 toastr.options.extendedTimeOut = 1000;
 toastr.options.showEasing = 'swing';
 toastr.options.hideEasing = 'linear';
@@ -39,4 +39,10 @@ function showToastr(msg) {
     } else if(msg.msg === 'error'){
         toastr['error'](msg.status, '');
     }
+}
+
+function closeModal(modal) {
+    setTimeout(function () {
+        modal.modal('hide');
+    }, 3000);
 }

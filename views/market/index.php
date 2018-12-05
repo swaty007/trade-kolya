@@ -39,64 +39,99 @@ $this->title = 'Магазин';
                         <div class="tab-content pull-content">
 
                             <div id="tab-1" class="tab-pane active">
-                                <div class="row row-flex">
-                                    <?php foreach ($markets_active as $market):?>
-                                        <div class="col-lg-4 pool_block col-flex">
-                                            <div class="panel panel-default market_block">
-                                                <div class="panel-heading">
-                                                    <strong class="market-title"><?=$market->title;?></strong>
-                                                </div>
-                                                <div class="panel-body">
-                                                    <p class="style-pull-card market-type">Тип продукта: <strong><?=$market->type;?></strong></p>
-                                                    <p class="style-pull-card market-description">Описание продукта: <span><?=$market->description;?></span></p>
-                                                    <p class="style-pull-card market-cost">Стоимость продукта: <strong><?=(double)$market->cost;?></strong></p>
-                                                    <p class="style-pull-card market-end">Срок действия апи(в днях): <strong><?=$market->time_action;?></strong></p>
-                                                    <p class="style-pull-card market-count_api">Количество апи: <strong><?= $market->count_api?></strong></p>
-                                                </div>
-                                                <div class="panel-footer">
-                                                    <button class="btn btn-primary" type="button" onclick="buyMarket(<?=$market->id;?>,this)">Купить</button>
-                                                    <?php if( Yii::$app->user->identity->user_role == "admin"):?>
-                                                        <button class="btn btn-info" type="button" onclick="editMarket(<?=$market->id;?>,this)">Редактировать</button>
-                                                        <button class="btn btn-danger" type="button" onclick="deleteMarket(<?=$market->id;?>,this)">Удалить</button>
-                                                    <?php endif;?>
-                                                </div>
+                                <?php foreach (array_chunk($markets_active, 4) as $row) :?>
+                                    <div class="row">
+                                        <?php foreach ($row as $market) :?>
+                                        <div class="col-lg-3">
+                                            <div class="widget lazur-bg p-xl">
+
+                                                <h2 class="market-title"><?=$market->title;?></h2>
+                                                <ul class="list-unstyled m-t-md">
+                                                    <li style="margin-bottom: 20px">
+                                                        <span class="market-description"><?=$market->description;?></span>
+                                                    </li>
+                                                    <li>
+                                                        <label>Стоимость:</label>
+                                                        <span class="market-cost"><?=(double)$market->cost;?></span> $
+                                                    </li>
+                                                    <li>
+                                                        <label>Тип:</label>
+                                                        <span class="market-type"><?=$market->type;?></span>
+                                                    </li>
+                                                    <li>
+                                                        <label>Срок действия апи(в днях):</label>
+                                                        <span class="market-end"><?=$market->time_action;?></span>
+                                                    </li>
+                                                    <li>
+                                                        <label>Количество апи:</label>
+                                                        <span class="market-count_api"><?= $market->count_api?></span>
+                                                    </li>
+                                                    <li style="margin-top: 20px">
+                                                        <button class="btn btn-success" type="button" onclick="buyMarket(<?=$market->id;?>,this)">Купить</button>
+                                                        <?php if( Yii::$app->user->identity->user_role == "admin"):?>
+                                                            <button class="btn btn-warning" type="button" onclick="editMarket(<?=$market->id;?>,this)">Редактировать</button>
+                                                            <button class="btn btn-danger" type="button" onclick="deleteMarket(<?=$market->id;?>,this)">Удалить</button>
+                                                        <?php endif;?>
+                                                    </li>
+                                                </ul>
+
                                             </div>
                                         </div>
                                     <?php endforeach;?>
                                 </div>
+                                <?php endforeach;?>
                             </div>
 
                             <div id="tab-2" class="tab-pane">
-                                <div class="row row-flex">
-                                    <?php foreach ($markets_archive as $market):?>
-                                        <div class="col-lg-4 pool_block col-flex">
-                                            <div class="panel panel-default market_block">
-                                                <div class="panel-heading">
-                                                    <strong class="pull-title"><?=$market->title;?></strong>
-                                                </div>
-                                                <div class="panel-body">
-                                                    <p class="style-pull-card market-type">Тип продукта: <strong><?=$market->type;?></strong></p>
-                                                    <p class="style-pull-card market-description">Описание продукта: <span><?=$market->description;?></span></p>
-                                                    <p class="style-pull-card market-cost">Стоимость продукта: <strong><?=(double)$market->cost;?></strong></p>
-                                                    <p class="style-pull-card market-end">Срок действия апи(в днях): <strong><?=$market->time_action;?></strong></p>
-                                                    <p class="style-pull-card market-count_api">Количество апи: <strong><?= $market->count_api?></strong></p>
-                                                </div>
-                                                <div class="panel-footer">
+                                <?php foreach (array_chunk($markets_archive, 4) as $row) :?>
+                                <div class="row">
+                                    <?php foreach ($row as $market) :?>
+                                    <div class="col-lg-3">
+                                        <div class="widget lazur-bg p-xl">
+
+                                            <h2>
+                                                <?=$market->title;?>
+                                            </h2>
+                                            <ul class="list-unstyled m-t-md">
+                                                <li style="margin-bottom: 20px">
+                                                    <?=$market->description;?>
+                                                </li>
+                                                <li>
+                                                    <label>Стоимость:</label>
+                                                    <?=(double)$market->cost;?> $
+                                                </li>
+                                                <li>
+                                                    <label>Тип:</label>
+                                                    <?=$market->type;?>
+                                                </li>
+                                                <li>
+                                                    <label>Срок действия апи(в днях):</label>
+                                                    <?=$market->time_action;?>
+                                                </li>
+                                                <li>
+                                                    <label>Количество апи:</label>
+                                                    <?= $market->count_api?>
+                                                </li>
+                                                <li style="margin-top: 20px">
                                                     <?php if( Yii::$app->user->identity->user_role == "admin"):?>
                                                         <button class="btn btn-danger" type="button" onclick="deleteMarket(<?=$market->id;?>,this)">Удалить</button>
                                                     <?php endif;?>
-                                                </div>
-                                            </div>
+                                                </li>
+                                            </ul>
+
                                         </div>
+                                    </div>
                                     <?php endforeach;?>
                                 </div>
+                                <?php endforeach;?>
                             </div>
 
                             <div id="tab-3" class="tab-pane">
-                                <div class="row">
-                                    <?php foreach ($markets_user as $market) :?>
+                                <?php foreach (array_chunk($markets_user, 4) as $row) :?>
+                                    <div class="row">
+                                        <?php foreach ($row as $market) :?>
                                         <div class="col-lg-3">
-                                            <div class="widget navy-bg p-xl">
+                                            <div class="widget lazur-bg p-xl">
 
                                                 <h2>
                                                     <?=$market->title;?>
@@ -118,8 +153,9 @@ $this->title = 'Магазин';
 
                                             </div>
                                         </div>
-                                    <?php endforeach;?>
-                                </div>
+                                        <?php endforeach;?>
+                                    </div>
+                                <?php endforeach;?>
                             </div>
 
                         </div>

@@ -7,7 +7,7 @@
                     <span class="sr-only">Close</span>
                 </button>
                 <i class="fa fa-newspaper-o modal-icon"></i>
-                <h4 class="modal-title">Создать новость</h4>
+                <h4 class="modal-title">Создать продукт</h4>
             </div>
             <div class="modal-body">
                 <div class="form-group select-style">
@@ -59,7 +59,7 @@
                     <span class="sr-only">Close</span>
                 </button>
                 <i class="fa fa-newspaper-o modal-icon"></i>
-                <h4 class="modal-title">Создать новость</h4>
+                <h4 class="modal-title">Редактировать продукт</h4>
             </div>
             <div class="modal-body">
                 <div class="form-group select-style">
@@ -118,13 +118,13 @@
             <div class="modal-body">
                 <div class="form-group select-style">
                     <p>
-                        Вы уверены что хотите купить
+                        Вы уверены что хотите купить?
                     </p>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Закрыть</button>
-                <button id="buy_market" type="button" data-id="" class="btn btn-primary">купить</button>
+                <button id="buy_market" type="button" data-id="" class="btn btn-primary">Купить</button>
             </div>
         </div>
     </div>

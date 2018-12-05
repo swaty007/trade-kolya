@@ -11,11 +11,10 @@ $(document).on('click',"#send", function(e) {
         url: "/coins/create-transaction",
         data: data,
         success: function (msg) {
-            console.log(msg);
+            console.log(msg.msg);
             showToastr(msg);
-            if (msg.msg.result === 'ok') {
-                let answer = $('#payments');
-
+            let answer = $('#payments');
+            if (msg.msg === 'ok') {
                 answer.find('.address').text(msg.result.address);
                 answer.find('.status_url').attr('href',msg.result.status_url);
                 answer.find('.qrcode_url').attr('src',msg.result.qrcode_url);
@@ -47,9 +46,8 @@ $(document).on('click',"#send_withdraw", function(e) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            let answer = $('#withdraw');
             if (msg.msg === 'ok') {
-                let answer = $('#withdraw');
-
                 answer.find('.address').text(msg.result.user_purse);
                 answer.find('.amount1').text(msg.result.amount1); // in start curr
                 answer.find('.amount2').text(msg.result.amount2); //in BTC
@@ -78,6 +76,7 @@ $(document).on('click',"#switch_coin", function(e) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            closeModal($('#switchRate'));
         }
     })
 });

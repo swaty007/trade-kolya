@@ -5,6 +5,7 @@
 use yii\helpers\Html;
 use app\assets\AppAsset;
 use app\widgets\MainMenu;
+use yii\helpers\Url;
 
 AppAsset::register($this);
 ?>
@@ -32,12 +33,12 @@ AppAsset::register($this);
                 <div class="row border-bottom">
                     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
                         <ul class="nav navbar-top-links navbar-right">
-                            <li class="dropdown" style="margin-left: 10px">
+                            <li class="dropdown">
                                 <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
                                     USDT: <strong><?= (double)Yii::$app->user->identity->USDT_money; ?></strong>
                                     <b class="caret"></b>
                                 </a>
-                                <ul class="dropdown-menu dropdown-alerts">
+                                <ul class="dropdown-menu dropdown-alerts animated fadeInRight">
                                     <li>
                                         <a>
                                             <div>
@@ -76,9 +77,12 @@ AppAsset::register($this);
                                             </button>
                                         </div>
                                     </li>
+                                    <li>
+                                        <a href="<?= Url::to(['coins/transactions'])?>" class="link-btn">Транзакции</a>
+                                    </li>
                                 </ul>
                             </li>
-                            <li style="margin-left: 10px">
+                            <li>
                                 <button type="button"
                                         class="btn btn-w-m btn-primary"
                                         data-toggle="modal"
@@ -87,11 +91,11 @@ AppAsset::register($this);
                                     Пополнить
                                 </button>
                             </li>
-                            <li class="dropdown" style="margin-left: 10px">
+                            <li class="dropdown bell">
                                 <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
                                     <i class="fa fa-bell"></i>  <span class="label label-primary">8</span>
                                 </a>
-                                <ul class="dropdown-menu dropdown-alerts">
+                                <ul class="dropdown-menu dropdown-alerts animated fadeInRight">
                                     <li>
                                         <a href="mailbox.html">
                                             <div>
@@ -129,7 +133,7 @@ AppAsset::register($this);
                                     </li>
                                 </ul>
                             </li>
-                            <li style="margin-left: 10px">
+                            <li>
                                 <div class="dropdown">
                                     <img alt="image" class="img-circle" src="../image/user_icon.png" />
                                     <a data-toggle="dropdown" class="dropdown-toggle styling-settings" href="#">
@@ -139,10 +143,10 @@ AppAsset::register($this);
                                         </span>
                                     </a>
                                     <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                                        <li><a href="profile.html">Настройки</a></li>
+                                        <li><a href="<?=Url::to(['cabinet/accounts'])?>">Настройки</a></li>
                                         <li><a href="contacts.html">Двухфакторная авторизация</a></li>
-                                        <li><a href="mailbox.html">Мои биржи</a></li>
-                                        <li><a href="mailbox.html">Транзакции</a></li>
+                                        <li><a href="<?=Url::to(['cabinet/accounts'])?>">Мои биржи</a></li>
+                                        <li><a href="<?= Url::to(['coins/transactions'])?>">Транзакции</a></li>
                                         <li><a href="mailbox.html">Уведомления</a></li>
                                         <li class="divider"></li>
                                         <li><form action="/site/logout" method="post">
@@ -194,7 +198,7 @@ AppAsset::register($this);
                         </div>
                         <div class="form-group">
                             <label class="main-label" for="money">Сумма:</label>
-                            <input id="money" type="text" title="money" name="money" style="width: 100%">
+                            <input id="money" type="text" class="form-control" title="money" name="money">
                         </div>
                     </div>
                     <div class="modal-body hidden">
@@ -218,7 +222,7 @@ AppAsset::register($this);
                             <div class="img-qr-block">
                                 <img src="" class="qrcode_url">
                             </div>
-                            <a class="status_url" href="">Status_URL</a>
+                            <a class="status_url" href="" style="display: block;margin-top: 10px">Подробнее</a>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -266,7 +270,7 @@ AppAsset::register($this);
                         </div>
                         <div class="form-group">
                             <label class="main-label" for="value_switch">Количество:</label>
-                            <input id="value_switch" type="text" title="money" name="money" style="width: 100%">
+                            <input id="value_switch" type="text" title="money" name="money" class="form-control">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -304,7 +308,7 @@ AppAsset::register($this);
                         </div>
                         <div class="form-group">
                             <label class="main-label" for="money_withdraw">Цена:</label>
-                            <input id="money_withdraw" type="text" title="money" name="money" style="width: 100%">
+                            <input id="money_withdraw" type="text" title="money" name="money" class="form-control">
                         </div>
                         <div class="form-group">
                             <label class="main-label" for="culture_main_withdraw2">
@@ -322,7 +326,7 @@ AppAsset::register($this);
                                    type="text"
                                    title="purse_withdraw"
                                    name="purse_withdraw"
-                                   style="width: 100%">
+                                   class="form-control">
                         </div>
                     </div>
                     <div class="modal-body hidden">
@@ -346,7 +350,7 @@ AppAsset::register($this);
                             <div class="img-qr-block">
                                 <img src="" class="qrcode_url">
                             </div>
-                            <a class="status_url" href="">Status_URL</a>
+                            <a class="status_url" href="">Подробнее</a>
                         </div>
                     </div>
                     <div class="modal-footer">
