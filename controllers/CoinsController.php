@@ -11,6 +11,8 @@ use app\models\api\CoinPayments;
 
 class CoinsController extends Controller
 {
+    public $layout = 'dashboard-layout';
+
     public function beforeAction($action)
     {
         Yii::$app->controller->enableCsrfValidation = false;
@@ -26,22 +28,25 @@ class CoinsController extends Controller
             $amount = (double)Yii::$app->request->post('value1', '');
             $curr = (string)Yii::$app->request->post('currency1', '');
 
-//            if ($curr !== "USDT" || $curr !== "BTC") {
-//                return ['msg' => ['result'] == 'fail'];
-//            }
-
             $transaction = new Transactions();
-            $transaction->amount1 = $amount;
-            $transaction->type = 'deposit';
-            $transaction->currency1 = $curr;
+            $transaction->amount1     = $amount;
+            $transaction->type        = 'deposit';
+            $transaction->currency1   = $curr;
 //            $transaction->currency2 = $curr;
-            $transaction->user_id = $id;
-            $transaction->buyer_name = Yii::$app->user->identity->username;
+            $transaction->user_id     = $id;
+            $transaction->buyer_name  = Yii::$app->user->identity->username;
             $transaction->buyer_email = Yii::$app->user->identity->email;
+
             $answer = $transaction->createTransaction();
+
             if ($answer['result'] == 'ok') {
                 $transaction->save();
-                return ['msg' => 'ok','status'=>'Транзакция создана успешно','result'=>$answer, 'transaction' => $transaction];
+                return [
+                    'msg' => 'ok',
+                    'status'=>'Транзакция создана успешно',
+                    'result'=>$answer,
+                    'transaction' => $transaction
+                ];
             } else {
                 return ['msg' => 'error','status'=>$answer];
             }
@@ -55,18 +60,18 @@ class CoinsController extends Controller
 
         if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = 'json';
-            $id = Yii::$app->user->getId();
 
+            $id      = Yii::$app->user->getId();
             $amount1 = (double)Yii::$app->request->post('value', '');
-            $curr1 = (string)Yii::$app->request->post('currency1', '');
-            $curr2 = (string)Yii::$app->request->post('currency2', '');
+            $curr1   = (string)Yii::$app->request->post('currency1', '');
+            $curr2   = (string)Yii::$app->request->post('currency2', '');
 
             if (!($user = User::findOne(['id'=>$id]))) {
                 return ['msg' => 'error', 'status' => "No User finded"];
             }
 
-            $cps = new CoinPayments();
-            $rates_btc = $cps->GetRates();
+            $cps                    = new CoinPayments();
+            $rates_btc              = $cps->GetRates();
             $exchangeCommissionRate = (double)(AdminSettings::find()
                                                                 ->where(['id'=>1])
                                                                 ->select('value')
@@ -92,18 +97,23 @@ class CoinsController extends Controller
 
             if ($user->save()) {
                 $transaction = new Transactions();
-                $transaction->type = 'exchange';
-                $transaction->user_id = $id;
-                $transaction->status = 1;
-                $transaction->amount1 = $amount1;
-                $transaction->amount2 = $amount2;
-                $transaction->currency1 = $curr1;
-                $transaction->currency2 = $curr2;
-                $transaction->buyer_name = Yii::$app->user->identity->username;
+                $transaction->type        = 'exchange';
+                $transaction->user_id     = $id;
+                $transaction->status      = 1;
+                $transaction->amount1     = $amount1;
+                $transaction->amount2     = $amount2;
+                $transaction->currency1   = $curr1;
+                $transaction->currency2   = $curr2;
+                $transaction->buyer_name  = Yii::$app->user->identity->username;
                 $transaction->buyer_email = Yii::$app->user->identity->email;
                 $transaction->save();
 
-                return ['msg' => 'ok','status'=>'Обмен средств выполнен успешно', 'value'=>$user->{$curr2.'_money'},'commission'=>$exchangeCommission];
+                return [
+                    'msg'        => 'ok',
+                    'status'     => 'Обмен средств выполнен успешно',
+                    'value'      => $user->{$curr2.'_money'},
+                    'commission' => $exchangeCommission
+                ];
             } else {
                 return ['msg' => 'error', 'status' => "Don't save transaction"];
             }
@@ -115,26 +125,27 @@ class CoinsController extends Controller
     {
         if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = 'json';
-            $id = Yii::$app->user->getId();
 
-            $amount = (double)Yii::$app->request->post('value', '');
-            $curr1 = (string)Yii::$app->request->post('currency1', '');
-            $curr2 = (string)Yii::$app->request->post('currency2', '');
+            $id         = Yii::$app->user->getId();
+            $amount     = (double)Yii::$app->request->post('value', '');
+            $curr1      = (string)Yii::$app->request->post('currency1', '');
+            $curr2      = (string)Yii::$app->request->post('currency2', '');
             $user_purse = (string)Yii::$app->request->post('user_purse', '');
 
             $transaction = new Transactions();
-            $transaction->amount1 = $amount;
-            $transaction->amount2 = $transaction->amount1;
-            $transaction->currency1 = $curr1;
-            $transaction->currency2 = $curr2;
-            $transaction->type = 'withdraw';
-            $transaction->user_purse = $user_purse;
-            $transaction->status = 0;
-            $transaction->user_id = $id;
-            $transaction->buyer_name = Yii::$app->user->identity->username;
+            $transaction->amount1     = $amount;
+            $transaction->amount2     = $transaction->amount1;
+            $transaction->currency1   = $curr1;
+            $transaction->currency2   = $curr2;
+            $transaction->type        = 'withdraw';
+            $transaction->user_purse  = $user_purse;
+            $transaction->status      = 0;
+            $transaction->user_id     = $id;
+            $transaction->buyer_name  = Yii::$app->user->identity->username;
             $transaction->buyer_email = Yii::$app->user->identity->email;
 
             $user = User::find()->where(['id' => $id])->one();
+
             if (User::allowedCurrency($curr1)) {
                 if ($user->{$curr1.'_money'} < $amount) {
                     return ['msg' => 'error', 'status' => "Don't have balance"];
@@ -149,7 +160,7 @@ class CoinsController extends Controller
                     $transaction->delete();
                     return ['msg' => 'error', 'status' => "Don't save user"];
                 }
-                return ['msg' => 'ok', 'status' => 'Транзакция создана успешно','result'=>$transaction];
+                return ['msg' => 'ok', 'status' => 'Транзакция создана успешно', 'result' => $transaction];
             } else {
                 return ['msg' => 'error', 'status' => "Don't save transaction"];
             }
@@ -160,8 +171,7 @@ class CoinsController extends Controller
     public function actionTransactions()
     {
         $data = [];
-        $id = Yii::$app->user->getId();
-        $this->layout = 'dashboard-layout';
+        $id   = Yii::$app->user->getId();
 
         if (Yii::$app->user->identity->user_role == "admin") {
             $data['transactions'] = Transactions::find()->all();
@@ -171,6 +181,7 @@ class CoinsController extends Controller
 
         return $this->render('transactions', $data);
     }
+
     public function actionTransactionDone()
     {
         if (Yii::$app->request->isAjax) {
@@ -180,7 +191,7 @@ class CoinsController extends Controller
 
                 $transaction_id = (int)Yii::$app->request->post('transaction_id', '');
 
-                if (!($transaction = Transactions::findOne(['id'=>$transaction_id]) )) {
+                if (!($transaction = Transactions::findOne(['id' => $transaction_id]) )) {
                     return ['msg' => 'error', 'status' => "No Transaction finded"];
                 }
 

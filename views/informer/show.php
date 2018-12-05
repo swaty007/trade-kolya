@@ -16,14 +16,14 @@
                         <a href="<?=$informer->link?>" style="display: block; margin-bottom: 10px">Ссылка на ресурс</a>
                     </div>
                     <?php if (!empty($informer->tag)) :?>
-                    <div class="tags">
-                        <h5 style="display: inline-block;">Tags:</h5>
-                        <?php foreach ($informer->tag as $tag) :?>
-                            <a class="btn btn-white btn-xs tag" type="button">
-                                <?=$tag->tag_name?>
-                            </a>
-                        <?php endforeach;?>
-                    </div>
+                        <div class="tags">
+                            <h5 style="display: inline-block;">Tags:</h5>
+                            <?php foreach ($informer->tag as $tag) :?>
+                                <a class="btn btn-white btn-xs tag" type="button">
+                                    <?=$tag->tag_name?>
+                                </a>
+                            <?php endforeach;?>
+                        </div>
                     <?php endif;?>
                     <?php if (!empty($informer->category)) :?>
                         <div class="categories">

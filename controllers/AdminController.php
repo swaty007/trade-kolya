@@ -4,22 +4,12 @@ namespace app\controllers;
 
 use app\models\AdminSettings;
 use app\models\Categories;
-use app\models\InformerTag;
-use app\models\InvestPools;
-use app\models\Transactions;
 use app\models\User;
-use app\models\UserPools;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\helpers\VarDumper;
-use yii\widgets\Menu;
-use app\models\UserMenu;
-use app\models\Informer;
-use app\models\InformerCategory;
 use app\models\Tags;
 use app\models\UserMarketplace;
-
 
 class AdminController extends Controller
 {
@@ -99,9 +89,9 @@ class AdminController extends Controller
                 $setting->value = $value;
 
                 if ($setting->save()) {
-                    return ['msg' => 'ok','status'=>'Настройка сохранена',  'setting' => $setting];
+                    return ['msg' => 'ok','status'=>'Настройка сохранена', 'setting' => $setting];
                 } else {
-                    return ['msg' => 'error','status'=>'При сохранении произошла ошибка',  'setting' => $setting];
+                    return ['msg' => 'error','status'=>'При сохранении произошла ошибка', 'setting' => $setting];
                 }
 
             } else {

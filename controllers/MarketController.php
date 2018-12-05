@@ -2,26 +2,16 @@
 
 namespace app\controllers;
 
-use app\models\Categories;
-use app\models\InformerTag;
-use app\models\InvestPools;
 use app\models\Transactions;
 use app\models\User;
 use app\models\UserMarkets;
-use app\models\UserPools;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\helpers\VarDumper;
-use yii\widgets\Menu;
-use app\models\UserMenu;
-use app\models\Informer;
-use app\models\InformerCategory;
-use app\models\Tags;
 use app\models\Markets;
 use app\models\UserMarketplace;
 
-class MarketController extends \yii\web\Controller
+class MarketController extends Controller
 {
     public $layout = 'dashboard-layout';
 
@@ -64,19 +54,21 @@ class MarketController extends \yii\web\Controller
 
     public function actionIndex()
     {
-        $data = [];
-        $id = Yii::$app->user->getId();
-        $data['markets_active'] = Markets::find()->where(['status' => 'active'])->orderBy('date_update DESC')->all();
+        $data                    = [];
+        $id                      = Yii::$app->user->getId();
+        $data['markets_active']  = Markets::find()->where(['status' => 'active'])->orderBy('date_update DESC')->all();
         $data['markets_archive'] = Markets::find()->where(['status' => 'archive'])->orderBy('date_update DESC')->all();
 
         $users_markets_ids = [];
-//        foreach (UserMarketplace::find()->where(['user_id' => $id])->select('user_market_id')->distinct()->all() as $users_markets_id) {
-//            $users_markets_ids[] = $users_markets_id->user_market_id;//надо менять селект
-//        }
+
         foreach (UserMarkets::find()->where(['user_id' => $id])->select(['market_id'])->all() as $users_markets_id) {
             $users_markets_ids[] = $users_markets_id->market_id;
         }
-        $data['markets_user'] = Markets::find()->where(['IN','id',$users_markets_ids])->orderBy('date_update DESC')->all();
+
+        $data['markets_user'] = Markets::find()
+            ->where(['IN','id',$users_markets_ids])
+            ->orderBy('date_update DESC')
+            ->all();
 
         $data['types'] = ['api','telegram'];
 
@@ -96,30 +88,30 @@ class MarketController extends \yii\web\Controller
     {
         if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = 'json';
-            $id = Yii::$app->user->getId();
-
-            $title = (string)Yii::$app->request->post('title', '');
-            $type = (string)Yii::$app->request->post('type', '');
+            $id          = Yii::$app->user->getId();
+            $title       = (string)Yii::$app->request->post('title', '');
+            $type        = (string)Yii::$app->request->post('type', '');
             $description = (string)Yii::$app->request->post('description', '');
-            $cost = (double)Yii::$app->request->post('cost', 0);
+            $cost        = (double)Yii::$app->request->post('cost', 0);
             $time_action = (int)Yii::$app->request->post('time_action', '');
-            $count_api = (int)Yii::$app->request->post('count_api', '');
+            $count_api   = (int)Yii::$app->request->post('count_api', '');
 
-            $market = new Markets();
-            $market->title = $title;
-            $market->type = $type;
+            $market              = new Markets();
+            $market->title       = $title;
+            $market->type        = $type;
             $market->description = $description;
-            $market->cost = $cost;
+            $market->cost        = $cost;
             $market->time_action = $time_action;
-            $market->count_api = $count_api;
+            $market->count_api   = $count_api;
 
             if ($market->save()) {
-                return ['msg' => 'ok', 'status'=>'Маркет создан', 'market' => $market];
+                return ['msg' => 'ok', 'status' => 'Маркет создан', 'market' => $market];
             } else {
-                return ['msg' => 'error', 'status'=>'Маркет не сохранился', 'market' => $market];
+                return ['msg' => 'error', 'status' => 'Маркет не сохранился', 'market' => $market];
             }
         }
     }
+
     public function actionUpdateMarket()
     {
         if (Yii::$app->request->isAjax) {
@@ -127,24 +119,24 @@ class MarketController extends \yii\web\Controller
             if (User::canAdmin()) {
                 Yii::$app->response->format = 'json';
 
-                $market_id = (int)Yii::$app->request->post('market_id', '');
-                $title = (string)Yii::$app->request->post('title', '');
-                $type = (string)Yii::$app->request->post('type', '');
+                $market_id   = (int)Yii::$app->request->post('market_id', '');
+                $title       = (string)Yii::$app->request->post('title', '');
+                $type        = (string)Yii::$app->request->post('type', '');
                 $description = (string)Yii::$app->request->post('description', '');
-                $cost = (double)Yii::$app->request->post('cost', 0);
+                $cost        = (double)Yii::$app->request->post('cost', 0);
                 $time_action = (int)Yii::$app->request->post('time_action', '');
-                $count_api = (int)Yii::$app->request->post('count_api', '');
+                $count_api   = (int)Yii::$app->request->post('count_api', '');
 
                 if (!($market = Markets::findOne(['id'=>$market_id]) )) {
                     return ['msg' => 'error', 'status' => "No Market finded"];
                 }
 
-                $market->title = $title;
-                $market->type = $type;
+                $market->title       = $title;
+                $market->type        = $type;
                 $market->description = $description;
-                $market->cost = $cost;
+                $market->cost        = $cost;
                 $market->time_action = $time_action;
-                $market->count_api = $count_api;
+                $market->count_api   = $count_api;
 
                 if ($market->save()) {
                     return ['msg' => 'ok', 'status' => "Market updated"];
@@ -192,11 +184,9 @@ class MarketController extends \yii\web\Controller
     {
         if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = 'json';
-            $id = Yii::$app->user->getId();
-
-            $market_id = (int)Yii::$app->request->post('market_id', '');
+            $id            = Yii::$app->user->getId();
+            $market_id     = (int)Yii::$app->request->post('market_id', '');
             $invest_method = "USDT";
-
 
             if (!($market = Markets::findOne(['id'=>$market_id]) )) {
                 return ['msg' => 'error', 'status' => "No Market finded"];
@@ -221,37 +211,38 @@ class MarketController extends \yii\web\Controller
                 return ['msg' => 'error', 'status' => "User don't save"];
             }
 
-            $user_market = new UserMarkets();
-            $user_market->user_id = $user->id;
-            $user_market->market_id = $market->id;
-            $user_market->count_api = $market->count_api;
+            $user_market              = new UserMarkets();
+            $user_market->user_id     = $user->id;
+            $user_market->market_id   = $market->id;
+            $user_market->count_api   = $market->count_api;
             $user_market->time_action = $market->time_action; //($market->time_action*(60*60*24))
             if (!$user_market->save()) {
                 return ['msg' => 'error', 'status' => "User Market don't save"];
             }
 
-            $transaction = new Transactions();
-            $transaction->type = 'market';
-            $transaction->user_id = $id;
-            $transaction->status = 1;
-            $transaction->amount1 = $market->cost;
-            $transaction->currency1 = $invest_method;
-            $transaction->buyer_name = Yii::$app->user->identity->username;
+            $transaction              = new Transactions();
+            $transaction->type        = 'market';
+            $transaction->user_id     = $id;
+            $transaction->status      = 1;
+            $transaction->amount1     = $market->cost;
+            $transaction->currency1   = $invest_method;
+            $transaction->buyer_name  = Yii::$app->user->identity->username;
             $transaction->buyer_email = Yii::$app->user->identity->email;
+
             $transaction->save();
 
             return ['msg' => 'ok', 'status' => 'Marketplace buyed'];
         }
     }
+
     public function actionMarketplaceToApi()
     {
         if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = 'json';
-            $id = Yii::$app->user->getId();
-            $marketplaces = (array)Yii::$app->request->post('marketplace', 0);
+            $id             = Yii::$app->user->getId();
+            $marketplaces   = (array)Yii::$app->request->post('marketplace', 0);
             $user_market_id = (array)Yii::$app->request->post('user_market_id', 0);
-
-            $today = date('Y-m-d');
+            $today          = date('Y-m-d');
 
             if (!($user_market = UserMarkets::findOne(['id'=>$user_market_id,'user_id'=>$id]) )) {
                 return ['msg' => 'error', 'status' => "No User Market finded"];
@@ -262,6 +253,7 @@ class MarketController extends \yii\web\Controller
                 ->andWhere(['IN','user_marketplace_id',$marketplaces])
                 ->andWhere(['user_market_id' => 0])
                 ->count();
+
             if ((int)count($marketplaces) > (int)$user_market->count_api
                 || (int)$user_marketplaces_count !== (int)count($marketplaces)
             ) {
@@ -275,7 +267,7 @@ class MarketController extends \yii\web\Controller
                     ->andWhere(['user_market_id' => 0])
                     ->andWhere(['user_marketplace_id'=>$marketplace])
                     ->one();
-                $u_marketplace->user_market_id = $user_market->id;
+                $u_marketplace->user_market_id  = $user_market->id;
                 $u_marketplace->market_date_end = date('Y-m-d', $days_with_action);
 
                 $user_market->count_api -= 1;

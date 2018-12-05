@@ -133,4 +133,9 @@ body.mini-navbar .nav-header {
     text-overflow: ellipsis; /* Добавляем многоточие */
 }
 
+#page-wrapper, .new-navbar {
+    -webkit-transition: ease 0.7s; /* Safari */
+    transition: ease 0.7s;
+}
+
 

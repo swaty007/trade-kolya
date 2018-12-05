@@ -117,9 +117,9 @@ function deletePool(id,_this) {
 function investPool(id,_this) {
     let el = $(_this).closest('.pool_block'),
         data = {
-        pool_id: Number(id),
-        value: el.find('input.value').val()
-    };
+            pool_id: Number(id),
+            value: el.find('input.value').val()
+        };
     console.log(data);
 
     $.ajax({

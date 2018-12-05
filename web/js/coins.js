@@ -83,21 +83,21 @@ $(document).on('click',"#switch_coin", function(e) {
 });
 
 function transationDone(transaction_id) {
-        event.preventDefault();
-        let data = {
-            transaction_id: transaction_id,
-        };
-        console.log(data);
+    event.preventDefault();
+    let data = {
+        transaction_id: transaction_id,
+    };
+    console.log(data);
 
-        $.ajax({
-            type: "POST",
-            url: "/coins/transaction-done",
-            data: data,
-            success: function (msg) {
-                console.log(msg);
-                showToastr(msg);
-            }
-        })
+    $.ajax({
+        type: "POST",
+        url: "/coins/transaction-done",
+        data: data,
+        success: function (msg) {
+            console.log(msg);
+            showToastr(msg);
+        }
+    })
 }
 
 function copyText(_this, text) {

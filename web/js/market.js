@@ -67,8 +67,8 @@ function editMarket(market_id,_this) {
 }
 function deleteMarket(id,_this) {
     let data = {
-            market_id: Number(id),
-        };
+        market_id: Number(id),
+    };
     console.log(data);
 
     $.ajax({

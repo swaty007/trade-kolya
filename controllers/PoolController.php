@@ -44,7 +44,6 @@ class PoolController extends Controller
      *
      * @return string
      */
-
     public function actionCron()
     {
 
@@ -59,24 +58,27 @@ class PoolController extends Controller
 
                         if ($in_pool < $pool->min_size_invest && $in_pool > $pool->max_size_invest) {
                             foreach (UserPools::find()->where(['pool_id' => $pool->id])->all() as $u_pool) {
-                                $user = User::find()->where(['id' => $u_pool->user_id])->one();
+                                $user          = User::find()->where(['id' => $u_pool->user_id])->one();
                                 $invest_method = $pool->invest_method;
+
                                 if (User::allowedCurrency($invest_method)) {
                                     $user->{$invest_method.'_money'} += $u_pool->invest;
                                 } else {
                                     return ['msg' => 'error', 'status' => "Failed currency"];
                                 }
+
                                 if ($user->save()) {
-                                    $transaction = new Transactions();
-                                    $transaction->type = 'pool';
-                                    $transaction->user_id = $user->id;
-                                    $transaction->status = -1;
-                                    $transaction->amount1 = $u_pool->invest;
-//                $transaction->amount2 = $amount2;
-                                    $transaction->currency1 = $invest_method;
-//                $transaction->currency2 = $curr2;
-                                    $transaction->buyer_name = Yii::$app->user->identity->username;
+                                    $transaction              = new Transactions();
+                                    $transaction->type        = 'pool';
+                                    $transaction->user_id     = $user->id;
+                                    $transaction->status      = -1;
+                                    $transaction->amount1     = $u_pool->invest;
+                                    //$transaction->amount2     = $amount2;
+                                    $transaction->currency1   = $invest_method;
+                                    //$transaction->currency2   = $curr2;
+                                    $transaction->buyer_name  = Yii::$app->user->identity->username;
                                     $transaction->buyer_email = Yii::$app->user->identity->email;
+
                                     $transaction->save();
 
                                     if (!$u_pool->delete()) {
@@ -88,15 +90,20 @@ class PoolController extends Controller
                             }
                             $pool->status = "archive";
                         }
-
                     }
                     break;
                 case 'active':
-                    $all_period = (int)((strtotime($pool->date_end) - strtotime($pool->date_start))/(60*60*24));
+                    $all_period      = (int)((strtotime($pool->date_end) - strtotime($pool->date_start))/(60*60*24));
                     $days_from_start = (int)((strtotime($today) - strtotime($pool->date_start))/(60*60*24));
-                    foreach (UserPools::find()->where(['pool_id' => $pool->id])->andWhere(['status'=>'deposit'])->all() as $u_pool) {
+                    $user_pools      = UserPools::find()
+                                                    ->where(['pool_id' => $pool->id])
+                                                    ->andWhere(['status'=>'deposit'])
+                                                    ->all();
+
+                    foreach ($user_pools as $u_pool) {
                         if (((int)($all_period/$pool->diversification)*$u_pool->diversification <= $days_from_start)) {
                             $user = User::find()->where(['id' => $u_pool->user_id])->one();
+
                             if (User::allowedCurrency($pool->invest_method)) {
                                 $transaction_pay_val = (($u_pool->invest*$pool->profit)/100)/$pool->diversification;
                                 $user->{$pool->invest_method.'_money'} +=  $transaction_pay_val;
@@ -104,7 +111,9 @@ class PoolController extends Controller
                                 Yii::error("Failed invest method");
                             }
 
-                            if (User::allowedCurrency($pool->invest_method) && $u_pool->diversification == $pool->diversification) {
+                            if (User::allowedCurrency($pool->invest_method)
+                                && $u_pool->diversification == $pool->diversification
+                            ) {
                                 $u_pool->status = 'withdraw';
                                 $user->{$pool->invest_method.'_money'} +=  $u_pool->invest;
                                 $transaction_pay_val += $u_pool->invest;
@@ -115,14 +124,15 @@ class PoolController extends Controller
                             $u_pool->diversification += 1;
 
                             if ($u_pool->save()) {
-                                $transaction = new Transactions();
-                                $transaction->type = 'pool';
-                                $transaction->user_id = $user->id;
-                                $transaction->status = 2;
-                                $transaction->amount1 = $transaction_pay_val;
-                                $transaction->currency1 = $pool->invest_method;
-                                $transaction->buyer_name = Yii::$app->user->identity->username;
+                                $transaction              = new Transactions();
+                                $transaction->type        = 'pool';
+                                $transaction->user_id     = $user->id;
+                                $transaction->status      = 2;
+                                $transaction->amount1     = $transaction_pay_val;
+                                $transaction->currency1   = $pool->invest_method;
+                                $transaction->buyer_name  = Yii::$app->user->identity->username;
                                 $transaction->buyer_email = Yii::$app->user->identity->email;
+
                                 $transaction->save();
 
                                 if (!$user->save()) {
@@ -135,7 +145,9 @@ class PoolController extends Controller
                             }
                         }
                     }
-                    if ($today > $pool->date_end && !UserPools::find()->where(['pool_id' => $pool->id])->andWhere(['status'=>'deposit'])->count()) {
+                    if ($today > $pool->date_end
+                        && !UserPools::find()->where(['pool_id' => $pool->id])->andWhere(['status'=>'deposit'])->count()
+                    ) {
                         $pool->status = "archive";
                     }
                     break;
@@ -151,12 +163,26 @@ class PoolController extends Controller
     public function actionIndex()
     {
         $data = [];
-        //$data['menu'] = $this->menu();
         $id = Yii::$app->user->getId();
 
-        $data['pools_new'] = InvestPools::find()->with('comments.user')->where(['status' => 'new'])->orderBy('date_start ASC')->asArray()->all();
-        $data['pools_active'] = InvestPools::find()->with('comments.user')->where(['status' => 'active'])->orderBy('date_start ASC')->asArray()->all();
-        $data['pools_archive'] = InvestPools::find()->with('comments.user')->where(['status' => 'archive'])->orderBy('date_start ASC')->asArray()->all();
+        $data['pools_new']     = InvestPools::find()
+            ->with('comments.user')
+            ->where(['status' => 'new'])
+            ->orderBy('date_start ASC')
+            ->asArray()
+            ->all();
+        $data['pools_active']  = InvestPools::find()
+            ->with('comments.user')
+            ->where(['status' => 'active'])
+            ->orderBy('date_start ASC')
+            ->asArray()
+            ->all();
+        $data['pools_archive'] = InvestPools::find()
+            ->with('comments.user')
+            ->where(['status' => 'archive'])
+            ->orderBy('date_start ASC')
+            ->asArray()
+            ->all();
 
         $u_pools = UserPools::find()->where(['user_id' => $id])->asArray()->all();
 
@@ -172,7 +198,11 @@ class PoolController extends Controller
         foreach ($data['pools_archive'] as $item_archive) {
             $data['info_pools'][$item_archive['id']] = $item_archive;
         }
-        foreach (UserPools::find()->select('SUM(invest) AS invest, pool_id')->groupBy('pool_id')->asArray()->all() as $item_sum) {
+        foreach (UserPools::find()
+                     ->select('SUM(invest) AS invest, pool_id')
+                     ->groupBy('pool_id')
+                     ->asArray()
+                     ->all() as $item_sum) {
             $data['info_pools'][$item_sum['pool_id']]['sum_invest'] = $item_sum['invest'];
         }
 
@@ -190,35 +220,34 @@ class PoolController extends Controller
     {
         if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = 'json';
-            $id = Yii::$app->user->getId();
-
-            $profit = (int)Yii::$app->request->post('profit', '');
-            $min_invest = (double)Yii::$app->request->post('min_invest', '');
-            $pool_method = (string)Yii::$app->request->post('pool_method', '');
+            $id              = Yii::$app->user->getId();
+            $profit          = (int)Yii::$app->request->post('profit', '');
+            $min_invest      = (double)Yii::$app->request->post('min_invest', '');
+            $pool_method     = (string)Yii::$app->request->post('pool_method', '');
             $diversification = (int)Yii::$app->request->post('diversification', 1);
-            $name = (string)Yii::$app->request->post('name', '');
-            $desc = (string)Yii::$app->request->post('description', '');
-            $date_start = Yii::$app->request->post('date_start', '');
-            $date_end = Yii::$app->request->post('date_start', '');
-            $min_size = (double)Yii::$app->request->post('min_size', '');
-            $max_size = (double)Yii::$app->request->post('max_size', '');
+            $name            = (string)Yii::$app->request->post('name', '');
+            $desc            = (string)Yii::$app->request->post('description', '');
+            $date_start      = Yii::$app->request->post('date_start', '');
+            $date_end        = Yii::$app->request->post('date_start', '');
+            $min_size        = (double)Yii::$app->request->post('min_size', '');
+            $max_size        = (double)Yii::$app->request->post('max_size', '');
 
-            $pool = new InvestPools();
-            $pool->min_invest = $min_invest;
-            $pool->invest_method = $pool_method;
+            $pool                  = new InvestPools();
+            $pool->min_invest      = $min_invest;
+            $pool->invest_method   = $pool_method;
             $pool->diversification = $diversification;
-            $pool->profit = $profit;
-            $pool->name = $name;
-            $pool->description = $desc;
-            $pool->date_start = $date_start;
-            $pool->date_end = $date_end;
+            $pool->profit          = $profit;
+            $pool->name            = $name;
+            $pool->description     = $desc;
+            $pool->date_start      = $date_start;
+            $pool->date_end        = $date_end;
             $pool->min_size_invest = $min_size;
             $pool->max_size_invest = $max_size;
 
             if ($pool->save()) {
-                return ['msg' => 'ok', 'status'=>'Пул создан', 'pool' => $pool];
+                return ['msg' => 'ok', 'pool' => $pool];
             } else {
-                return ['msg' => 'error', 'status'=>'Пул не сохранен', 'pool' => $pool];
+                return ['msg' => 'error', 'pool' => $pool];
             }
         }
     }
@@ -239,7 +268,9 @@ class PoolController extends Controller
                 if (InvestPools::haveInvest($pool->id)) {
                     return ['msg' => 'error', 'status' => 'Have money in invest'];
                 }
+
                 CommentsPools::deleteAll(['pool_id'=>$pool_id]);
+
                 if ($pool->delete()) {
                     return ['msg' => 'ok', 'status' => "Pool deleted"];
                 } else {
@@ -255,10 +286,9 @@ class PoolController extends Controller
     {
         if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = 'json';
-            $id = Yii::$app->user->getId();
-
+            $id      = Yii::$app->user->getId();
             $pool_id = (int)Yii::$app->request->post('pool_id', '');
-            $value = (double)Yii::$app->request->post('value', 0);
+            $value   = (double)Yii::$app->request->post('value', 0);
 
             if (!($pool = InvestPools::findOne(['id'=>$pool_id]) )) {
                 return ['msg' => 'error', 'status' => "No Invest Pool finded"];
@@ -270,13 +300,13 @@ class PoolController extends Controller
                 return ['msg' => 'error', 'status' => "Archive/Active Pool"];
             }
 
-            $u_pool = new UserPools();
-            $u_pool->user_id = $id;
-            $u_pool->pool_id = $pool_id;
-            $u_pool->invest = $value;
+            $u_pool                  = new UserPools();
+            $u_pool->user_id         = $id;
+            $u_pool->pool_id         = $pool_id;
+            $u_pool->invest          = $value;
             $u_pool->diversification = 1;
 
-            $invest_method = $pool->invest_method;
+            $invest_method           = $pool->invest_method;
 
             if (User::allowedCurrency($invest_method)) {
                 if ($user->{$invest_method.'_money'} < $value) {
@@ -301,23 +331,23 @@ class PoolController extends Controller
                     return ['msg' => 'error', 'status' => "User don't save"];
                 }
 
-                $transaction = new Transactions();
-                $transaction->type = 'pool';
-                $transaction->user_id = $id;
-                $transaction->status = 1;
-                $transaction->amount1 = $u_pool->invest;
+                $transaction              = new Transactions();
+                $transaction->type        = 'pool';
+                $transaction->user_id     = $id;
+                $transaction->status      = 1;
+                $transaction->amount1     = $u_pool->invest;
 //                $transaction->amount2 = $amount2;
-                $transaction->currency1 = $invest_method;
+                $transaction->currency1   = $invest_method;
 //                $transaction->currency2 = $curr2;
-                $transaction->buyer_name = Yii::$app->user->identity->username;
+                $transaction->buyer_name  = Yii::$app->user->identity->username;
                 $transaction->buyer_email = Yii::$app->user->identity->email;
+
                 $transaction->save();
 
-                return ['msg' => 'ok', 'status'=>'Пул создан', 'pool' => $u_pool];
+                return ['msg' => 'ok', 'status' => $u_pool];
             } else {
                 return ['msg' => 'error', 'status' => "Don't save pool"];
             }
-
         }
     }
 
@@ -339,9 +369,10 @@ class PoolController extends Controller
                 if ($pool->status === 'archive' || $pool->status === 'active') {
                     return ['msg' => 'error', 'status' => "Archive/Active Pool"];
                 }
-                $user = User::find()->where(['id' => $u_pool->user_id])->one();
+                $user          = User::find()->where(['id' => $u_pool->user_id])->one();
                 $invest_method = $pool->invest_method;
-                $invest = $u_pool->invest;
+                $invest        = $u_pool->invest;
+
                 if (User::allowedCurrency($invest_method)) {
                     $user->{$invest_method.'_money'} += $invest;
                 } else {
@@ -350,16 +381,17 @@ class PoolController extends Controller
 
                 if ($user->save()) {
                     if ($u_pool->delete()) {
-                        $transaction = new Transactions();
-                        $transaction->type = 'pool';
-                        $transaction->user_id = $user->id;
-                        $transaction->status = -1;
-                        $transaction->amount1 = $invest;
+                        $transaction              = new Transactions();
+                        $transaction->type        = 'pool';
+                        $transaction->user_id     = $user->id;
+                        $transaction->status      = -1;
+                        $transaction->amount1     = $invest;
 //                $transaction->amount2 = $amount2;
-                        $transaction->currency1 = $invest_method;
+                        $transaction->currency1   = $invest_method;
 //                $transaction->currency2 = $curr2;
-                        $transaction->buyer_name = Yii::$app->user->identity->username;
+                        $transaction->buyer_name  = Yii::$app->user->identity->username;
                         $transaction->buyer_email = Yii::$app->user->identity->email;
+
                         $transaction->save();
 
                         return ['msg' => 'ok', 'status' => "User Pool deleted and returned money"];
@@ -382,17 +414,17 @@ class PoolController extends Controller
             if (User::canAdmin()) {
                 Yii::$app->response->format = 'json';
 
-                $pool_id = (int)Yii::$app->request->post('pool_id', '');
-                $profit = (int)Yii::$app->request->post('profit', '');
-                $min_invest = (double)Yii::$app->request->post('min_invest', '');
-                $pool_method = (string)Yii::$app->request->post('pool_method', '');
+                $pool_id         = (int)Yii::$app->request->post('pool_id', '');
+                $profit          = (int)Yii::$app->request->post('profit', '');
+                $min_invest      = (double)Yii::$app->request->post('min_invest', '');
+                $pool_method     = (string)Yii::$app->request->post('pool_method', '');
                 $diversification = (string)Yii::$app->request->post('diversification', '');
-                $name = (string)Yii::$app->request->post('name', '');
-                $desc = (string)Yii::$app->request->post('description', '');
-                $date_start = Yii::$app->request->post('date_start', '');
-                $date_end = Yii::$app->request->post('date_start', '');
-                $min_size = (double)Yii::$app->request->post('min_size', '');
-                $max_size = (double)Yii::$app->request->post('max_size', '');
+                $name            = (string)Yii::$app->request->post('name', '');
+                $desc            = (string)Yii::$app->request->post('description', '');
+                $date_start      = Yii::$app->request->post('date_start', '');
+                $date_end        = Yii::$app->request->post('date_start', '');
+                $min_size        = (double)Yii::$app->request->post('min_size', '');
+                $max_size        = (double)Yii::$app->request->post('max_size', '');
 
                 if (!($pool = InvestPools::findOne(['id'=>$pool_id]) )) {
                     return ['msg' => 'error', 'status' => "No Invest Pool finded"];
@@ -402,17 +434,16 @@ class PoolController extends Controller
                     return ['msg' => 'error', 'status' => 'Have money in invest'];
                 }
 
-                $pool->min_invest = $min_invest;
-                $pool->invest_method = $pool_method;
-                $pool->profit = $profit;
-                $pool->name = $name;
-                $pool->description = $desc;
+                $pool->min_invest      = $min_invest;
+                $pool->invest_method   = $pool_method;
+                $pool->profit          = $profit;
+                $pool->name            = $name;
+                $pool->description     = $desc;
                 $pool->diversification = $diversification;
-                $pool->date_start = $date_start;
-                $pool->date_end = $date_end;
+                $pool->date_start      = $date_start;
+                $pool->date_end        = $date_end;
                 $pool->min_size_invest = $min_size;
                 $pool->max_size_invest = $max_size;
-
 
                 if ($pool->save()) {
                     return ['msg' => 'ok', 'status' => "Pool updated"];
@@ -443,7 +474,7 @@ class PoolController extends Controller
                     return ['msg' => 'error', 'status' => "No Invest Pool finded"];
                 }
 
-                $u_comment = new CommentsPools();
+                $u_comment          = new CommentsPools();
                 $u_comment->user_id = $id;
                 $u_comment->pool_id = $pool->id;
                 $u_comment->comment = $comment;
@@ -467,7 +498,7 @@ class PoolController extends Controller
                 Yii::$app->response->format = 'json';
 
                 $comment_id = (int)Yii::$app->request->post('comment_id', '');
-                if (!($u_comment = CommentsPools::findOne(['id'=>$comment_id]) )) {
+                if (!($u_comment = CommentsPools::findOne(['id'=>$comment_id]))) {
                     return ['msg' => 'error', 'status' => "No Comment finded"];
                 }
 

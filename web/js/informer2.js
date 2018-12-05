@@ -39,7 +39,7 @@ $(document).on('click',"#create_informer", function(e) {
 $(document).on('click', '.contact-box', function (e) {
     if (e.target.tagName === 'A') return;
     let id = $(this).attr('data-id'),
-    link = $('#informer_pjax_link');
+        link = $('#informer_pjax_link');
     link.attr('href','/informer?id='+id);
     link.click();
 });

@@ -130,8 +130,6 @@
     </div>
 </div>
 
-
-
 <div class="modal inmodal" id="market-to-api" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content animated bounceInRight">
@@ -147,7 +145,11 @@
                 <div class="form-group select-style">
                     <label class="main-label">Выбрать апи</label>
                     <div class="input-group">
-                        <select id="market_placeid_buy" data-placeholder="Выбор" class="chosen-select" tabindex="2" multiple>
+                        <select id="market_placeid_buy"
+                                data-placeholder="Выбор"
+                                class="chosen-select"
+                                tabindex="2"
+                                multiple>
                             <?php foreach ($user_marketplace as $value): ?>
                                 <option value="<?= $value["user_marketplace_id"]?>">
                                     <?php echo $value["marketplace_name"]; ?>
