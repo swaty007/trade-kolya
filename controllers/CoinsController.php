@@ -66,6 +66,10 @@ class CoinsController extends Controller
             $curr1   = (string)Yii::$app->request->post('currency1', '');
             $curr2   = (string)Yii::$app->request->post('currency2', '');
 
+            if($curr1 === $curr2) {
+                return ['msg' => 'error', 'status' => "Одинаковые валюты"];
+            }
+
             if (!($user = User::findOne(['id'=>$id]))) {
                 return ['msg' => 'error', 'status' => "No User finded"];
             }
