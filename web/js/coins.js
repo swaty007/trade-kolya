@@ -11,7 +11,7 @@ $(document).on('click',"#send", function(e) {
         url: "/coins/create-transaction",
         data: data,
         success: function (msg) {
-            console.log(msg.msg);
+            console.log(msg);
             showToastr(msg);
             let answer = $('#payments');
             if (msg.msg === 'ok') {
@@ -77,6 +77,7 @@ $(document).on('click',"#switch_coin", function(e) {
             console.log(msg);
             showToastr(msg);
             closeModal($('#switchRate'));
+            finishPjax('#balance_pjax');
         }
     })
 });
@@ -95,6 +96,7 @@ function transationDone(transaction_id) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            finishPjax();
         }
     })
 }

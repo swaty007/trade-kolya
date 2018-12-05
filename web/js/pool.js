@@ -30,6 +30,7 @@ $(document).on('click',"#create_pool", function(e) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            finishPjax();
         }
     })
 });
@@ -58,6 +59,7 @@ $(document).on('click',"#update_pool", function(e) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            finishPjax();
         }
     })
 });
@@ -108,7 +110,7 @@ function deletePool(id,_this) {
             console.log(msg);
             showToastr(msg);
             if (msg.msg === 'ok') {
-                el.remove();
+                finishPjax();
             }
         }
     })
@@ -129,6 +131,8 @@ function investPool(id,_this) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            finishPjax('#balance_pjax');
+            finishPjax();
         }
     })
 }
@@ -149,6 +153,7 @@ function returnUserMoney(id,_this) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            finishPjax();
         }
     })
 }
@@ -168,6 +173,7 @@ function createPoolComment(id,_this) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            finishPjax();
         }
     })
 }

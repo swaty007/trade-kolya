@@ -23,9 +23,9 @@ toastr.options = {
     positionClass: 'toast-top-right',
     onclick: null
 };
-toastr.options.showDuration = 0;
+toastr.options.showDuration = 300;
 toastr.options.hideDuration = 1000;
-toastr.options.timeOut = 3000;
+toastr.options.timeOut = 5000;
 toastr.options.extendedTimeOut = 1000;
 toastr.options.showEasing = 'swing';
 toastr.options.hideEasing = 'linear';
@@ -40,9 +40,18 @@ function showToastr(msg) {
         toastr['error'](msg.status, '');
     }
 }
+function finishPjax(el) {
+    if(typeof $ !== 'undefined') {
+        if (el !== undefined) {
+            $.pjax.reload({container: el});
+        } else {
+            $.pjax.reload({container: '#p0'});
+        }
+    }
+}
 
 function closeModal(modal) {
     setTimeout(function () {
         modal.modal('hide');
-    }, 3000);
+    }, 100);
 }

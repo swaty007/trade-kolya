@@ -32,6 +32,9 @@ $(document).on('click',"#create_informer", function(e) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            closeModal($('#informer-create'));
+            finishPjax('#p0');
+            finishPjax('#p1');
         }
     });
 });
@@ -82,6 +85,8 @@ $(document).on('click',"#update_informer", function(e) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            closeModal($('#informer_edit'));
+            finishPjax('#p0');
         }
     })
 });
@@ -146,7 +151,7 @@ function deleteInformer(id,_this) {
             console.log(msg);
             showToastr(msg);
             if (msg.msg === 'ok') {
-                el.remove();
+                finishPjax('#p0');
             }
         }
     })

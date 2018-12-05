@@ -17,6 +17,7 @@ $(document).on('click',"#create_market", function(e) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            finishPjax();
             closeModal($('#market-create'));
         }
     })
@@ -42,6 +43,7 @@ $(document).on('click',"#update_market", function(e) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            finishPjax();
             closeModal($('#market-edit'));
         }
     })
@@ -79,6 +81,7 @@ function deleteMarket(id,_this) {
         data: data,
         success: function (msg) {
             console.log(msg);
+            finishPjax();
             showToastr(msg);
         }
     })
@@ -101,6 +104,8 @@ $(document).on('click',"#buy_market", function(e) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            finishPjax('#balance_pjax');
+            finishPjax();
             closeModal($('#market-buy'));
         }
     })

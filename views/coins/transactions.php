@@ -45,7 +45,7 @@ $this->title = 'My Yii Application';
                     </div>
                 </div>
                 <div class="ibox-content">
-
+                    <?php \yii\widgets\Pjax::begin(); ?>
                     <table id="data_table" class="table table-striped table-bordered table-hover dataTables-example dataTable dtr-inline">
                         <thead>
                         <tr>
@@ -109,6 +109,7 @@ $this->title = 'My Yii Application';
                         <?php endforeach;?>
                         </tbody>
                     </table>
+                    <?php \yii\widgets\Pjax::end(); ?>
                 </div>
             </div>
 

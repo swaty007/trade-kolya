@@ -36,6 +36,7 @@ $this->title = 'Магазин';
                     </div>
 
                     <div class="panel-body">
+                        <?php \yii\widgets\Pjax::begin(); ?>
                         <div class="tab-content pull-content">
 
                             <div id="tab-1" class="tab-pane active">
@@ -159,6 +160,14 @@ $this->title = 'Магазин';
                             </div>
 
                         </div>
+                        <script>
+                            if(typeof $ !== 'undefined') {
+                                let active_href = $('.nav-tabs li.active a').attr('href');
+                                $('.tab-content .tab-pane').removeClass('active');
+                                $(active_href).addClass('active');
+                            }
+                        </script>
+                        <?php \yii\widgets\Pjax::end(); ?>
                     </div>
 
                 </div>

@@ -38,7 +38,11 @@ AppAsset::register($this);
                                     USDT: <strong><?= (double)Yii::$app->user->identity->USDT_money; ?></strong>
                                     <b class="caret"></b>
                                 </a>
-                                <ul class="dropdown-menu dropdown-alerts animated fadeInRight">
+                                    <?php \yii\widgets\Pjax::begin(['id'=>'balance_pjax',
+                                        'options' => [
+                                            'class' => 'dropdown-menu dropdown-alerts animated fadeInRight',
+                                            'tag'=>'ul'
+                                        ]]); ?>
                                     <li>
                                         <a>
                                             <div>
@@ -80,7 +84,7 @@ AppAsset::register($this);
                                     <li>
                                         <a href="<?= Url::to(['coins/transactions'])?>" class="link-btn">Транзакции</a>
                                     </li>
-                                </ul>
+                                    <?php \yii\widgets\Pjax::end(); ?>
                             </li>
                             <li>
                                 <button type="button"

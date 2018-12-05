@@ -344,7 +344,7 @@ class PoolController extends Controller
 
                 $transaction->save();
 
-                return ['msg' => 'ok', 'status' => $u_pool];
+                return ['msg' => 'ok', 'status' => 'Вы успещно вложили деньги', 'pool' => $u_pool];
             } else {
                 return ['msg' => 'error', 'status' => "Don't save pool"];
             }
