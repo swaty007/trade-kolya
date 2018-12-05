@@ -74,7 +74,7 @@ class MarketController extends \yii\web\Controller
 //            $users_markets_ids[] = $users_markets_id->user_market_id;//надо менять селект
 //        }
         foreach (UserMarkets::find()->where(['user_id' => $id])->select(['market_id'])->all() as $users_markets_id) {
-            $users_markets_ids[] = $users_markets_id->market_id;//надо менять селект
+            $users_markets_ids[] = $users_markets_id->market_id;
         }
         $data['markets_user'] = Markets::find()->where(['IN','id',$users_markets_ids])->orderBy('date_update DESC')->all();
 
