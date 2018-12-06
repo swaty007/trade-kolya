@@ -120,6 +120,9 @@
 .logo-element {
     padding: 0;
 }
+.sidebar-collapse {
+    overflow-x: hidden;
+}
 body.mini-navbar .nav-header {
     padding: 6px 0;
 }
@@ -181,5 +184,17 @@ body .navbar-default .nav>li>a {
 body.mini-navbar .navbar-default .nav>li>a {
     font-size: 15px;
 }
-
-
+.notification-wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.notification-wrap span {
+    margin-left: 10px;
+    line-height: 15px;
+    -webkit-line-clamp: 3;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-height: 63px;
+}

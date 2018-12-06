@@ -20,7 +20,7 @@ AppAsset::register($this);
         <title><?= Html::encode($this->title) ?></title>
         <?php $this->head() ?>
     </head>
-    <body class="mini-navbar">
+    <body class="mini-navbar1">
         <?php $this->beginBody() ?>
         <div id="wrapper">
             <nav class="navbar-default navbar-static-side new-navbar" role="navigation">
@@ -95,48 +95,13 @@ AppAsset::register($this);
                                     Пополнить
                                 </button>
                             </li>
-                            <li class="dropdown bell">
-                                <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-                                    <i class="fa fa-bell"></i>  <span class="label label-primary">8</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-alerts animated fadeInRight">
-                                    <li>
-                                        <a href="mailbox.html">
-                                            <div>
-                                                <i class="fa fa-envelope fa-fw"></i> You have 16 messages
-                                                <span class="pull-right text-muted small">4 minutes ago</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li>
-                                        <a href="profile.html">
-                                            <div>
-                                                <i class="fa fa-twitter fa-fw"></i> 3 New Followers
-                                                <span class="pull-right text-muted small">12 minutes ago</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li>
-                                        <a href="grid_options.html">
-                                            <div>
-                                                <i class="fa fa-upload fa-fw"></i> Server Rebooted
-                                                <span class="pull-right text-muted small">4 minutes ago</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li>
-                                        <div class="text-center link-block">
-                                            <a href="notifications.html">
-                                                <strong>Просмотреть все уведомления</strong>
-                                                <i class="fa fa-angle-right"></i>
-                                            </a>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
+                            <?php \yii\widgets\Pjax::begin(['id'=>'notification_pjax',
+                                'options' => [
+                                    'class' => 'dropdown bell',
+                                    'tag'=>'li'
+                                ]]); ?>
+                            <?php echo  \app\widgets\NotificationWidget::widget(); ?>
+                            <?php \yii\widgets\Pjax::end(); ?>
                             <li>
                                 <div class="dropdown">
                                     <img alt="image" class="img-circle" src="../image/user_icon.png" />
@@ -314,16 +279,16 @@ AppAsset::register($this);
                             <label class="main-label" for="money_withdraw">Цена:</label>
                             <input id="money_withdraw" type="text" title="money" name="money" class="form-control">
                         </div>
-                        <div class="form-group">
-                            <label class="main-label" for="culture_main_withdraw2">
-                                Выберите валюту на которую хотите получить деньги:
-                            </label>
-                            <select class="form-control m-b main-select" id="culture_main_withdraw2">
-                                <option value="BTC">BTC</option>
-                                <option value="LTC">LTC</option>
-                                <option value="ETH">ETH</option>
-                            </select>
-                        </div>
+<!--                        <div class="form-group">-->
+<!--                            <label class="main-label" for="culture_main_withdraw2">-->
+<!--                                Выберите валюту на которую хотите получить деньги:-->
+<!--                            </label>-->
+<!--                            <select class="form-control m-b main-select" id="culture_main_withdraw2">-->
+<!--                                <option value="BTC">BTC</option>-->
+<!--                                <option value="LTC">LTC</option>-->
+<!--                                <option value="ETH">ETH</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
                         <div class="form-group">
                             <label class="main-label" for="purse_withdraw">Адресс кошелька:</label>
                             <input id="purse_withdraw"
@@ -345,7 +310,7 @@ AppAsset::register($this);
                                         </p>
                                     </div></div>
                                 <div class="col-md-6"><div class="form-group">
-                                        <label class="control-label">Сума в BTC</label>
+                                        <label class="control-label">Комиссия</label>
                                         <p class="text-am-cur">
                                             <span class="amount2"></span>
                                             <span class="currency2">BTC</span>

@@ -64,15 +64,6 @@ $(document).on('click',"#update_pool", function(e) {
     })
 });
 
-let a = setInterval(function () {
-    if (document.readyState === 'complete') {
-        $('#data_table').DataTable( {
-            "order": [[ 2, "desc" ]]
-        } );
-        $('#data_table').show('slide',200);
-        clearInterval(a);
-    }
-},100);
 
 function editPool(id,_this) {
     let block = $(_this).parent().parent('.pool_block'),

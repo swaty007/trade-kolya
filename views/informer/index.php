@@ -4,22 +4,30 @@ use yii\helpers\Html;
 $this->title = 'Информер';
 ?>
 
-<div class="row wrapper border-bottom white-bg">
-    <div class="col-lg-10">
-        <h2><strong>Информер</strong></h2>
+    <div class="row wrapper border-bottom white-bg">
+        <div class="col-lg-10">
+            <h2><strong>Информер</strong></h2>
+        </div>
+        <div class="col-lg-10">
+            <?php if (Yii::$app->user->identity->user_role == "admin") : ?>
+                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#informer-create"
+                        style="margin-bottom: 10px"><strong>Создать новость</strong></button>
+            <?php endif; ?>
+        </div>
     </div>
-    <div class="col-lg-10">
-        <?php if (Yii::$app->user->identity->user_role == "admin") :?>
-            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#informer-create" style="margin-bottom: 10px"><strong>Создать новость</strong></button>
-        <?php endif;?>
-    </div>
-</div>
 
-<?php if(isset($informer)):?>
+<?php if (isset($informer)): ?>
     <?php \yii\widgets\Pjax::begin(); ?>
-    <?php echo $this->render('show',['informer'=>$informer,'categories'=>$categories,'sub_categories'=>$sub_categories,'tags'=>$tags]) ?>
+    <?php echo $this->render('show',
+        [
+            'informer' => $informer,
+            'categories' => $categories,
+            'sub_categories' => $sub_categories,
+            'tags' => $tags
+        ]
+    ) ?>
     <?php \yii\widgets\Pjax::end(); ?>
-<?php else :?>
+<?php else : ?>
     <div class="wrapper wrapper-content animated fadeIn">
 
         <div class="row">
@@ -56,9 +64,9 @@ $this->title = 'Информер';
                                                 class="chosen-select"
                                                 tabindex="2"
                                         >
-                                            <?php foreach ($full_categories as $category) :?>
-                                                <option value="<?=$category['id']?>" <?php if (isset($select->category)) if (in_array($category['id'],$select->category)) echo 'selected' ?>><?=$category['cat_name']?></option>
-                                            <?php endforeach;?>
+                                            <?php foreach ($full_categories as $category) : ?>
+                                                <option value="<?= $category['id'] ?>" <?php if (isset($select->category)) if (in_array($category['id'], $select->category)) echo 'selected' ?>><?= $category['cat_name'] ?></option>
+                                            <?php endforeach; ?>
                                         </select>
                                     </div>
                                     <div class="col-lg-12">
@@ -67,9 +75,9 @@ $this->title = 'Информер';
                                                 multiple
                                                 class="chosen-select"
                                                 tabindex="2">
-                                            <?php foreach ($full_tags as $tag) :?>
-                                                <option value="<?=$tag['id']?>" <?php if (isset($select->tag)) if (in_array($tag['id'],$select->tag)) echo 'selected' ?>><?=$tag['tag_name']?></option>
-                                            <?php endforeach;?>
+                                            <?php foreach ($full_tags as $tag) : ?>
+                                                <option value="<?= $tag['id'] ?>" <?php if (isset($select->tag)) if (in_array($tag['id'], $select->tag)) echo 'selected' ?>><?= $tag['tag_name'] ?></option>
+                                            <?php endforeach; ?>
                                         </select>
                                     </div>
                                 </div>
@@ -114,93 +122,108 @@ $this->title = 'Информер';
             <div class="col-lg-9">
                 <?php \yii\widgets\Pjax::begin(); ?>
                 <?php if (!$informers) echo 'Не найденно ни одной записи' ?>
-                <?php foreach (array_chunk($informers, 2) as $row) :?>
+                <?php foreach (array_chunk($informers, 2) as $row) : ?>
                     <div class="row">
-                        <?php foreach ($row as $informer) :?>
+                        <?php foreach ($row as $informer) : ?>
                             <div class="col-lg-6">
-                                <div href="?id=<?=$informer->id?>" class="contact-box" data-id="<?=$informer->id?>">
+                                <div href="?id=<?= $informer->id ?>" class="contact-box" data-id="<?= $informer->id ?>">
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <div class="text-center">
-                                                <img alt="image" class="m-t-xs img-responsive" src="<?= $informer->src?>">
+                                                <img alt="image"
+                                                     class="m-t-xs img-responsive"
+                                                     src="<?= $informer->src ? $informer->src : 'https://static-cache.ua.uaprom.net/image/new_design/images/no_image.png?r=e614324446b22b42a09b69093e309fce' ?>">
                                             </div>
                                         </div>
                                         <div class="col-sm-8">
-                                            <h3 class="clip"><strong><?=$informer->title?></strong></h3>
-                                            <p><i class="fa fa-clock-o"></i> <?=$informer->date?></p>
-                                            <p><?=$informer->html?></p>
-                                            <?php if (!empty($informer->tag)) :?>
+                                            <h3 class="clip"><strong><?= $informer->title ?></strong></h3>
+                                            <p><i class="fa fa-clock-o"></i> <?= substr($informer->date, 0, 10) ?></p>
+                                            <p><?= $informer->html ?></p>
+                                            <?php if (!empty($informer->tag)) : ?>
                                                 <div class="tags">
                                                     <h5 style="display: inline-block;">Tags:</h5>
-                                                    <?php foreach ($informer->tag as $tag) :?>
-                                                        <a href="?tag=<?=$tag->id?>" class="btn btn-white btn-xs tag" type="button">
-                                                            <?=$tag->tag_name?>
+                                                    <?php foreach ($informer->tag as $tag) : ?>
+                                                        <a href="?tag=<?= $tag->id ?>" class="btn btn-white btn-xs tag"
+                                                           type="button">
+                                                            <?= $tag->tag_name ?>
                                                         </a>
-                                                    <?php endforeach;?>
+                                                    <?php endforeach; ?>
                                                 </div>
-                                            <?php endif;?>
-                                            <?php if (!empty($informer->category)) :?>
+                                            <?php endif; ?>
+                                            <?php if (!empty($informer->category)) : ?>
                                                 <div class="categories">
                                                     <h5 style="display: inline-block;">Categories:</h5>
-                                                    <?php foreach ($informer->category as $category) :?>
-                                                        <a href="?category=<?=$category->id?>" class="btn btn-white btn-xs" type="button">
-                                                            <?=$category->cat_name?>
+                                                    <?php foreach ($informer->category as $category) : ?>
+                                                        <a href="?category=<?= $category->id ?>"
+                                                           class="btn btn-white btn-xs" type="button">
+                                                            <?= $category->cat_name ?>
                                                         </a>
-                                                    <?php endforeach;?>
+                                                    <?php endforeach; ?>
                                                 </div>
-                                            <?php endif;?>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        <?php endforeach;?>
+                        <?php endforeach; ?>
                     </div>
-                <?php endforeach;?>
+                <?php endforeach; ?>
                 <?php \yii\widgets\Pjax::end(); ?>
             </div>
 
         </div>
     </div>
     <?php \yii\widgets\Pjax::begin(); ?>
-    <?php if($informers_count > 10):?>
+    <?php if ($informers_count > 10): ?>
         <div class="paging_simple_numbers">
             <ul id="pagination" class="pagination">
-                <li class="paginate_button page-item previous <?php if($pagination == 0){echo 'active';} ?>" >
-                    <a <?php if( $pagination == 0) :?>
+                <li class="paginate_button page-item previous <?php if ($pagination == 0) {
+                    echo 'active';
+                } ?>">
+                    <a <?php if ($pagination == 0) : ?>
                         disabled
-                    <?php else :?>
-                        onclick="informerPostParametrs(<?=$pagination - 1?>)"
-                    <?php endif;?>
-                            class="page-link" >Previous</a>
+                    <?php else : ?>
+                        onclick="informerPostParametrs(<?= $pagination - 1 ?>)"
+                    <?php endif; ?>
+                            class="page-link">Previous</a>
                 </li>
                 <?php
-                $i=0;
-                while ($i <= $informers_count-1):
-                    $i++; if(!($i%10) == 1):;?>
+                $i = 0;
+                while ($i <= $informers_count - 1):
+                    $i++;
+                    if (!($i % 10) == 1):; ?>
 
-                    <li class="paginate_button page-item <?php if ($pagination == ($i/10)-1) {echo 'active';}?>">
-                        <a onclick="informerPostParametrs(<?=($i/10)-1;?>)" data-page="<?=($i/10)-1;?>" class="page-link"><?=$i/10;?></a>
-                    </li>
-                <?php endif; endwhile; ?>
-                <li class="paginate_button page-item <?php if ($pagination == ceil($i/10)-1) {echo 'active';}?>">
-                    <a onclick="informerPostParametrs(<?=ceil($i/10)-1?>)" data-page="<?=ceil($i/10)-1?>" class="page-link"><?=ceil($i/10);?></a>
+                        <li class="paginate_button page-item <?php if ($pagination == ($i / 10) - 1) {
+                            echo 'active';
+                        } ?>">
+                            <a onclick="informerPostParametrs(<?= ($i / 10) - 1; ?>)"
+                               data-page="<?= ($i / 10) - 1; ?>" class="page-link"><?= $i / 10; ?></a>
+                        </li>
+                    <?php endif; endwhile; ?>
+                <li class="paginate_button page-item <?php if ($pagination == ceil($i / 10) - 1) {
+                    echo 'active';
+                } ?>">
+                    <a onclick="informerPostParametrs(<?= ceil($i / 10) - 1 ?>)"
+                       data-page="<?= ceil($i / 10) - 1 ?>" class="page-link"><?= ceil($i / 10); ?></a>
                 </li>
-                <li class="paginate_button page-item next <?php if($pagination == ceil($i/10)-1){echo 'active';} ?>">
-                    <a <?php if($pagination == ceil($i/10)-1) :?>
+                <li class="paginate_button page-item next <?php if ($pagination == ceil($i / 10) - 1) {
+                    echo 'active';
+                } ?>">
+                    <a <?php if ($pagination == ceil($i / 10) - 1) : ?>
                         disabled
-                    <?php else :?>
-                        onclick="informerPostParametrs(<?=$pagination+1?>)"
-                    <?php endif;?>
+                    <?php else : ?>
+                        onclick="informerPostParametrs(<?= $pagination + 1 ?>)"
+                    <?php endif; ?>
                             class="page-link">Next</a>
                 </li>
             </ul>
         </div>
-    <?php endif;?>
+    <?php endif; ?>
     <a id="informer_pjax_link" class="hidden" href="/informer/?tag=5"></a>
     <script>
-         finishPjax('#p0');
+        finishPjax('#p0');
     </script>
     <?php \yii\widgets\Pjax::end(); ?>
-<?php endif;?>
+<?php endif; ?>
 
-<?php echo $this->render('modals',['categories' => $categories, 'sub_categories' => $sub_categories, 'tags' => $tags])?>
+<?php echo $this->render('modals', ['categories' => $categories, 'sub_categories' => $sub_categories, 'tags' => $tags]) ?>

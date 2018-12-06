@@ -86,6 +86,9 @@ $this->title = 'Админка';
                                 <?php endforeach;?>
                                 </tbody>
                             </table>
+                            <script>
+                                dataTablePajax();
+                            </script>
                         </div>
                     </div>
                 </div>

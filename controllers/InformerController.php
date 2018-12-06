@@ -128,7 +128,7 @@ class InformerController extends Controller
                 $informer->title = $title;
                 $informer->html  = $html;
                 $informer->link  = $link;
-                $informer->date  = date("Y-m-d");
+                $informer->date  = date("Y-m-d H:i:s");
 
                 $tags = explode(",", $tags);
 

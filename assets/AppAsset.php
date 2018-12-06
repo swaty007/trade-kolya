@@ -52,18 +52,18 @@ class AppAsset extends AssetBundle
         "js/plugins/dataTables/jquery.dataTables.js",
         "js/plugins/dataTables/dataTables.bootstrap.js",
         "js/plugins/summernote/summernote.min.js",
-        "js/plugins/chosen/chosen.jquery.js",
         "js/plugins/bootstrap-tags/bootstrap3-typeahead.min.js",
         "js/plugins/bootstrap-tags/bootstrap-tagsinput.js",
+        "js/plugins/chosen/chosen.jquery.js",
         "js/global.js",
         "js/coins.js",
         "js/pool.js",
         "js/informer2.js",
         "js/market.js",
     ];
-//    public $jsOptions = array(
-//        'position' => \yii\web\View::POS_HEAD
-//    );
+    public $jsOptions = array(
+        'position' => \yii\web\View::POS_HEAD
+    );
     public $depends = [
        'yii\web\YiiAsset',
     ];

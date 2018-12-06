@@ -31,14 +31,16 @@ class User extends ActiveRecord implements IdentityInterface {
     /**
      * @inheritdoc
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return '{{%user}}';
     }
 
     /**
      * @inheritdoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         return [
             TimestampBehavior::className(),
         ];
@@ -47,7 +49,8 @@ class User extends ActiveRecord implements IdentityInterface {
     /**
      * @inheritdoc
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
@@ -57,14 +60,16 @@ class User extends ActiveRecord implements IdentityInterface {
     /**
      * @inheritdoc
      */
-    public static function findIdentity($id) {
+    public static function findIdentity($id)
+    {
         return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
      * @inheritdoc
      */
-    public static function findIdentityByAccessToken($token, $type = null) {
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
         throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
     }
 
@@ -74,31 +79,36 @@ class User extends ActiveRecord implements IdentityInterface {
      * @param string $username
      * @return static|null
      */
-    public static function findByUsername($username) {
+    public static function findByUsername($username)
+    {
         return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
     }
 
-    public static function findByEmail($email) {
+    public static function findByEmail($email)
+    {
         return static::findOne(['email' => $email, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
      * @inheritdoc
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->getPrimaryKey();
     }
 
     /**
      * @inheritdoc
      */
-    public function getAuthKey() {
+    public function getAuthKey()
+    {
         return $this->auth_key;
     }
 
     public static function canAdmin()
     {
-        if (Yii::$app->user->identity->user_role == "admin" ) {
+        if (Yii::$app->user->identity->user_role == "globalAdmin" ||
+            Yii::$app->user->identity->user_role == "admin" ) {
             return true;
         } else {
             return false;
@@ -106,7 +116,9 @@ class User extends ActiveRecord implements IdentityInterface {
     }
     public static function canModerate()
     {
-        if (Yii::$app->user->identity->user_role == "admin" || Yii::$app->user->identity->user_role == "moderator") {
+        if (Yii::$app->user->identity->user_role == "globalAdmin" ||
+            Yii::$app->user->identity->user_role == "admin" ||
+            Yii::$app->user->identity->user_role == "moderator") {
             return true;
         } else {
             return false;

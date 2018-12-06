@@ -9,6 +9,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\LoginEmailForm;
+use app\models\Notifications;
 use app\models\SignupForm;
 use app\models\ContactForm;
 
@@ -152,6 +153,37 @@ class UserController extends Controller {
         ]);
     }
 
+    public function actionNotifications() {
+        $this->layout = 'dashboard-layout';
+        $data = [];
+        $id = Yii::$app->user->getId();
+
+        $data['notifications'] = Notifications::find()->where(['user_id'=>$id])->orderBy('time DESC')->all();
+
+        return $this->render('notifications', $data);
+    }
+    public function actionNotificationShow() {
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = 'json';
+            $id = Yii::$app->user->getId();
+            $notification_id = (int)Yii::$app->request->post('id', '');
+
+            $notification = Notifications::find()
+                ->where(['id' => $notification_id])
+                ->andWhere(['show' => 0])
+                ->andWhere(['user_id' => $id]);
+            if ($notification->count()) {
+                $notification = $notification->one();
+                $notification->show = 1;
+                if ($notification->save()) {
+                    return ['msg' => 'ok'];
+                }
+            }
+            return ['msg' => 'error'];
+
+
+        }
+    }
     /**
      * Displays about page.
      *

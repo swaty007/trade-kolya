@@ -133,22 +133,25 @@ $this->title = 'Магазин';
                                         <?php foreach ($row as $market) :?>
                                         <div class="col-lg-3">
                                             <div class="widget lazur-bg p-xl">
-
                                                 <h2>
-                                                    <?=$market->title;?>
+                                                    <?=$market['title'];?>
                                                 </h2>
                                                 <ul class="list-unstyled m-t-md">
                                                     <li>
                                                         <label>Стоимость продукта:</label>
-                                                        <?=(double)$market->cost;?>
+                                                        <?=(double)$market['cost'];?>
                                                     </li>
                                                     <li>
                                                         <label>Срок действия апи(в днях):</label>
-                                                        <?=$market->time_action;?>
+                                                        <?=$market['time_action'];?>
                                                     </li>
                                                     <li>
                                                         <label>Количество апи:</label>
-                                                        <?= $market->count_api?>
+                                                        <?= $market['count_api_sum']?>
+                                                    </li>
+                                                    <li>
+                                                        <label>Количество карточек:</label>
+                                                        <?= $market['cnt']?>
                                                     </li>
                                                 </ul>
 

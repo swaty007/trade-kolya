@@ -17,12 +17,14 @@ use app\models\User;
  * @property string $currency1
  * @property string $currency2
  * @property string $type
+ * @property string $sub_type
  * @property string $buyer_name
  * @property string $buyer_email
  * @property string $user_purse
  * @property integer $txn_id
  * @property integer $confirms_needed
  * @property string $date_start
+ * @property string $comment
  * @property string $date_last
  */
 class Transactions extends ActiveRecord
@@ -41,13 +43,13 @@ class Transactions extends ActiveRecord
     public function rules()
     {
         return [
-            [['status', 'amount2', 'currency2'], 'required'],
+            [['user_id','status','amount1','currency1' ], 'required'],
             [['status', 'user_id',  'confirms_needed'], 'integer'],
             [['amount1', 'amount2'], 'number'],
             [['date_start', 'date_last'], 'safe'],
             [['currency1', 'currency2'], 'string', 'max' => 20],
             [['buyer_name', 'buyer_email'], 'string', 'max' => 100],
-            [['txn_id'], 'string', 'max' => 50],
+            [['txn_id'], 'string', 'max' => 255],
             [['user_purse'], 'string', 'max' => 255],
         ];
     }
@@ -63,6 +65,7 @@ class Transactions extends ActiveRecord
             'amount1' => 'Amount1',
             'amount2' => 'Amount2',
             'type' => 'Type',
+            'sub_type' => 'Sub Type',
             'currency1' => 'Currency1',
             'currency2' => 'Currency2',
             'buyer_name' => 'Buyer Name',
@@ -92,8 +95,11 @@ class Transactions extends ActiveRecord
 
         $rates_btc = $cps->GetRates();
 
-        $amount_in_btc = number_format((
-            ($this->amount1 - $rates_btc['result'][$this->currency1]['tx_fee']) * $rates_btc['result'][$this->currency1]['rate_btc']) ,15,'.','');
+        //($this->amount1 - $rates_btc['result'][$this->currency1]['tx_fee']) * $rates_btc['result'][$this->currency1]['rate_btc'])
+        $commission_persent = (double)AdminSettings::findOne(['id'=>4])->value;
+        $commission = ($this->amount1/100)*$commission_persent;
+        $amount_in_btc = number_format(
+        ($this->amount1 - $commission), 15,'.','');
 
         $req = array(
             'amount' => $this->amount1,
@@ -122,8 +128,8 @@ class Transactions extends ActiveRecord
 
         if ($result['error'] == 'ok') {
             $this->status = 0;
-            $this->amount2 =  $amount_in_btc;
-            $this->currency2 =  "BTC";
+            $this->amount2 = $commission;
+//            $this->currency2 =  "BTC";
             $this->txn_id = $result['result']['txn_id'];
             $this->confirms_needed = floatval($result['result']['confirms_needed']);
             return [

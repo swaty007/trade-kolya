@@ -6,9 +6,15 @@ use yii\base\Model;
 
 class CoinPayments extends Model
 {
-    private $private_key = '9dDc78613f02Cd4b4383efcfeb4ae53F731F64605716ecBD84fa7D5E700d04c0';
-    private $public_key = 'e7970bb8eb4b8f16ac5f10f7b17a31d03ddf3e91ffac4b301c7b8c866ace5f87';
+    private $private_key;
+    private $public_key;
     private $ch = null;
+
+    public function  __construct()
+    {
+        $this->private_key = Yii::$app->params['coinPaymentsPrivateKey'];
+        $this->public_key = Yii::$app->params['coinPaymentsPublicKey'];
+    }
 
     public function setup($private_key, $public_key)
     {

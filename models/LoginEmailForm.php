@@ -48,7 +48,24 @@ class LoginEmailForm extends Model
             $user = $this->getUser();
 
             if (!$user || !$user->validatePassword($this->password)) {
+                $notification = new Notifications();
+                $notification->createNotification($user->id,
+                    'notification',
+                    'Неудачная попытка входа, неверный пароль IP = '
+                    .$_SERVER['REMOTE_ADDR']
+                    . ' Браузер: '
+                    .$_SERVER['HTTP_USER_AGENT'],
+                    $_SERVER['HTTP_USER_AGENT']);
                 $this->addError($attribute, 'Incorrect username or password.');
+            } else {
+                $notification = new Notifications();
+                $notification->createNotification($user->id,
+                    'success',
+                    'Успешный вход IP = '
+                    .$_SERVER['REMOTE_ADDR']
+                    . ' Браузер: '
+                    .$_SERVER['HTTP_USER_AGENT'],
+                    $_SERVER['HTTP_USER_AGENT']);
             }
         }
     }

@@ -5,7 +5,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+use app\models\User;
 $this->title = 'My Yii Application';
 ?>
 <div class="row wrapper border-bottom white-bg">
@@ -49,24 +49,27 @@ $this->title = 'My Yii Application';
                     <table id="data_table" class="table table-striped table-bordered table-hover dataTables-example dataTable dtr-inline">
                         <thead>
                         <tr>
-                            <th>#</th>
-                            <th>TYPE</th>
-                            <th>ADDRESS WITHDRAW</th>
+                            <?php if (User::canAdmin()) :?>
+                                <th>
+                                    #ID
+                                </th>
+                                <th>
+                                    Никнейм
+                                </th>
+                                <th>Email</th>
+                                <th>Кошелек</th>
+                            <?php endif;?>
+                            <th>Тип</th>
+                            <th>Вид операции</th>
                             <th>Original Currency</th>
                             <th>BTC Currency(for deposit)</th>
                             <th>STATUS</th>
                             <th>Time start</th>
                             <th>Time end</th>
-                            <?php if(Yii::$app->user->identity->user_role == "admin"):?>
-                                <td>
-                                   user id
-                                </td>
-                                <td>
-                                    user name
-                                </td>
-                                <td>
+                            <?php if (User::canAdmin()) :?>
+                                <th>
                                     Manual payout
-                                </td>
+                                </th>
                             <?php endif;?>
                         </tr>
                         </thead>
@@ -77,14 +80,27 @@ $this->title = 'My Yii Application';
                                 1=>'Выполнена',
                                 2=>'Начисленно',
                         ] ?>
-                        <?php foreach ($transactions as $n=>$transaction):?>
+                        <?php foreach ($transactions as $n => $transaction) :?>
                             <tr class="">
-                                <td><?=$n?></td>
+                                <?php if (User::canAdmin()) :?>
+                                    <td>
+                                        <?=$transaction->user_id?>
+                                    </td>
+                                    <td>
+                                        <?=$transaction->user->username?>
+                                    </td>
+                                    <td>
+                                        <?=$transaction->user->email?>
+                                    </td>
+                                    <td><?=$transaction->user_purse?></td>
+                                <?php endif;?>
                                 <td class="<?php if ($transaction->type == "deposit" ) {echo "text-danger"; }
                                 else if ($transaction->type == "withdraw") {echo "text-success"; } ?>">
                                     <?=$transaction->type?>
                                 </td>
-                                <td><?=$transaction->user_purse?></td>
+                                <td>
+                                    <?=$transaction->sub_type?>
+                                </td>
                                 <td><?=(double)$transaction->amount1.' '.$transaction->currency1?></td>
                                 <td><?=(double)$transaction->amount2.' '.$transaction->currency2?></td>
                                 <td><span class="label <?=($transaction->status == 1 ) ? "label-primary" : "label-warning" ?>">
@@ -94,13 +110,9 @@ $this->title = 'My Yii Application';
                                 <td><?=$transaction->date_last?></td>
                                 <?php if(Yii::$app->user->identity->user_role == "admin"):?>
                                     <td>
-                                        <?=$transaction->user_id?>
-                                    </td>
-                                    <td>
-                                        <?=$transaction->user->username?>
-                                    </td>
-                                    <td>
-                                        <?php if($transaction->type === "withdraw" &&  $transaction->status == 0):?>
+                                        <?php if($transaction->type === "coin" &&
+                                            $transaction->sub_type === "withdraw" &&
+                                            $transaction->status == 0):?>
                                             <button class="btn btn-success label label-success" onclick="transationDone(<?=$transaction->id?>)">Выплатить</button>
                                         <?php endif;?>
                                     </td>
@@ -109,6 +121,9 @@ $this->title = 'My Yii Application';
                         <?php endforeach;?>
                         </tbody>
                     </table>
+                    <script>
+                        dataTablePajax();
+                    </script>
                     <?php \yii\widgets\Pjax::end(); ?>
                 </div>
             </div>

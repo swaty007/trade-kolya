@@ -34,7 +34,7 @@ $(document).on('click',"#send_withdraw", function(e) {
     let data = {
         value: $('#money_withdraw').val(),
         currency1: $('#culture_main_withdraw1').val(),
-        currency2: $('#culture_main_withdraw2').val(),
+        //currency2: $('#culture_main_withdraw2').val(),
         user_purse: $('#purse_withdraw').val(),
     };
     console.log(data);

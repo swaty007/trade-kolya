@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Transactions;
 use app\models\User;
 use app\models\UserMarkets;
+use app\models\Notifications;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -45,9 +46,20 @@ class MarketController extends Controller
                 $marketplace->user_market_id = 0;
                 if ($marketplace->save()) {
                     Yii::trace("Status changed");
+                    $notification = new Notifications();
+                    $notification->createNotification($marketplace->user_id,
+                        'error',
+                        'Была отключена служба API: '.$marketplace->name,
+                        $marketplace->attributes);
                 } else {
                     Yii::error("Status changed ERROR");
                 }
+            } else if (strtotime( $today." +1 day" ) == strtotime($marketplace->market_date_end)) {
+                $notification = new Notifications();
+                $notification->createNotification($marketplace->user_id,
+                    'notification',
+                    'Остался один день до окончания срока службы API: '.$marketplace->name,
+                    $marketplace->attributes);
             }
         }
     }
@@ -59,16 +71,20 @@ class MarketController extends Controller
         $data['markets_active']  = Markets::find()->where(['status' => 'active'])->orderBy('date_update DESC')->all();
         $data['markets_archive'] = Markets::find()->where(['status' => 'archive'])->orderBy('date_update DESC')->all();
 
-        $users_markets_ids = [];
+        $user_markets = UserMarkets::find()
+        ->select('sum(user_markets.count_api) as count_api_sum,
+             market_id,
+              markets.time_action,
+               markets.title,
+                markets.cost,
+                 COUNT(user_markets.market_id) AS cnt')
+        ->leftJoin('markets', 'markets.id = user_markets.market_id')
+        ->where(['user_id' => $id])
+        ->groupBy(['market_id'])
+        ->asArray()
+        ->all();
 
-        foreach (UserMarkets::find()->where(['user_id' => $id])->select(['market_id'])->all() as $users_markets_id) {
-            $users_markets_ids[] = $users_markets_id->market_id;
-        }
-
-        $data['markets_user'] = Markets::find()
-            ->where(['IN','id',$users_markets_ids])
-            ->orderBy('date_update DESC')
-            ->all();
+        $data['markets_user'] = $user_markets;
 
         $data['types'] = ['api','telegram'];
 
@@ -216,12 +232,27 @@ class MarketController extends Controller
             $user_market->market_id   = $market->id;
             $user_market->count_api   = $market->count_api;
             $user_market->time_action = $market->time_action; //($market->time_action*(60*60*24))
+
+            $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
+            $global_admin->{$invest_method.'_money'} += $market->cost;
+            $transaction_admin = new Transactions();
+            $transaction_admin->amount1     = $market->cost;
+            $transaction_admin->currency1   = $invest_method;
+            $transaction_admin->type        = 'market';
+            $transaction_admin->sub_type    = 'withdraw';
+            $transaction_admin->comment     = 'Покупка товара';
+            $transaction_admin->status      = 1;
+            $transaction_admin->user_id     = $user->id;
+            $transaction_admin->buyer_name  = $user->username;
+            $transaction_admin->buyer_email = $user->email;
+
             if (!$user_market->save()) {
                 return ['msg' => 'error', 'status' => "User Market don't save"];
             }
 
             $transaction              = new Transactions();
             $transaction->type        = 'market';
+            $transaction->sub_type    = 'deposit';
             $transaction->user_id     = $id;
             $transaction->status      = 1;
             $transaction->amount1     = $market->cost;
@@ -230,6 +261,9 @@ class MarketController extends Controller
             $transaction->buyer_email = Yii::$app->user->identity->email;
 
             $transaction->save();
+            if (!$global_admin->save() && !$transaction_admin->save()) {
+                return ['msg' => 'error', 'status' => "Не создалась транзакция администратору"];
+            }
 
             return ['msg' => 'ok', 'status' => 'Marketplace buyed'];
         }
