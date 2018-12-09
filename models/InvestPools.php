@@ -68,7 +68,11 @@ class InvestPools extends ActiveRecord
         ];
     }
     static public function haveInvest($pool_id){
-        $u_sums = UserPools::find()->select('SUM(invest) AS invest, pool_id')->where(['pool_id' => $pool_id])->asArray()->one();
+        $u_sums = UserPools::find()
+            ->select('SUM(invest) AS invest, pool_id')
+            ->where(['pool_id' => $pool_id])
+            ->asArray()
+            ->one();
 
         if((float)$u_sums['invest'] > 0) {
             return (float)$u_sums['invest'];

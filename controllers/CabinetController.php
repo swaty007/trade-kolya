@@ -13,6 +13,9 @@ use app\models\CurrencyExchange;
 use yii\helpers\Url;
 use yii\web\Response;
 use app\models\UserMenu;
+use app\models\api\google2fa\GoogleAuthenticator;
+use app\models\api\google2fa\Rfc6238;
+use app\models\User;
 
 class CabinetController extends Controller
 {
@@ -205,6 +208,61 @@ class CabinetController extends Controller
         }
 
         return $this->renderPartial('masters', $params);
+    }
+
+    public function actionTfa()
+    {
+        if(Yii::$app->user->isGuest) {
+            return $this->redirect(Url::toRoute('/site/login'));
+        }
+        $params = [];
+        $user = Yii::$app->user->identity;
+
+        if (!isset($user->google_se) || !mb_strlen($user->google_se)) {
+            $g = new GoogleAuthenticator();
+            $user->google_se = $g->generateSecret();
+            $user->save();
+        }
+        $params['user'] = $user;
+        $params['qr_url'] = Rfc6238::getBarCodeUrl($user->email,
+            Yii::$app->params['project_domain'],
+            $user->google_se, Yii::$app->params['project_name']);
+
+        return $this->render('tfa', $params);
+    }
+
+    public function actionChangeGoogle(){
+        if(!Yii::$app->request->isAjax){
+            return $this->redirect('/site/index');
+        }
+        $data = Yii::$app->request->post();
+        Yii::$app->response->format = 'json';
+
+        $id      = Yii::$app->user->getId();
+        $user = User::find()->where(['id' => $id])->one();
+        if(!isset($data['code']) || !isset($data['secret'])){
+            return ['status' => 'error', 'data' => 'no needed params'];
+        }
+        $g = new GoogleAuthenticator();
+        if($g->getCode($data['secret']) == $data['code']){
+            if($user->google_tfa == 1){
+                $user->google_tfa = 0;
+                $user->google_se = $g->generateSecret();
+            }else{
+                $user->google_tfa = 1;
+            }
+            if($user->save()){
+                $url = Rfc6238::getBarCodeUrl($user->email, Yii::$app->params['project_domain'], $user->google_se, Yii::$app->params['project_name']);
+                return ['status' => 'success', 'data' => [
+                    'type' => $user->google_tfa,
+                    'url' => $url,
+                    'secret' => $user->google_se
+                ]];
+            }
+        }else{
+            return ['status' => 'error', 'data' => 'incorrect code'];
+        }
+        return false;
     }
 
     public function menu()

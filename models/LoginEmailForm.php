@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
+use app\models\api\google2fa\GoogleAuthenticator;
 
 /**
  * LoginForm is the model behind the login form.
@@ -16,6 +17,8 @@ class LoginEmailForm extends Model
     public $email;
     public $password;
     public $rememberMe = true;
+    public $gc;
+    public $code;
 
     private $_user = false;
 
@@ -28,10 +31,13 @@ class LoginEmailForm extends Model
         return [
             // username and password are both required
             [['email', 'password'], 'required'],
+            ['code', 'string'],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
+
+            ['gc', 'required', 'requiredValue' => 'true', 'message' => 'Invalid capcha'],
         ];
     }
 
@@ -47,7 +53,11 @@ class LoginEmailForm extends Model
         if (!$this->hasErrors()) {
             $user = $this->getUser();
 
-            if (!$user || !$user->validatePassword($this->password)) {
+            if (!$user) {
+                $this->addError('code', 'Incorrect code');
+                return false;
+            }
+            if(!$user->validatePassword($this->password)){
                 $notification = new Notifications();
                 $notification->createNotification($user->id,
                     'notification',
@@ -56,17 +66,18 @@ class LoginEmailForm extends Model
                     . ' Браузер: '
                     .$_SERVER['HTTP_USER_AGENT'],
                     $_SERVER['HTTP_USER_AGENT']);
-                $this->addError($attribute, 'Incorrect username or password.');
-            } else {
-                $notification = new Notifications();
-                $notification->createNotification($user->id,
-                    'success',
-                    'Успешный вход IP = '
-                    .$_SERVER['REMOTE_ADDR']
-                    . ' Браузер: '
-                    .$_SERVER['HTTP_USER_AGENT'],
-                    $_SERVER['HTTP_USER_AGENT']);
+
+                $this->addError($attribute, 'Incorrect email or password.');
+                return false;
             }
+            $notification = new Notifications();
+            $notification->createNotification($user->id,
+                'success',
+                'Успешный вход IP = '
+                .$_SERVER['REMOTE_ADDR']
+                . ' Браузер: '
+                .$_SERVER['HTTP_USER_AGENT'],
+                $_SERVER['HTTP_USER_AGENT']);
         }
     }
 
@@ -92,6 +103,27 @@ class LoginEmailForm extends Model
         if ($this->_user === false) {
             //$this->_user = User::findByUsername($this->username);
             $this->_user = User::findByEmail($this->email);
+            if($this->_user !== null)
+            {
+                if($this->_user->google_tfa == 1)
+                {
+                    $g = new GoogleAuthenticator();
+                    if($g->getCode($this->_user->google_se) != $this->code){
+                        $notification = new Notifications();
+                        $notification->createNotification($this->_user->id,
+                            'notification',
+                            'Неудачная попытка входа, неверный пароль Google2Fa, IP = '
+                            .$_SERVER['REMOTE_ADDR']
+                            . ' Браузер: '
+                            .$_SERVER['HTTP_USER_AGENT'],
+                            $_SERVER['HTTP_USER_AGENT']);
+                        return null;
+                    }
+                }
+//                $this->username = $this->_user->username;
+            } else {
+                $this->addError('email', 'User does not exist or incorrect password.');
+            }
         }
 
         return $this->_user;

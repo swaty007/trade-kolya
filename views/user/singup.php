@@ -34,6 +34,20 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= $form->field($model, 'email')->textInput(['autofocus' => true, 'placeholder' => 'Email'])->label(false); ?>
 
         <?= $form->field($model, 'password')->passwordInput()->textInput(['placeholder' => 'Пароль', 'type' => 'password'])->label(false);?>
+        <div class="recaptcha-block">
+            <script src='https://www.google.com/recaptcha/api.js?render=<?=Yii::$app->params['capcha_frontkey'] ?>'></script>
+            <textarea id="g-recaptcha-response"
+                      name="g-recaptcha-response"
+                      class="g-recaptcha-response"
+                      style="width: 250px;height: 40px;border: 1px solid rgb(193, 193, 193);margin: 10px 25px;padding: 0px;resize: none;display: none;"></textarea>
+            <script>
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('<?=Yii::$app->params['capcha_frontkey'] ?>', {action: 'login'}).then(function(token) {
+                        document.getElementById('g-recaptcha-response').value = token;
+                    });
+                });
+            </script>
+        </div>
         <?= Html::submitButton('Регистрация', ['class' => 'btn btn-primary block full-width m-b', 'name' => 'signup-button']) ?>
         <p class="text-muted text-center"><small>Уже есть аккаунт?</small></p>
         <a class="btn btn-sm btn-white btn-block" href="<?php echo Url::to(['user/login']); ?>"">Вход</a>

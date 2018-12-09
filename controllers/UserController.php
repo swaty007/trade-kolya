@@ -12,6 +12,7 @@ use app\models\LoginEmailForm;
 use app\models\Notifications;
 use app\models\SignupForm;
 use app\models\ContactForm;
+use app\models\User;
 
 class UserController extends Controller {
 
@@ -54,7 +55,11 @@ class UserController extends Controller {
             ],
         ];
     }
-
+    public function beforeAction($action)
+    {
+//        $this->enableCsrfValidation = false;
+        return parent::beforeAction($action);
+    }
     /**
      * Displays homepage.
      *
@@ -90,7 +95,8 @@ class UserController extends Controller {
         //if ($model->load(Yii::$app->request->post()) && $model->login()) {
         //    return $this->goBack();
         //}
-
+        $gcapcha = Yii::$app->request->post("g-recaptcha-response", '');
+        $model->gc = $this->validateGoogleCapcha($gcapcha);
         if ($model->load(Yii::$app->request->post())) {
             if ($user = $model->signup()) {
                 if (Yii::$app->getUser()->login($user)) {
@@ -114,6 +120,8 @@ class UserController extends Controller {
         }
 
         $model = new LoginEmailForm();
+        $gcapcha = Yii::$app->request->post("g-recaptcha-response", '');
+        $model->gc = $this->validateGoogleCapcha($gcapcha);
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->redirect(['cabinet/index']);
             //return $this->goBack();
@@ -124,7 +132,19 @@ class UserController extends Controller {
                     'model' => $model,
         ]);
     }
+    public function actionCheckAccount()
+    {
+        Yii::$app->response->format = 'json';
 
+        $em = Yii::$app->request->post('email');
+        $q = User::find()->where(['email' => $em]);
+
+        if ($q->count() == 0) {
+            return 0;
+        } else {
+            return $q->one()->google_tfa;
+        }
+    }
     /**
      * Logout action.
      *
@@ -182,6 +202,23 @@ class UserController extends Controller {
             return ['msg' => 'error'];
 
 
+        }
+    }
+
+    private function validateGoogleCapcha($value)
+    {
+        //TODO: remove after testsВ
+//        return true;
+        if ($curl = curl_init()) {
+            $data = ['secret' => Yii::$app->params['capcha_secret'], 'response' => $value, 'remoteip' => Yii::$app->request->userIP];
+            curl_setopt($curl, CURLOPT_URL, 'https://www.google.com/recaptcha/api/siteverify');
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_POST, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+            $out = curl_exec($curl);
+            curl_close($curl);
+
+            return json_decode($out, true)['success'];
         }
     }
     /**
