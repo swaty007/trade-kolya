@@ -210,13 +210,14 @@ class CabinetController extends Controller
         return $this->renderPartial('masters', $params);
     }
 
-    public function actionTfa()
+    public function action2fa()
     {
         if(Yii::$app->user->isGuest) {
             return $this->redirect(Url::toRoute('/site/login'));
         }
         $params = [];
-        $user = Yii::$app->user->identity;
+        $id     = Yii::$app->user->getId();
+        $user   = User::find()->where(['id' => $id])->one();
 
         if (!isset($user->google_se) || !mb_strlen($user->google_se)) {
             $g = new GoogleAuthenticator();
@@ -228,7 +229,7 @@ class CabinetController extends Controller
             Yii::$app->params['project_domain'],
             $user->google_se, Yii::$app->params['project_name']);
 
-        return $this->render('tfa', $params);
+        return $this->render('2fa', $params);
     }
 
     public function actionChangeGoogle(){

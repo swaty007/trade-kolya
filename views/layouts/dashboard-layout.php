@@ -113,7 +113,7 @@ AppAsset::register($this);
                                     </a>
                                     <ul class="dropdown-menu animated fadeInRight m-t-xs">
                                         <li><a href="<?=Url::to(['cabinet/accounts'])?>">Настройки</a></li>
-                                        <li><a href="contacts.html">Двухфакторная авторизация</a></li>
+                                        <li><a href="<?=Url::to(['cabinet/2fa'])?>">Двухфакторная авторизация</a></li>
                                         <li><a href="<?=Url::to(['cabinet/accounts'])?>">Мои биржи</a></li>
                                         <li><a href="<?= Url::to(['coins/transactions'])?>">Транзакции</a></li>
                                         <li><a href="mailbox.html">Уведомления</a></li>
