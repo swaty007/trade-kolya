@@ -113,8 +113,8 @@ $(document).on('click',"#buy_market", function(e) {
 $(document).on('click',"#market_to_api", function(e) {
     e.preventDefault();
     let data = {
-        marketplace: $('#market_placeid_buy').val(),
-        user_market_id: Number($(this).attr('data-id')),
+        marketplace: Number($(this).attr('data-id')),
+        user_market_id: $('#market_placeid_buy').val(),
     };
     console.log(data);
 
@@ -125,6 +125,13 @@ $(document).on('click',"#market_to_api", function(e) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            finishPjax();
+            closeModal($('#market-to-api'));
         }
     })
 });
+
+function marketToApi(id,_this) {
+    $('#market_to_api').attr('data-id', id);
+    $('#market-to-api').modal('show');
+}

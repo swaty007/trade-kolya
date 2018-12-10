@@ -16,6 +16,7 @@ use app\models\UserMenu;
 use app\models\api\google2fa\GoogleAuthenticator;
 use app\models\api\google2fa\Rfc6238;
 use app\models\User;
+use app\models\UserMarkets;
 
 class CabinetController extends Controller
 {
@@ -125,6 +126,20 @@ class CabinetController extends Controller
                 ->asArray()
                 ->all();
 
+
+        $user_markets = UserMarkets::find()
+            ->select('user_markets.count_api,
+             user_markets.id,
+             market_id,
+              user_markets.time_action,
+               markets.title,
+                markets.cost')
+            ->leftJoin('markets', 'markets.id = user_markets.market_id')
+            ->where(['user_id' => $user_id])
+            ->asArray()
+            ->all();
+
+        $data['markets_user'] = $user_markets;
 
         foreach ($data['user_marketplace'] as &$mp) {
             $mp['edit']   = Url::to(['cabinet/account', 'user_marketplace_id' => $mp['user_marketplace_id']]);

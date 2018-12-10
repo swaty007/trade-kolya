@@ -274,10 +274,10 @@ class MarketController extends Controller
         if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = 'json';
             $id             = Yii::$app->user->getId();
-            $marketplaces   = (array)Yii::$app->request->post('marketplace', 0);
-            $user_market_id = (array)Yii::$app->request->post('user_market_id', 0);
+            $marketplaces   = (int)Yii::$app->request->post('marketplace', 0);
+            $user_market_id = (int)Yii::$app->request->post('user_market_id', 0);
             $today          = date('Y-m-d');
-
+            $marketplaces = [$marketplaces];
             if (!($user_market = UserMarkets::findOne(['id'=>$user_market_id,'user_id'=>$id]) )) {
                 return ['msg' => 'error', 'status' => "No User Market finded"];
             }
@@ -314,7 +314,7 @@ class MarketController extends Controller
                     return ['msg' => 'error', 'status' => "Don't save marketplace"];
                 }
             }
-
+            return ['msg' => 'ok', 'status' => "Биржа была активирована"];
         }
     }
 

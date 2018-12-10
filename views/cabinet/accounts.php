@@ -43,7 +43,8 @@ $this->title = 'My Yii Application';
                     </div>
                 </div>
                 <div class="ibox-content">
-                    <form  action="<?php echo $delete; ?>" method="POST" id='FormAccounts'>
+                    <?php \yii\widgets\Pjax::begin(); ?>
+                    <form  action="<?= $delete; ?>" method="POST" id='FormAccounts'>
                         <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
                         <table class="table table-bordered">
                             <thead>
@@ -55,21 +56,22 @@ $this->title = 'My Yii Application';
                                     <th>Статус</th>
                                     <th>Дата окончания</th>
                                     <th>Редактировать</th>
+                                    <th>Активировать</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($user_marketplace as $value) { ?>
                                     <tr>
-                                        <td><input type="checkbox" name="user_marketplace_id[]" value="<?php echo $value["user_marketplace_id"]; ?>"></td>
+                                        <td><input type="checkbox" name="user_marketplace_id[]" value="<?= $value["user_marketplace_id"]; ?>"></td>
                                         <td>
                                             <?php if ($value["user_market_id"] == 0) :?>
-                                            <p><?php echo $value["name"]; ?></p>
+                                            <p><?= $value["name"]; ?></p>
                                             <?php else :?>
-                                                <a href='<?php echo $value['open']?>'><?php echo $value["name"]; ?></a>
+                                                <a href='<?= $value['open']?>'><?= $value["name"]; ?></a>
                                             <?php endif;?>
                                         </td>
-                                        <td><?php echo $value["marketplace_name"]; ?></td>
-                                        <td><?php echo $value["order"]; ?></td>
+                                        <td><?= $value["marketplace_name"]; ?></td>
+                                        <td><?= $value["order"]; ?></td>
                                         <td>
                                             <?php if ($value["user_market_id"] == 0) :?>
                                                 Не активный
@@ -78,20 +80,59 @@ $this->title = 'My Yii Application';
                                             <?php endif;?>
                                         </td>
                                         <td><?php echo $value["market_date_end"]; ?></td>
-                                        <td><a href='<?php echo $value['edit']; ?>'><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                                            <!--a href='<?php echo $value['delete']; ?>'>удалить</a--></td>
+                                        <td><a href='<?= $value['edit']; ?>'><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+                                            <!--a href='<?= $value['delete']; ?>'>удалить</a--></td>
+                                        <td>
+                                            <a class="btn btn-success label label-success" onclick="marketToApi(<?= $value['user_marketplace_id']; ?>)">Активировать</a>
+                                        </td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
                         </table>
                         <div>
-                            <a href="<?php echo $add; ?>" class="btn btn-primary">Добавить</a>
+                            <a href="<?= $add; ?>" class="btn btn-primary">Добавить</a>
                             <a href="javascript:void(0);" onclick="if (confirm('Удалить?')) {$('#FormAccounts').submit();};" class="btn btn-danger">Удалить</a>
                         </div>
                     </form>
+                    <?php \yii\widgets\Pjax::end(); ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<div class="modal inmodal" id="market-to-api" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <i class="fa fa-newspaper-o modal-icon"></i>
+                <h4 class="modal-title">Купить апи</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group select-style">
+                    <label class="main-label">Выбрать апи</label>
+                    <div class="input-group">
+                        <select id="market_placeid_buy"
+                                data-placeholder="Выбор"
+                                class="chosen-select"
+                                tabindex="2">
+                            <?php foreach ($markets_user as $market): ?>
+                                <option value="<?= $market["id"]?>">
+                                    <?= $market["count_api"]; ?>  <?= $market["title"]; ?> <?= $market["description"]; ?> <?= $market["time_action"]; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Закрыть</button>
+                <button id="market_to_api" type="button" data-id="" class="btn btn-primary">Купить</button>
+            </div>
+        </div>
+    </div>
+</div>

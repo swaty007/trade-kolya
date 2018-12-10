@@ -114,7 +114,7 @@ class CoinsController extends Controller
                 $transaction                 = new Transactions();
                 $transaction->type           = 'coin';
                 $transaction->sub_type       = 'exchange';
-                $transaction_admin->comment  = $exchangeCommission;
+                $transaction->comment        = $exchangeCommission;
                 $transaction->user_id        = $id;
                 $transaction->status         = 1;
                 $transaction->amount1        = -1*$amount1;

@@ -62,7 +62,7 @@ $this->title = 'My Yii Application';
                             <th>Тип</th>
                             <th>Вид операции</th>
                             <th>Original Currency</th>
-                            <th>BTC Currency(for deposit)</th>
+                            <th>Comment</th>
                             <th>STATUS</th>
                             <th>Time start</th>
                             <th>Time end</th>
@@ -75,10 +75,8 @@ $this->title = 'My Yii Application';
                         </thead>
                         <tbody>
                         <?php $transaction_statuses = [
-                                -1=>'Возврат отмена',
                                  0=>'В выполнении',
                                 1=>'Выполнена',
-                                2=>'Начисленно',
                         ] ?>
                         <?php foreach ($transactions as $n => $transaction) :?>
                             <tr class="">
@@ -101,8 +99,8 @@ $this->title = 'My Yii Application';
                                 <td>
                                     <?=$transaction->sub_type?>
                                 </td>
-                                <td><?=(double)$transaction->amount1.' '.$transaction->currency1?></td>
-                                <td><?=(double)$transaction->amount2.' '.$transaction->currency2?></td>
+                                <td><?=(double)$transaction->amount1.' '.$transaction->currency1?> / <?=(double)$transaction->amount2.' '.$transaction->currency2?></td>
+                                <td><?=$transaction->comment?></td>
                                 <td><span class="label <?=($transaction->status == 1 ) ? "label-primary" : "label-warning" ?>">
                                         <?=$transaction_statuses[$transaction->status == 1] ?></span>
                                 </td>

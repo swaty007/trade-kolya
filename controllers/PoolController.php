@@ -72,7 +72,7 @@ class PoolController extends Controller
                                 $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
                                 $global_admin->{$invest_method.'_money'} -= $u_pool->invest;
                                 $transaction_admin = new Transactions();
-                                $transaction_admin->amount1     = $u_pool->invest;
+                                $transaction_admin->amount1     = -1*$u_pool->invest;
                                 $transaction_admin->currency1   = $invest_method;
                                 $transaction_admin->type        = 'pool';
                                 $transaction_admin->sub_type    = 'refund';
@@ -163,7 +163,7 @@ class PoolController extends Controller
                                 $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
                                 $global_admin->{$pool->invest_method.'_money'} -= $transaction_pay_val;
                                 $transaction_admin = new Transactions();
-                                $transaction_admin->amount1     = $transaction_pay_val;
+                                $transaction_admin->amount1     = -1*$transaction_pay_val;
                                 $transaction_admin->currency1   = $pool->invest_method;
                                 $transaction_admin->type        = 'pool';
                                 $transaction_admin->sub_type    = 'withdraw';
