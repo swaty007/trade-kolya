@@ -34,8 +34,8 @@ $(document).ready(function () {
     });
 
     $('.new-navbar').hover(function () {
-        // $("body").toggleClass("mini-navbar");
-        // SmoothlyMenu();
+        $("body").toggleClass("mini-navbar");
+        SmoothlyMenu();
     });
  
     // tooltips

@@ -20,7 +20,7 @@ AppAsset::register($this);
         <title><?= Html::encode($this->title) ?></title>
         <?php $this->head() ?>
     </head>
-    <body class="mini-navbar1">
+    <body class="mini-navbar">
         <?php $this->beginBody() ?>
         <div id="wrapper">
             <nav class="navbar-default navbar-static-side new-navbar" role="navigation">

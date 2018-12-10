@@ -8,6 +8,8 @@ return [
     'coinPayments_cp_merchant_id'   => 'c42c00dfefdbe664dbc4a1f523340cd4',
     'coinPayments_cp_ipn_secret'    => 'MySuperPuperIPM',
     'project_domain'                => 'kolya.infinitum.tech',
+    //'project_domain'                => 'takeprofit.local',
+    //'project_domain'                => 'takeprofit.cf',
     'project_name'                  => 'TakeProfit',
     'capcha_secret'                 => '6LeKlX8UAAAAAOiRaKKGEopAR1kCWGHUnlojLqqT',
     'capcha_frontkey'               => '6LeKlX8UAAAAAB7HP1kRvi2bp5SxM1h9Hue3ns_X',
