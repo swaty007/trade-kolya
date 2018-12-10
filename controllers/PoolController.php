@@ -102,7 +102,7 @@ class PoolController extends Controller
                                         'Вы получили возврат по пулу потому-что он не запустился',
                                         $transaction->attributes);
 
-                                    if (!$transaction->save() && !$transaction_admin->save()) {
+                                    if (!$transaction->save() || !$transaction_admin->save()) {
                                          Yii::error("Транзакция не сохранилась");
                                         return ['msg' => 'error', 'status' => "Транзакция не сохранилась"];
                                     }
@@ -179,11 +179,11 @@ class PoolController extends Controller
                                     'Вы успещно получили выплату % за пул',
                                     $transaction->attributes);
 
-                                if (!$user->save() && !$global_admin->save()) {
+                                if (!$user->save() || !$global_admin->save()) {
                                     Yii::error("Don't save user balance");
                                     return ['msg' => 'error', 'status' => "Don't save user balance"];
                                 }
-                                if (!$transaction->save() && !$transaction_admin->save()) {
+                                if (!$transaction->save() || !$transaction_admin->save()) {
                                     Yii::error("Транзакция не сохранилась");
                                     return ['msg' => 'error', 'status' => "Транзакция не сохранилась"];
                                 }
@@ -435,7 +435,7 @@ class PoolController extends Controller
                 $transaction_admin->buyer_name  = $user->username;
                 $transaction_admin->buyer_email = $user->email;
 
-                if (!$user->save() && !$global_admin->save()) {
+                if (!$user->save() || !$global_admin->save()) {
                     $u_pool->delete();
                     return ['msg' => 'error', 'status' => "User don't save"];
                 }
@@ -446,14 +446,14 @@ class PoolController extends Controller
                 $transaction->comment     = 'Покупка пула';
                 $transaction->user_id     = $id;
                 $transaction->status      = 1;
-                $transaction->amount1     = $u_pool->invest;
+                $transaction->amount1     = -1*$u_pool->invest;
 //                $transaction->amount2 = $amount2;
                 $transaction->currency1   = $invest_method;
 //                $transaction->currency2 = $curr2;
                 $transaction->buyer_name  = Yii::$app->user->identity->username;
                 $transaction->buyer_email = Yii::$app->user->identity->email;
 
-                if (!$transaction->save() && !$transaction_admin->save()) {
+                if (!$transaction->save() || !$transaction_admin->save()) {
                     return ['msg' => 'error', 'status' => "Транзакция не сохранилась"];
                 }
 
@@ -495,7 +495,7 @@ class PoolController extends Controller
                 $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
                 $global_admin->{$invest_method.'_money'} -= $invest;
                 $transaction_admin = new Transactions();
-                $transaction_admin->amount1     = $invest;
+                $transaction_admin->amount1     = -1*$invest;
                 $transaction_admin->currency1   = $invest_method;
                 $transaction_admin->type        = 'pool';
                 $transaction_admin->sub_type    = 'refund';
@@ -512,7 +512,7 @@ class PoolController extends Controller
                         $transaction->sub_type    = 'refund';
                         $transaction->comment     = 'Возврат с пула';
                         $transaction->user_id     = $user->id;
-                        $transaction->status      = -1;
+                        $transaction->status      = 1;
                         $transaction->amount1     = $invest;
 //                $transaction->amount2 = $amount2;
                         $transaction->currency1   = $invest_method;
@@ -520,7 +520,7 @@ class PoolController extends Controller
                         $transaction->buyer_name  = Yii::$app->user->identity->username;
                         $transaction->buyer_email = Yii::$app->user->identity->email;
 
-                        if (!$transaction->save() && !$transaction_admin->save()) {
+                        if (!$transaction->save() || !$transaction_admin->save()) {
                             return ['msg' => 'error', 'status' => "Транзакция не сохранилась"];
                         }
 

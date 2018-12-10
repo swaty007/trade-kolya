@@ -261,7 +261,7 @@ class MarketController extends Controller
             $transaction->buyer_email = Yii::$app->user->identity->email;
 
             $transaction->save();
-            if (!$global_admin->save() && !$transaction_admin->save()) {
+            if (!$global_admin->save() || !$transaction_admin->save()) {
                 return ['msg' => 'error', 'status' => "Не создалась транзакция администратору"];
             }
 

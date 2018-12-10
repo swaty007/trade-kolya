@@ -117,7 +117,7 @@ class CoinsController extends Controller
                 $transaction_admin->comment  = $exchangeCommission;
                 $transaction->user_id        = $id;
                 $transaction->status         = 1;
-                $transaction->amount1        = $amount1;
+                $transaction->amount1        = -1*$amount1;
                 $transaction->amount2        = $amount2-$exchangeCommission;
                 $transaction->currency1      = $curr1;
                 $transaction->currency2      = $curr2;
@@ -125,7 +125,7 @@ class CoinsController extends Controller
                 $transaction->buyer_email    = Yii::$app->user->identity->email;
 
 
-                if (!$transaction_admin->save() && !$transaction->save()) {
+                if (!$transaction_admin->save() || !$transaction->save()) {
                     return ['msg' => 'error', 'status' => "Don't save transaction"];
                 }
                 return [
@@ -153,7 +153,7 @@ class CoinsController extends Controller
             $user_purse = (string)Yii::$app->request->post('user_purse', '');
 
             $transaction              = new Transactions();
-            $transaction->amount1     = $amount;
+            $transaction->amount1     = -1*$amount;
             $transaction->amount2     = $transaction->amount1/100*(double)AdminSettings::findOne(['id' => 5])->value;
             $transaction->currency1   = $curr1;
             $transaction->currency2   = $curr1;
@@ -191,7 +191,7 @@ class CoinsController extends Controller
             }
 
             if ($transaction->save() && $transaction_admin->save()) {
-                if (!$user->save() && !$global_admin->save()) {
+                if (!$user->save() || !$global_admin->save()) {
                     $transaction->delete();
                     return ['msg' => 'error', 'status' => "Don't save user"];
                 }
@@ -342,7 +342,7 @@ class CoinsController extends Controller
                 $transaction_admin->buyer_name  = $usr->username;
                 $transaction_admin->buyer_email = $usr->email;
 
-                if (!$usr->save() && !$transaction_admin->save() && !$global_admin->save()) {
+                if (!$usr->save() || !$transaction_admin->save() || !$global_admin->save()) {
                     Yii::trace("Dont save balance to users/admin and create transaction");
                     $this->errorAndDie('Save error 1');
                 }
