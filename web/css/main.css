@@ -101,6 +101,8 @@
 }
 .nav-header .profile-element {
     width: 170px;
+    color: #ffffff;
+    font-size: 20px;
 }
 .profile-element .font-bold {
     color: #ffffff;
@@ -108,8 +110,12 @@
     display: inline-block;
     margin-top: 10px;
 }
+.profile-element strong {
+    margin-left: 5px;
+}
 .profile-element .user-icon {
-    margin-top: -10px;
+    margin-top: -3px;
+    padding: 8px 0;
 }
 .new-navbar {
     position: absolute;
@@ -118,7 +124,7 @@
     top: 0;
 }
 .logo-element {
-    padding: 0;
+    padding: 6px 0;
 }
 .sidebar-collapse {
     overflow-x: hidden;
@@ -197,4 +203,19 @@ body.mini-navbar .navbar-default .nav>li>a {
     -webkit-box-orient: vertical;
     overflow: hidden;
     max-height: 63px;
+}
+.balance-style {
+    font-size: 16px !important;
+}
+.image-store {
+    width: 100px;
+}
+.default-style-ol {
+    padding-left: 12px;
+}
+
+@media only screen and (min-width: 768px) {
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
 }

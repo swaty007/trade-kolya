@@ -110,8 +110,11 @@ function editInformer(id,_this) {
                 $('#informer_summernote_req').parent().find('div.note-editable').html(informer.html);
                 $('#informer_link_req').val(informer.link);
                 $('#datepicker1').val(informer.date);
-                $('#image_src').attr('src', informer.src);
-
+                if (informer.src) {
+                    $('#image_src').attr('src', informer.src);
+                } else {
+                    $('#image_src').attr('src', '/image/tp_image.png');
+                }
                 $.each(category, function (index, value) {
                     $('#informer_category_req option').each(function () {
                         if( $(this).val() == value.id) {$(this).prop("selected", true)}
@@ -260,10 +263,10 @@ function filterSubCategoies(parent_select,children_select) {
     });
     $(children_select).trigger("chosen:updated");
 }
-$(document).on('change', '#informer_category', function () {
+$('#informer_category').on('change', function () {
     filterSubCategoies('#informer_category','#informer_under_category');
 });
-$(document).on('change', '#informer_category_req', function () {
+$('#informer_category_req').on('change', function () {
     filterSubCategoies('#informer_category_req','#informer_under_category_req');
 });
 $(function() {

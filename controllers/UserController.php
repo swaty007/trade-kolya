@@ -59,6 +59,7 @@ class UserController extends Controller {
     public function beforeAction($action)
     {
 //        $this->enableCsrfValidation = false;
+        //Yii::$app->setTimeZone('Europe/Kiev');
         return parent::beforeAction($action);
     }
     /**
@@ -244,11 +245,13 @@ class UserController extends Controller {
             $user                   = User::findOne(['id'=>$id]);
             $username               = (string)Yii::$app->request->post('username', '');
             $timezone               = (float)Yii::$app->request->post('timezone', '');
+            $timezone_id            = (int)Yii::$app->request->post('timezone_id', '');
             $lang                   = (string)Yii::$app->request->post('lang', '');
             $file                   = UploadedFile::getInstanceByName('file');
 
             $user->username     = $username;
             $user->timezone     = $timezone;
+            $user->timezone_id  = $timezone_id;
             $user->lang         = $lang;
 
             if ($file) {

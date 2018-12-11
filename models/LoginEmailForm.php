@@ -50,6 +50,7 @@ class LoginEmailForm extends Model
      */
     public function validatePassword($attribute, $params)
     {
+       //Yii::$app->setTimeZone('UTC');
         if (!$this->hasErrors()) {
             $user = $this->getUser();
 

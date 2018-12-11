@@ -21,6 +21,7 @@ use yii\web\IdentityInterface;
  * @property string $lang
  * @property string $logo_src
  * @property string $timezone
+ * @property integer $timezone_id
  * @property integer $status
  * @property integer $created_at
  * @property integer $updated_at

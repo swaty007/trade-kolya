@@ -6,8 +6,10 @@ use yii\helpers\Html;
 use app\assets\AppAsset;
 use app\widgets\MainMenu;
 use yii\helpers\Url;
+use app\models\AdminSettings;
 
 AppAsset::register($this);
+
 ?>
 
 <?php $this->beginPage() ?>
@@ -22,6 +24,13 @@ AppAsset::register($this);
     </head>
     <body class="mini-navbar">
         <?php $this->beginBody() ?>
+        <?php
+        Yii::$app->setTimeZone(Yii::$app->user->identity->timezone);
+        //Yii::$app->formatter->defaultTimeZone = 'UTC';
+        //$date = date("Y-m-d H:i:s");
+        //echo $date;
+        //echo Yii::$app->formatter->asDatetime($date . 'Europe/Kiev', 'php:Y-m-d h:i');
+        ?>
         <div id="wrapper">
             <nav class="navbar-default navbar-static-side new-navbar" role="navigation">
                 <div class="sidebar-collapse">
@@ -34,8 +43,8 @@ AppAsset::register($this);
                     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
                         <ul class="nav navbar-top-links navbar-right">
                             <li class="dropdown">
-                                <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-                                    USDT: <strong><?= (double)Yii::$app->user->identity->USDT_money; ?></strong>
+                                <a class="dropdown-toggle count-info balance-style" data-toggle="dropdown" href="#">
+                                    Ваш баланс USDT: <strong><?= (double)Yii::$app->user->identity->USDT_money; ?></strong>
                                     <b class="caret"></b>
                                 </a>
                                     <?php \yii\widgets\Pjax::begin(['id'=>'balance_pjax',
@@ -82,7 +91,7 @@ AppAsset::register($this);
                                         </div>
                                     </li>
                                     <li>
-                                        <a href="<?= Url::to(['coins/transactions'])?>" class="link-btn">Транзакции</a>
+                                        <a href="<?= Url::to(['coins/transactions'])?>" class="link-btn" data-pjax=0>Транзакции</a>
                                     </li>
                                     <?php \yii\widgets\Pjax::end(); ?>
                             </li>
@@ -95,11 +104,15 @@ AppAsset::register($this);
                                     Пополнить
                                 </button>
                             </li>
-                            <li class="dropdown bell">
-                            <?php echo  \app\widgets\NotificationWidget::widget(); ?>
-                            </li>
-                            <li>
-                                <div class="dropdown">
+                            <?php \yii\widgets\Pjax::begin(['id'=>'notification_pjax',
+                                'options' => [
+                                    'class' => 'dropdown bell',
+                                    'tag'=>'li'
+                                ]]); ?>
+                            <?=  \app\widgets\NotificationWidget::widget(); ?>
+                            <?php \yii\widgets\Pjax::end(); ?>
+                            <li class="dropdown">
+                                <div>
                                     <img alt="image" class="img-circle" src="../image/user_icon.png" />
                                     <a data-toggle="dropdown" class="dropdown-toggle styling-settings" href="#">
                                         <span class="text-muted text-xs block">
@@ -107,7 +120,7 @@ AppAsset::register($this);
                                             <b class="caret"></b>
                                         </span>
                                     </a>
-                                    <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                    <ul class="dropdown-menu animated fadeInRight">
                                         <li><a href="<?=Url::to(['user/profile-settings'])?>">Настройки</a></li>
                                         <li><a href="<?=Url::to(['cabinet/2fa'])?>">Двухфакторная авторизация</a></li>
                                         <li><a href="<?=Url::to(['cabinet/accounts'])?>">Мои биржи</a></li>
@@ -211,6 +224,7 @@ AppAsset::register($this);
                         <small class="font-bold">
                             Пополнением своего кошелька в нашей системе, вы получаете дополнительные возможности
                         </small>
+                        <h4>Комисия при обмене составляет: <strong><?= AdminSettings::findOne(['id' => 1])->value?></strong>%</h4>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">

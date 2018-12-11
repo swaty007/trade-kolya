@@ -79,7 +79,7 @@ class NotificationWidget extends Widget
                                 <ul id="notification_wrap" class="dropdown-menu dropdown-alerts animated fadeInRight">'.$notification_items.
            '<li>
                                         <div class="text-center link-block">
-                                            <a href="'.Url::to(['user/notifications']).'">
+                                            <a href="'.Url::to(['user/notifications']).'" data-pjax=0>
                                                 <strong>Просмотреть все уведомления</strong>
                                                 <i class="fa fa-angle-right"></i>
                                             </a>

@@ -36,14 +36,14 @@ class MainMenu extends Widget
     {
 
         $this->menu[] = array(
-            'label' => 'TAKEPROFIT',
+            'label' => 'TAKE',
             'class' => Url::to(['cabinet/accounts']),
             'template' => '<div class="dropdown profile-element">                             
-                                <img alt="image" class="img-circle user-icon" src="../image/user_icon.png" />
-                                <strong class="font-bold">{label}</strong>                              
+                                <img alt="image" class="user-icon" src="../image/logo4.png" />
+                                <strong class="">Take</strong>Profit                            
                             </div>
                             <div class="logo-element">
-                                 <img alt="image" class="img-circle user-icon" src="../image/user_icon.png" />
+                                 <img alt="image" class="user-icon" src="../image/logo4.png" />
                             </div>',
             'url' => Url::to(['cabinet/accounts']),
 

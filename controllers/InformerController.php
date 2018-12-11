@@ -39,6 +39,19 @@ class InformerController extends Controller
         ];
     }
 
+    public function beforeAction($action)
+    {
+//        $this->enableCsrfValidation = false;
+        //Yii::$app->setTimeZone('UTC');
+        return parent::beforeAction($action);
+    }
+
+    public function afterAction($action, $result)
+    {
+        //Yii::$app->setTimeZone('Europe/Kiev');
+        return parent::afterAction($action, $result);
+    }
+
     public function actionIndex()
     {
         $data = [];
@@ -148,8 +161,7 @@ class InformerController extends Controller
                         $informer->delete();
                         return $createInfoCat;
                     }
-
-                    if (empty($sub_category_ids)) {
+                    if ($sub_category_ids) {
                         foreach ($sub_category_ids as $sub_category_id) {
                             $createInfoCat = $this->createIformerCategory(
                                 (int)$sub_category_id,
@@ -172,7 +184,7 @@ class InformerController extends Controller
                         }
                     }
 
-                    return ['msg' => 'ok', 'status'=>'Информер создан', 'informer' => $informer];
+                    return ['msg' => 'ok','status'=>'Информер создан',  'informer' => $informer];
                 } else {
                     return ['msg' => 'error', 'status' => "Don't save informer"];
                 }

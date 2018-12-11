@@ -1,20 +1,18 @@
 <?php
-use yii\helpers\Html;
-
 $this->title = 'Информер';
 ?>
 
-    <div class="row wrapper border-bottom white-bg">
-        <div class="col-lg-10">
-            <h2><strong>Информер</strong></h2>
-        </div>
-        <div class="col-lg-10">
-            <?php if (Yii::$app->user->identity->user_role == "admin") : ?>
-                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#informer-create"
-                        style="margin-bottom: 10px"><strong>Создать новость</strong></button>
-            <?php endif; ?>
-        </div>
+<div class="row wrapper border-bottom white-bg">
+    <div class="col-lg-10">
+        <h2><strong><?=$this->title?></strong></h2>
     </div>
+    <div class="col-lg-10">
+        <?php if (Yii::$app->user->identity->user_role == "admin") : ?>
+            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#informer-create"
+                    style="margin-bottom: 10px"><strong>Создать новость</strong></button>
+        <?php endif; ?>
+    </div>
+</div>
 
 <?php if (isset($informer)): ?>
     <?php \yii\widgets\Pjax::begin(); ?>
@@ -132,7 +130,7 @@ $this->title = 'Информер';
                                             <div class="text-center">
                                                 <img alt="image"
                                                      class="m-t-xs img-responsive"
-                                                     src="<?= $informer->src ? $informer->src : 'https://static-cache.ua.uaprom.net/image/new_design/images/no_image.png?r=e614324446b22b42a09b69093e309fce' ?>">
+                                                     src="<?= $informer->src ? $informer->src : '/image/tp_image.png' ?>">
                                             </div>
                                         </div>
                                         <div class="col-sm-8">
@@ -146,17 +144,6 @@ $this->title = 'Информер';
                                                         <a href="?tag=<?= $tag->id ?>" class="btn btn-white btn-xs tag"
                                                            type="button">
                                                             <?= $tag->tag_name ?>
-                                                        </a>
-                                                    <?php endforeach; ?>
-                                                </div>
-                                            <?php endif; ?>
-                                            <?php if (!empty($informer->category)) : ?>
-                                                <div class="categories">
-                                                    <h5 style="display: inline-block;">Categories:</h5>
-                                                    <?php foreach ($informer->category as $category) : ?>
-                                                        <a href="?category=<?= $category->id ?>"
-                                                           class="btn btn-white btn-xs" type="button">
-                                                            <?= $category->cat_name ?>
                                                         </a>
                                                     <?php endforeach; ?>
                                                 </div>

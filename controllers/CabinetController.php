@@ -261,6 +261,7 @@ class CabinetController extends Controller
             return ['msg' => 'error', 'status' => 'Незаполнены параметры'];
         }
         $g = new GoogleAuthenticator();
+
         if($g->getCode($data['secret']) == $data['code']){
             if($user->google_tfa == 1){
                 $user->google_tfa = 0;
@@ -285,9 +286,11 @@ class CabinetController extends Controller
                     ],
                     'status' =>  $user->google_tfa == 1 ? "Двухфакторная аутентификация включена" : "Двухфакторная аутентификация отключена"
                 ];
+            } else {
+                return ['msg' => 'error', 'status' => "Неверный код syka"];
             }
         } else {
-            return ['msg' => 'error', 'status' => "Неверный код"];
+            return ['msg' => 'error', 'status' => "Неверный код, заного просканируйте код" ];
         }
         return false;
     }

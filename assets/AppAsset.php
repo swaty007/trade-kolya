@@ -62,7 +62,6 @@ class AppAsset extends AssetBundle
         "js/pool.js",
         "js/informer2.js",
         "js/market.js",
-        "js/user.js",
     ];
     public $jsOptions = array(
         'position' => \yii\web\View::POS_HEAD

@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded',function () {
     for (let selector in config) {
         $(selector).chosen(config[selector]);
     }
+
+    var elem = document.querySelector('.js-switch');
+    var switchery = new Switchery(elem, { color: '#1c84c6' });
 });
 //toast
 toastr.options = {
@@ -114,6 +117,7 @@ $(document).on('mouseleave',"#notification_wrap li.notification-item:not(.show)"
             console.log(msg);
             if (msg.msg === 'ok') {
                 _this.addClass('show');
+                finishPjax('#notification_pjax');
             }
         }
     })
