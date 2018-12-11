@@ -147,11 +147,7 @@ $this->title = 'Магазин';
                                                     </li>
                                                     <li>
                                                         <label>Количество апи:</label>
-                                                        <?= $market['count_api_sum']?>
-                                                    </li>
-                                                    <li>
-                                                        <label>Количество карточек:</label>
-                                                        <?= $market['cnt']?>
+                                                        <?= $market['count_api']?> / <?= $market['count_api_full']?>
                                                     </li>
                                                 </ul>
 

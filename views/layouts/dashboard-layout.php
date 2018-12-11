@@ -95,13 +95,9 @@ AppAsset::register($this);
                                     Пополнить
                                 </button>
                             </li>
-                            <?php \yii\widgets\Pjax::begin(['id'=>'notification_pjax',
-                                'options' => [
-                                    'class' => 'dropdown bell',
-                                    'tag'=>'li'
-                                ]]); ?>
+                            <li class="dropdown bell">
                             <?php echo  \app\widgets\NotificationWidget::widget(); ?>
-                            <?php \yii\widgets\Pjax::end(); ?>
+                            </li>
                             <li>
                                 <div class="dropdown">
                                     <img alt="image" class="img-circle" src="../image/user_icon.png" />
@@ -112,11 +108,11 @@ AppAsset::register($this);
                                         </span>
                                     </a>
                                     <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                                        <li><a href="<?=Url::to(['cabinet/accounts'])?>">Настройки</a></li>
+                                        <li><a href="<?=Url::to(['user/profile-settings'])?>">Настройки</a></li>
                                         <li><a href="<?=Url::to(['cabinet/2fa'])?>">Двухфакторная авторизация</a></li>
                                         <li><a href="<?=Url::to(['cabinet/accounts'])?>">Мои биржи</a></li>
                                         <li><a href="<?= Url::to(['coins/transactions'])?>">Транзакции</a></li>
-                                        <li><a href="mailbox.html">Уведомления</a></li>
+                                        <li><a href="<?=Url::to(['user/notifications'])?>">Уведомления</a></li>
                                         <li class="divider"></li>
                                         <li><form action="/site/logout" method="post">
                                                 <input type="hidden"

@@ -72,17 +72,17 @@ class MarketController extends Controller
         $data['markets_archive'] = Markets::find()->where(['status' => 'archive'])->orderBy('date_update DESC')->all();
 
         $user_markets = UserMarkets::find()
-        ->select('sum(user_markets.count_api) as count_api_sum,
+            ->select('user_markets.count_api,
+             user_markets.id,
              market_id,
-              markets.time_action,
+              user_markets.time_action,
+              user_markets.count_api_full,
                markets.title,
-                markets.cost,
-                 COUNT(user_markets.market_id) AS cnt')
-        ->leftJoin('markets', 'markets.id = user_markets.market_id')
-        ->where(['user_id' => $id])
-        ->groupBy(['market_id'])
-        ->asArray()
-        ->all();
+                markets.cost')
+            ->leftJoin('markets', 'markets.id = user_markets.market_id')
+            ->where(['user_id' => $id])
+            ->asArray()
+            ->all();
 
         $data['markets_user'] = $user_markets;
 
@@ -227,11 +227,12 @@ class MarketController extends Controller
                 return ['msg' => 'error', 'status' => "User don't save"];
             }
 
-            $user_market              = new UserMarkets();
-            $user_market->user_id     = $user->id;
-            $user_market->market_id   = $market->id;
-            $user_market->count_api   = $market->count_api;
-            $user_market->time_action = $market->time_action; //($market->time_action*(60*60*24))
+            $user_market                  = new UserMarkets();
+            $user_market->user_id         = $user->id;
+            $user_market->market_id       = $market->id;
+            $user_market->count_api       = $market->count_api;
+            $user_market->count_api_full  = $market->count_api;
+            $user_market->time_action     = $market->time_action; //($market->time_action*(60*60*24))
 
             $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
             $global_admin->{$invest_method.'_money'} += $market->cost;

@@ -25,10 +25,11 @@ class AppAsset extends AssetBundle
         "css/animate.css",
         "css/style.min.css",
         "js/select2/dist/css/select2.min.css",
-        "css/main.css",
         "js/plugins/bootstrap-tags/bootstrap-tagsinput.css",
         "css/plugins/summernote/summernote.css",
         "css/plugins/summernote/summernote-bs3.css",
+        "css/plugins/switchery/switchery.css",
+        "css/main.css",
     ];
     public $js = [
         "js/plugins/jquery-ui/jquery-ui.min.js",
@@ -55,11 +56,13 @@ class AppAsset extends AssetBundle
         "js/plugins/bootstrap-tags/bootstrap3-typeahead.min.js",
         "js/plugins/bootstrap-tags/bootstrap-tagsinput.js",
         "js/plugins/chosen/chosen.jquery.js",
+        "js/plugins/switchery/switchery.js",
         "js/global.js",
         "js/coins.js",
         "js/pool.js",
         "js/informer2.js",
         "js/market.js",
+        "js/user.js",
     ];
     public $jsOptions = array(
         'position' => \yii\web\View::POS_HEAD

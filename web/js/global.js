@@ -1,7 +1,3 @@
-$('.summernote').summernote({
-    tooltip: false
-});
-
 let config = {
     '.chosen-select'           : {width:"100%"},
     '.chosen-select-deselect'  : {allow_single_deselect:true},
@@ -12,6 +8,10 @@ let config = {
 
 
 document.addEventListener('DOMContentLoaded',function () {
+    $('.summernote').summernote({
+        tooltip: false
+    });
+
     for (let selector in config) {
         $(selector).chosen(config[selector]);
     }

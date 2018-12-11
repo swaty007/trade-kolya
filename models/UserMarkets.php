@@ -11,6 +11,7 @@ use Yii;
  * @property int $user_id
  * @property int $market_id
  * @property int $count_api
+ * @property int $count_api_full
  * @property int $time_action
  * @property string $date_create
  * @property string $date_update
@@ -31,7 +32,7 @@ class UserMarkets extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'market_id', 'count_api', 'time_action'], 'integer'],
+            [['user_id', 'market_id', 'count_api', 'count_api_full', 'time_action'], 'integer'],
             [['date_create', 'date_update'], 'safe'],
         ];
     }

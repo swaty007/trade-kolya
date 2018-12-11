@@ -241,7 +241,7 @@ function informerPostParametrs(pagi_n) {
     link.attr('href',href);
     link.click();
 }
-$('#informer_filter_category,#informer_filter_tags').on('change',function(){
+$(document).on('change','#informer_filter_category,#informer_filter_tags',function(){
     informerPostParametrs();
 });
 $(document).on('click','#pagination a',function () {
@@ -260,10 +260,10 @@ function filterSubCategoies(parent_select,children_select) {
     });
     $(children_select).trigger("chosen:updated");
 }
-$('#informer_category').on('change', function () {
+$(document).on('change', '#informer_category', function () {
     filterSubCategoies('#informer_category','#informer_under_category');
 });
-$('#informer_category_req').on('change', function () {
+$(document).on('change', '#informer_category_req', function () {
     filterSubCategoies('#informer_category_req','#informer_under_category_req');
 });
 $(function() {

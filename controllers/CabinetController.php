@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Notifications;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -254,10 +255,10 @@ class CabinetController extends Controller
         $data = Yii::$app->request->post();
         Yii::$app->response->format = 'json';
 
-        $id      = Yii::$app->user->getId();
+        $id   = Yii::$app->user->getId();
         $user = User::find()->where(['id' => $id])->one();
         if(!isset($data['code']) || !isset($data['secret'])){
-            return ['status' => 'error', 'data' => 'no needed params'];
+            return ['msg' => 'error', 'status' => 'Незаполнены параметры'];
         }
         $g = new GoogleAuthenticator();
         if($g->getCode($data['secret']) == $data['code']){
@@ -269,14 +270,24 @@ class CabinetController extends Controller
             }
             if($user->save()){
                 $url = Rfc6238::getBarCodeUrl($user->email, Yii::$app->params['project_domain'], $user->google_se, Yii::$app->params['project_name']);
-                return ['status' => 'success', 'data' => [
-                    'type' => $user->google_tfa,
-                    'url' => $url,
-                    'secret' => $user->google_se
-                ]];
+                $notification = new Notifications();
+                $notification->createNotification($user->id,
+                    'info',
+                    $user->google_tfa == 1 ? "Двухфакторная аутентификация включена" : "Двухфакторная аутентификация отключена"
+                );
+
+                return [
+                    'msg' => 'ok',
+                    'data' => [
+                        'type' => $user->google_tfa,
+                        'url' => $url,
+                        'secret' => $user->google_se,
+                    ],
+                    'status' =>  $user->google_tfa == 1 ? "Двухфакторная аутентификация включена" : "Двухфакторная аутентификация отключена"
+                ];
             }
-        }else{
-            return ['status' => 'error', 'data' => 'incorrect code'];
+        } else {
+            return ['msg' => 'error', 'status' => "Неверный код"];
         }
         return false;
     }

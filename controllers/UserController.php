@@ -13,6 +13,7 @@ use app\models\Notifications;
 use app\models\SignupForm;
 use app\models\ContactForm;
 use app\models\User;
+use yii\web\UploadedFile;
 
 class UserController extends Controller {
 
@@ -226,6 +227,62 @@ class UserController extends Controller {
      *
      * @return string
      */
+    public function actionProfileSettings() {
+        $this->layout = 'dashboard-layout';
+        $id = Yii::$app->user->getId();
+        $data = [];
+        $data['user'] = User::findOne(['id'=>$id]);
+
+
+
+        return $this->render('profile-settings',$data);
+    }
+    public function actionSetProfileSettings() {
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = 'json';
+            $id                     = Yii::$app->user->getId();
+            $user                   = User::findOne(['id'=>$id]);
+            $username               = (string)Yii::$app->request->post('username', '');
+            $timezone               = (float)Yii::$app->request->post('timezone', '');
+            $lang                   = (string)Yii::$app->request->post('lang', '');
+            $file                   = UploadedFile::getInstanceByName('file');
+
+            $user->username     = $username;
+            $user->timezone     = $timezone;
+            $user->lang         = $lang;
+
+            if ($file) {
+                if (!is_null($user->logo_src)) {
+                    unlink(Yii::getAlias('@webroot') . $user->logo_src);
+                }
+                $filePath = '/image/users/' . time(). $file->baseName . '.' .$file->extension;
+                if ($file->saveAs(Yii::getAlias('@webroot') . $filePath)) {
+                    $user->logo_src = $filePath;
+                }
+            }
+            if ($user->save()) {
+                return ['msg' => 'ok', 'status' => 'Информация обновленна'];
+            } else  {
+                return ['msg' => 'error', 'status' => 'Не сохранило изменения'];
+            }
+        }
+    }
+    public function actionLanguage ()
+    {
+        $lang = Yii::$app->request->get('lang');
+        if($lang == 'en-US' || $lang == 'ru-RU')
+        {
+            $session = Yii::$app->session;
+            $session->open();
+            if ($session->isActive) {
+                $session->set('language', $lang);
+            }
+            \Yii::$app->language = $lang;
+            $session->close();
+            return $this->redirect(Yii::$app->request->referrer);
+        }
+        return 'gg';
+    }
     public function actionAbout() {
         return $this->render('about');
     }
