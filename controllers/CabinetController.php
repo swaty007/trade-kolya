@@ -287,7 +287,7 @@ class CabinetController extends Controller
                     'status' =>  $user->google_tfa == 1 ? "Двухфакторная аутентификация включена" : "Двухфакторная аутентификация отключена"
                 ];
             } else {
-                return ['msg' => 'error', 'status' => "Неверный код syka"];
+                return ['msg' => 'error', 'status' => "Не сохранился юзер"];
             }
         } else {
             return ['msg' => 'error', 'status' => "Неверный код, заного просканируйте код" ];

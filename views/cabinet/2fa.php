@@ -145,15 +145,12 @@ $warning = Yii::$app->session->getFlash('warning');
             },
             success: function (res) {
                 console.log(res);
-                console.log(res.data);
-                console.log(res['data']);
                 showToastr(res);
                 if(res['msg'] == 'ok'){
                     var data = res['data'];
                     if(data['type'] == 1){
                         //$('.image-sec-block').removeClass('fa2-disabled').addClass('fa2');
                        // $('#google_btn').html('Deactivate');
-                        $('#code strong').html(data['secret']);
                     }
                     if(data['type'] == 0){
                         //$('#google_btn').html('Activate');

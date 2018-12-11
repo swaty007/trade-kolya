@@ -184,7 +184,7 @@ class InformerController extends Controller
                         }
                     }
 
-                    return ['msg' => 'ok','status'=>'Информер создан',  'informer' => $informer];
+                    return ['msg' => 'ok','status' => 'Информер создан', 'informer' => $informer];
                 } else {
                     return ['msg' => 'error', 'status' => "Don't save informer"];
                 }
@@ -239,7 +239,7 @@ class InformerController extends Controller
                         return $createInfoCat;
                     }
 
-                    if ($sub_category_ids) {
+                    if (empty($sub_category_ids)) {
                         foreach ($sub_category_ids as $sub_category_id) {
                             $createInfoCat = $this->createIformerCategory(
                                 (int)$sub_category_id,
