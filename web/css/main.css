@@ -160,7 +160,7 @@ body.mini-navbar .nav-header {
     border-right: 2px solid #bfc2c4;
     line-height: 32px;
     padding: 0 25px;
-    height: 32px;
+    min-height: 32px;
     float: left;
 }
 .navbar-top-links>li:last-child {
