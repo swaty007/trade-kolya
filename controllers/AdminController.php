@@ -4,9 +4,12 @@ namespace app\controllers;
 
 use app\models\AdminSettings;
 use app\models\Categories;
+use app\models\Notifications;
+use app\models\Transactions;
 use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 use yii\web\Controller;
 use app\models\Tags;
 use app\models\UserMarketplace;
@@ -23,11 +26,6 @@ class AdminController extends Controller
                 //'only' => ['login', 'logout', 'signup'],
                 'rules' => [
                     [
-                        'allow' => false,
-                        //'actions' => ['login', 'signup'],
-                        'roles' => ['?'],
-                    ],
-                    [
                         'allow' => true,
                         //'actions' => ['logout'],
                         'roles' => ['@'],
@@ -36,12 +34,21 @@ class AdminController extends Controller
             ],
         ];
     }
-
+    public function beforeAction($action)
+    {
+        if (!User::canAdmin()) {
+            $this->redirect(Url::toRoute('/site/index'));
+            return false;
+        }
+        //$this->enableCsrfValidation = false;
+        return parent::beforeAction($action);
+    }
     public function actionIndex()
     {
         if (User::canAdmin()) {
             $data = [];
             $id = Yii::$app->user->getId();
+            $user_id                = (int)Yii::$app->request->get('user_id', null);
 
             $data['categories']     = Categories::find()->where(['parent_id' => null])->all();
             $data['sub_categories'] = Categories::find()->where(['not', ['parent_id' => null]])->all();
@@ -64,19 +71,52 @@ class AdminController extends Controller
                 ->all();
 
             $data['users'] = User::find()->all();
-
             $data['admin_settings'] = AdminSettings::find()->all();
+
+
+            $data['notifications'] = Notifications::find()->where(['user_id'=>$user_id])->orderBy('time DESC')->all();
+            $data['transactions'] = Transactions::find()->where(['user_id'=>$user_id])->orderBy('date_start DESC')->all();
 
             return $this->render('index', $data);
         } else {
             return ['msg' => 'error', 'status' => "Dont have asses"];
         }
     }
+    public function actionBanUser()
+    {
+        if (Yii::$app->request->isAjax) {
+            if (User::canAdmin()) {
+                Yii::$app->response->format = 'json';
 
+                $user_id = (int)Yii::$app->request->post('user_id', '');
+                $ban_user = (int)Yii::$app->request->post('status', null);
+
+                if (!($user = User::findOne(['id'=>$user_id]) )) {
+                    return ['msg' => 'error', 'status' => "No user finded"];
+                }
+
+                if ($ban_user === 0) {
+                    $user->status = 0;
+                    $status_text = "Юзер забанен";
+                } elseif ($ban_user === 10) {
+                    $user->status = 10;
+                    $status_text = "Юзер разбанен";
+                }
+
+                if ($user->save()) {
+                    return ['msg' => 'ok','status' => $status_text , 'user' => $user];
+                } else {
+                    return ['msg' => 'error','status'=>'При сохранении произошла ошибка', 'user' => $user];
+                }
+
+            } else {
+                return ['msg' => 'error', 'status' => "Dont have asses"];
+            }
+        }
+    }
     public function actionChangeSetting()
     {
         if (Yii::$app->request->isAjax) {
-            $id = Yii::$app->user->getId();
             if (User::canAdmin()) {
                 Yii::$app->response->format = 'json';
 

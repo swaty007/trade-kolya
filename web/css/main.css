@@ -75,6 +75,8 @@
 }
 .navbar-top-links .img-circle {
     width: 32px;
+    height: 32px;
+    object-fit: cover;
     display: inline-block;
 }
 

@@ -22,8 +22,8 @@ use yii\web\IdentityInterface;
  * @property string $logo_src
  * @property string $timezone
  * @property integer $status
- * @property integer $created_at
- * @property integer $updated_at
+ * @property string $created_at
+ * @property string $updated_at
  * @property string $password write-only password
  */
 class User extends ActiveRecord implements IdentityInterface {
@@ -46,6 +46,14 @@ class User extends ActiveRecord implements IdentityInterface {
     {
         return [
             TimestampBehavior::className(),
+            [
+                'class' => TimestampBehavior::className(),
+//                'createdAtAttribute' => 'created_at',
+//                'updatedAtAttribute' => 'updated_at',
+                'value' => function () {
+                    return date('Y-m-d h:m:s');
+                },
+            ],
         ];
     }
 

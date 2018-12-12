@@ -7,12 +7,35 @@ use app\models\Transactions;
 use app\models\User;
 use app\models\AdminSettings;
 use Yii;
+use yii\filters\AccessControl;
+use yii\helpers\Url;
 use yii\web\Controller;
 use app\models\api\CoinPayments;
 
 class CoinsController extends Controller
 {
     public $layout = 'dashboard-layout';
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                //'only' => ['login', 'logout', 'signup'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['api-answer'],
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'allow' => true,
+                        //'actions' => ['logout'],
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
 
     public function beforeAction($action)
     {
@@ -209,9 +232,9 @@ class CoinsController extends Controller
         $id   = Yii::$app->user->getId();
 
         if (User::canAdmin()) {
-            $data['transactions'] = Transactions::find()->all();
+            $data['transactions'] = Transactions::find()->orderBy('date_start DESC')->all();
         } else {
-            $data['transactions'] = Transactions::find()->where(['user_id'=>$id])->all();
+            $data['transactions'] = Transactions::find()->where(['user_id'=>$id])->orderBy('date_start DESC')->all();
         }
 
         return $this->render('transactions', $data);
@@ -292,7 +315,8 @@ class CoinsController extends Controller
 
             $txn = Transactions::find()
                                 ->where(['txn_id' => $txn_id])
-                                ->andWhere(['type'=>'deposit'])
+                                ->andWhere(['type'=>'coin'])
+                                ->andWhere(['sub_type'=>'deposit'])
                                 ->andWhere(['status' => 0]);
             if (!$txn->count()) {
                 Yii::trace("E1");

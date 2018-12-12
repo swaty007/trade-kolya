@@ -26,11 +26,6 @@ class TraderController extends Controller {
                 //'only' => ['login', 'logout', 'signup'],
                 'rules' => [
                     [
-                        'allow' => false,
-                        //'actions' => ['login', 'signup'],
-                        'roles' => ['?'],
-                    ],
-                    [
                         'allow' => true,
                         //'actions' => ['logout'],
                         'roles' => ['@'],

@@ -240,7 +240,7 @@ class MarketController extends Controller
             $transaction_admin->amount1     = $market->cost;
             $transaction_admin->currency1   = $invest_method;
             $transaction_admin->type        = 'market';
-            $transaction_admin->sub_type    = 'withdraw';
+            $transaction_admin->sub_type    = 'deposit';
             $transaction_admin->comment     = 'Покупка товара';
             $transaction_admin->status      = 1;
             $transaction_admin->user_id     = $user->id;
@@ -254,6 +254,7 @@ class MarketController extends Controller
             $transaction              = new Transactions();
             $transaction->type        = 'market';
             $transaction->sub_type    = 'deposit';
+            $transaction->comment     = 'Покупка товара';
             $transaction->user_id     = $id;
             $transaction->status      = 1;
             $transaction->amount1     = $market->cost;

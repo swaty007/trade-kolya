@@ -14,8 +14,11 @@ use app\models\api\google2fa\GoogleAuthenticator;
  */
 class LoginEmailForm extends Model
 {
+    const SCENARIO_CHANGEPASSWORD = 'change-password';
+    const SCENARIO_LOGIN = 'login';
     public $email;
     public $password;
+    public $passwordNew;
     public $rememberMe = true;
     public $gc;
     public $code;
@@ -30,17 +33,24 @@ class LoginEmailForm extends Model
     {
         return [
             // username and password are both required
-            [['email', 'password'], 'required'],
+            [['email', 'password'], 'required', 'on' => self::SCENARIO_LOGIN],
+            [['passwordNew', 'password'], 'required', 'on' => self::SCENARIO_CHANGEPASSWORD],
             ['code', 'string'],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
-            ['password', 'validatePassword'],
+            ['password', 'validatePassword', 'on' => self::SCENARIO_LOGIN],
+            ['password', 'validatePassword2', 'on' => self::SCENARIO_CHANGEPASSWORD],
 
             ['gc', 'required', 'requiredValue' => 'true', 'message' => 'Invalid capcha'],
         ];
     }
-
+    public function attributeLabels()
+    {
+        return [
+            'passwordNew' => 'Новый пароль',
+        ];
+    }
     /**
      * Validates the password.
      * This method serves as the inline validation for password.
@@ -79,6 +89,35 @@ class LoginEmailForm extends Model
                 .$_SERVER['HTTP_USER_AGENT'],
                 $_SERVER['HTTP_USER_AGENT']);
         }
+    }
+
+
+    public function validatePassword2($attribute, $params)
+    {
+        if (!$this->hasErrors()) {
+            if(!Yii::$app->user->identity->validatePassword($this->password)){
+                $this->addError($attribute, 'Incorrect password.');
+                return false;
+            }
+            if(Yii::$app->user->identity->google_tfa == 1)
+            {
+                $g = new GoogleAuthenticator();
+                if($g->getCode(Yii::$app->user->identity->google_se) != $this->code){
+                    $this->addError('code', 'Неверный код');
+                    return false;
+                }
+            }
+        }
+    }
+    public function changePassword()
+    {
+        if ($this->validate()) {
+            Yii::$app->user->identity->setPassword($this->passwordNew);
+            if (Yii::$app->user->identity->save()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

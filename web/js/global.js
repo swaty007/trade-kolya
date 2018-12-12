@@ -55,7 +55,13 @@ function finishPjax(el) {
     }
 }
 
-function dataTablePajax() {
+function dataTablePajax(el) {
+    if (el !== undefined) {
+        el = $(el);
+    } else {
+        el = $('#data_table');
+    }
+
     if(typeof $ !== 'undefined') {
         init();
     } else {
@@ -67,7 +73,7 @@ function dataTablePajax() {
         },100);
     }
     function init() {
-        $('#data_table').DataTable({
+        el.DataTable({
             responsive: true,
             "dom": 'T<"clear">lfrtip',
             "tableTools": {

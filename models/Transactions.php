@@ -6,6 +6,8 @@ use yii;
 use app\models\api\CoinPayments;
 use yii\db\ActiveRecord;
 use app\models\User;
+use yii\helpers\Url;
+
 /**
  * This is the model class for table "transactions".
  *
@@ -112,7 +114,7 @@ class Transactions extends ActiveRecord
             'custom' => $amount_in_btc, // СЂР°РЅРґРѕРјРЅРѕРµ РїРѕР»Рµ
             'invoice' => $this->user_id, //СЂР°РЅРґРѕРјРЅРѕРµ РїРѕР»Рµ 2
             'item_name' => 'Test Item/Order Description',
-            'ipn_url' => 'http://kolya.infinitum.tech/web/coins/api-answer',
+            'ipn_url' => Url::to(['coins/api-answer'],'https'),
         );
 
         $result = $cps->createTransaction($req);

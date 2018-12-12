@@ -24,10 +24,19 @@ class UserController extends Controller {
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+//                'only' => ['logout'],
                 'rules' => [
                     [
-                        'actions' => ['logout'],
+                        'allow' => false,
+                        'actions' => ['profile-settings', 'notifications','set-profile-settings','notification-show'],
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                    [
+//                        'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -41,7 +50,6 @@ class UserController extends Controller {
             ],
         ];
     }
-
     /**
      * {@inheritdoc}
      */
@@ -121,6 +129,7 @@ class UserController extends Controller {
         }
 
         $model = new LoginEmailForm();
+        $model->scenario = 'login';
         $gcapcha = Yii::$app->request->post("g-recaptcha-response", '');
         $model->gc = $this->validateGoogleCapcha($gcapcha);
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
@@ -233,7 +242,15 @@ class UserController extends Controller {
         $data = [];
         $data['user'] = User::findOne(['id'=>$id]);
 
-
+        $model = new LoginEmailForm();
+        $model->scenario = 'change-password';
+        $model->gc = true;
+        if ($model->load(Yii::$app->request->post()) && $model->changePassword()) {
+            Yii::$app->getSession()->setFlash('success', 'Пароль успешно изменене');
+        }
+        $model->password = '';
+        $model->passwordNew = '';
+        $data['model'] = $model;
 
         return $this->render('profile-settings',$data);
     }
@@ -243,7 +260,7 @@ class UserController extends Controller {
             $id                     = Yii::$app->user->getId();
             $user                   = User::findOne(['id'=>$id]);
             $username               = (string)Yii::$app->request->post('username', '');
-            $timezone               = (float)Yii::$app->request->post('timezone', '');
+            $timezone               = (string)Yii::$app->request->post('timezone', '');
             $lang                   = (string)Yii::$app->request->post('lang', '');
             $file                   = UploadedFile::getInstanceByName('file');
 

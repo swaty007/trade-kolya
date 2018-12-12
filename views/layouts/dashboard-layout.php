@@ -113,7 +113,11 @@ AppAsset::register($this);
                             <?php \yii\widgets\Pjax::end(); ?>
                             <li class="dropdown">
                                 <div>
-                                    <img alt="image" class="img-circle" src="../image/user_icon.png" />
+                                    <img alt="image"
+                                         class="img-circle"
+                                         src="<?=Yii::$app->user->identity->logo_src ?
+                                             Yii::$app->user->identity->logo_src :
+                                         '../image/user_icon.png';?>" />
                                     <a data-toggle="dropdown" class="dropdown-toggle styling-settings" href="#">
                                         <span class="text-muted text-xs block">
                                             <?php echo Yii::$app->user->identity->username ?>
@@ -127,10 +131,8 @@ AppAsset::register($this);
                                         <li><a href="<?= Url::to(['coins/transactions'])?>">Транзакции</a></li>
                                         <li><a href="<?=Url::to(['user/notifications'])?>">Уведомления</a></li>
                                         <li class="divider"></li>
-                                        <li><form action="/site/logout" method="post">
-                                                <input type="hidden"
-                                                       name="_csrf"
-                                                       value="3IVWs-2LhwVxDCcOrB3_EPNO5Fkx7VnyIsypYStsDrzrtwWG29nKVAlBQUHBSpRAsCWtMEOlFIF4u4QVGyZJ1Q==">
+                                        <li><form action="<?=Url::to(['site/logout'])?>" method="post">
+                                                <?= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->csrfToken); ?>
                                                 <button type="submit" class="btn btn-link logout">
                                                     <i class="fa fa-sign-out"></i>
                                                     Выйти

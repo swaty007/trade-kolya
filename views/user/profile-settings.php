@@ -1,6 +1,11 @@
 <?php
 
+use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
+use yii\helpers\Url;
+
 $this->title = 'Мой профиль';
+$success = Yii::$app->session->getFlash('success');
 ?>
 
     <div class="row wrapper border-bottom white-bg">
@@ -209,27 +214,42 @@ $this->title = 'Мой профиль';
                                 <button id="user_update_data" class="btn btn-primary btn-sm" type="submit">Save changes</button>
                                 <?php \yii\widgets\Pjax::end(); ?>
 
+                                <div class="hr-line-dashed"></div>
+
+                                <?php $form = ActiveForm::begin([
+                                    'id' => 'change-password-form',
+                                    'options' => [
+                                        'class' => 'm-t form-horizontal'
+                                    ],
+                                    'fieldConfig' => [
+                                        'template' => "{label}\n<div class=\"col-sm-10\">{input}</div>\n<div class=\"col-lg-12\">{error}</div>",
+                                        'labelOptions' => ['class' => 'col-sm-2 col-form-label'],
+                                    ],
+                                ]); ?>
+
+                                <?php if (isset($success)): ?>
+                                    <div class="alert alert-success alert-dismissable">
+                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                        <?=$success?>.
+                                    </div>
+                                <?php endif;?>
+
+
+                                    <?= $form->field($model, 'password')->passwordInput()->textInput(['placeholder' => 'Пароль']) ?>
 
                                 <div class="hr-line-dashed"></div>
-                                <div class="form-group row">
-                                    <label class="col-sm-2 col-form-label">Старый пароль</label>
-                                    <div class="col-sm-10">
-                                        <input type="password"
-                                               placeholder="placeholder"
-                                               class="form-control">
-                                    </div>
-                                </div>
+
+                                    <?= $form->field($model, 'passwordNew')->passwordInput()->textInput(['placeholder' => 'Новый пароль']) ?>
+
                                 <div class="hr-line-dashed"></div>
-                                <div class="form-group row">
-                                    <label class="col-sm-2 col-form-label">Сменить пароль</label>
-                                    <div class="col-sm-10">
-                                        <input type="password"
-                                               placeholder="placeholder"
-                                               class="form-control">
-                                    </div>
+                                <div id="code_cont" <?= $user->google_tfa !== 1 ? 'style="display: none"':'';?>>
+                                    <?= $form->field($model, 'code')->textInput(['placeholder' => Yii::t('app','2-FA Code')]) ?>
                                 </div>
-                                <button class="btn btn-primary btn-sm" type="submit">Save changes</button>
-                                <div class="hr-line-dashed"></div>
+                                <?= Html::submitButton('Сменить пароль', ['class' => 'btn btn-primary block full-width m-b', 'name' => 'change-password']) ?>
+
+                                <?php ActiveForm::end(); ?>
+
+
 
                             </div>
                         </div>
