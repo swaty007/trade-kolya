@@ -3,6 +3,8 @@
 namespace app\controllers;
 
 use app\models\Notifications;
+use app\models\Transactions;
+use app\models\UserMarketplaceBuy;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -18,6 +20,7 @@ use app\models\api\google2fa\GoogleAuthenticator;
 use app\models\api\google2fa\Rfc6238;
 use app\models\User;
 use app\models\UserMarkets;
+use app\models\AdminSettings;
 
 class CabinetController extends Controller
 {
@@ -145,6 +148,9 @@ class CabinetController extends Controller
 
         $data['delete'] = Url::to(['cabinet/deleteaccount']);
         $data['add']    = Url::to(['cabinet/account']);
+        $data['information_title'] = AdminSettings::find()->select('value')->where(['id' => 6])->one();
+        $data['information_text']  = AdminSettings::find()->select('value')->where(['id' => 7])->one();
+        $data['marketplaces']      = Marketplace::find()->all();
 
         return $this->render('accounts', $data);
     }
@@ -152,7 +158,7 @@ class CabinetController extends Controller
     public function actionAccount()
     {
 
-        $this->view->registerJsFile('/js/main.js', ['depends' => ['yii\web\JqueryAsset']]);
+        //$this->view->registerJsFile('/js/main.js', ['depends' => ['yii\web\JqueryAsset']]);
 
         $user_id = Yii::$app->user->getId();
 
@@ -175,11 +181,12 @@ class CabinetController extends Controller
                 'user_id' => $user_id])->attributes);
         }
         $data['marketplaces'] = array();
-        foreach (Marketplace::find()->asArray()->all() as $value) {
+        foreach (Marketplace::find()->where('is_active', 1)->asArray()->all() as $value) {
             $data['marketplaces'][$value['marketplace_id']] = $value['marketplace_name'];
         };
 
         $data["urlMasters"] = Url::toRoute('cabinet/masters');
+
         return $this->render('account', $data);
     }
 
@@ -293,5 +300,100 @@ class CabinetController extends Controller
     public function menu()
     {
         return UserMenu::get();
+    }
+
+    public function actionCopyIndex()
+    {
+        $data = [];
+
+        $data['information_title'] = AdminSettings::find()->select('value')->where(['id' => 8])->one();
+        $data['information_text']  = AdminSettings::find()->select('value')->where(['id' => 9])->one();
+        $data['marketplaces']      = Marketplace::find()->all();
+        $data['user_marketplaces'] = UserMarketplace::find()->where(['is_seen_activated' => 1])->all();
+        $data['user_marketplaces_my'] = UserMarketplace::find()->where(['is_seen_activated' => 1, 'user_id' => Yii::$app->user->getId()])->all();
+        $data['user_marketplaces_buy'] = UserMarketplace::find()->joinWith(['marketplaceUser'])->where(['user_id' => Yii::$app->user->getId()])->all();
+
+
+        return $this->render('copy', $data);
+    }
+
+    public function actionCopyBuy()
+    {
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = 'json';
+            $user_marketplace_id = Yii::$app->request->post('user_marketplace_id', '');
+            $userAction          = Yii::$app->user->getId();
+            $commission          = AdminSettings::find()->select('value')->where(['id' => 11])->one();
+
+
+            $user_buy = new UserMarketplaceBuy();
+
+            $user_buy->user_id = $userAction;
+            $user_buy->user_marketplace_id = $user_marketplace_id;
+
+            $user_buy->save();
+            $userTrader = User::findOne(['id' => $user_buy->userMarketplace->user->id ]);
+            $updateUser = User::findOne(['id' => $userAction ]);
+
+            $updateUser->USDT_money -= $user_buy->userMarketplace->pay_copy;
+            $transaction_buyer = new Transactions();
+            $transaction_buyer->amount1     = -1*$user_buy->userMarketplace->pay_copy;
+            $transaction_buyer->currency1   = 'USDT';
+            $transaction_buyer->type        = 'copy-trader';
+            $transaction_buyer->sub_type    = 'deposit';
+            $transaction_buyer->comment     = 'Покупка копирования';
+            $transaction_buyer->status      = 1;
+            $transaction_buyer->user_id     = $userTrader->id;
+            $transaction_buyer->buyer_name  = $userTrader->username;
+            $transaction_buyer->buyer_email = $userTrader->email;
+            $transaction_buyer->save();
+            $updateUser->save();
+            $notification1 = new Notifications();
+            $notification1->createNotification($updateUser->id,
+                'success',
+                'Вы успешно купили копирование');
+
+
+            $userTrader->USDT_money += $user_buy->userMarketplace->pay_copy - ($user_buy->userMarketplace->pay_copy/100*$commission);
+            $transaction_trader = new Transactions();
+            $transaction_trader->amount1     = $user_buy->userMarketplace->pay_copy - ($user_buy->userMarketplace->pay_copy/100*$commission);
+            $transaction_trader->currency1   = 'USDT';
+            $transaction_trader->type        = 'copy-trader';
+            $transaction_trader->sub_type    = 'deposit';
+            $transaction_trader->comment     = 'Покупка копирования';
+            $transaction_trader->status      = 1;
+            $transaction_trader->user_id     = $userAction;
+            $transaction_trader->buyer_name  = $updateUser->username;
+            $transaction_trader->buyer_email = $updateUser->email;
+            $transaction_trader->save();
+            $userTrader->save();
+            $notification2 = new Notifications();
+            $notification2->createNotification($userTrader->id,
+                'success',
+                'Вы успешно получили выплату за подписку на копирование');
+
+
+
+            $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
+            $global_admin->USDT_money += $user_buy->userMarketplace->pay_copy/100*$commission;
+            $transaction_admin = new Transactions();
+            $transaction_admin->amount1     = $user_buy->userMarketplace->pay_copy/100*$commission;
+            $transaction_admin->currency1   = 'USDT';
+            $transaction_admin->type        = 'copy-trader';
+            $transaction_admin->sub_type    = 'commission';
+            $transaction_admin->comment     = 'Покупка копирования трейдера';
+            $transaction_admin->status      = 1;
+            $transaction_admin->user_id     = $userAction;
+            $transaction_admin->buyer_name  = $updateUser->username;
+            $transaction_admin->buyer_email = $updateUser->email;
+            $transaction_admin->save();
+            $global_admin->save();
+            $notification = new Notifications();
+            $notification->createNotification($global_admin->id,
+                'success',
+                'Вы успешно получили комисию от покупки копирования');
+
+            return ['msg' => 'ok', 'status' => 'Копирование куплено'];
+        }
     }
 }

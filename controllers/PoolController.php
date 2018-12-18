@@ -11,6 +11,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\helpers\VarDumper;
+use yii\web\UploadedFile;
 use yii\widgets\Menu;
 use app\models\UserMenu;
 
@@ -279,6 +280,7 @@ class PoolController extends Controller
             $date_end        = Yii::$app->request->post('date_start', '');
             $min_size        = (double)Yii::$app->request->post('min_size', '');
             $max_size        = (double)Yii::$app->request->post('max_size', '');
+            $file            = UploadedFile::getInstanceByName('file');
 
             $pool                  = new InvestPools();
             $pool->min_invest      = $min_invest;
@@ -291,6 +293,16 @@ class PoolController extends Controller
             $pool->date_end        = $date_end;
             $pool->min_size_invest = $min_size;
             $pool->max_size_invest = $max_size;
+
+            if ($file) {
+                if (!is_null($pool->src)) {
+                    unlink(Yii::getAlias('@webroot') . $pool->src);
+                }
+                $filePath = '/image/pool/' . time(). $file->baseName . '.' .$file->extension;
+                if ($file->saveAs(Yii::getAlias('@webroot') . $filePath)) {
+                    $pool->src = $filePath;
+                }
+            }
 
             if ($pool->save()) {
                 return ['msg' => 'ok', 'pool' => $pool];
@@ -317,6 +329,7 @@ class PoolController extends Controller
                 $date_end        = Yii::$app->request->post('date_start', '');
                 $min_size        = (double)Yii::$app->request->post('min_size', '');
                 $max_size        = (double)Yii::$app->request->post('max_size', '');
+                $file             = UploadedFile::getInstanceByName('file');
 
                 if (!($pool = InvestPools::findOne(['id'=>$pool_id]) )) {
                     return ['msg' => 'error', 'status' => "No Invest Pool finded"];
@@ -336,6 +349,16 @@ class PoolController extends Controller
                 $pool->date_end        = $date_end;
                 $pool->min_size_invest = $min_size;
                 $pool->max_size_invest = $max_size;
+
+                if ($file) {
+                    if (!is_null($pool->src)) {
+                        unlink(Yii::getAlias('@webroot') . $pool->src);
+                    }
+                    $filePath = '/image/pool/' . time(). $file->baseName . '.' .$file->extension;
+                    if ($file->saveAs(Yii::getAlias('@webroot') . $filePath)) {
+                        $pool->src = $filePath;
+                    }
+                }
 
                 if ($pool->save()) {
                     return ['msg' => 'ok', 'status' => "Pool updated"];
@@ -365,6 +388,9 @@ class PoolController extends Controller
                 }
 
                 CommentsPools::deleteAll(['pool_id'=>$pool_id]);
+                if (!is_null($pool->src)) {
+                    unlink(Yii::getAlias('@webroot') . $pool->src);
+                }
 
                 if ($pool->delete()) {
                     return ['msg' => 'ok', 'status' => "Pool deleted"];

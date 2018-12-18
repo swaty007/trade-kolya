@@ -55,7 +55,8 @@ function finishPjax(el) {
     }
 }
 
-function dataTablePajax(el) {
+function
+dataTablePajax(el) {
     if (el !== undefined) {
         el = $(el);
     } else {

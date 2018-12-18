@@ -36,15 +36,25 @@ AppAsset::register($this);
                 <div class="sidebar-collapse">
                     <?php echo  MainMenu::widget(); ?>
                 </div>
+                <div class="social-block">
+                    <div class="copyright-block">
+                        <a href="#"><i class="fa fa-telegram fa-2x"></i></a>
+                        <a href="#"><i class="fa fa-facebook-square fa-2x"></i></a>
+                        <p class="copyright"><i class="fa fa-copyright"></i> TakeProfit, 2018. Все праза защищены.</p>
+                    </div>
+                    <div class="faq">
+                        <a href="#"><i class="fa fa-question-circle"></i> <strong>FAQ</strong></a>
+                    </div>
+                </div>
             </nav>
 
             <div id="page-wrapper" class="gray-bg dashbard-1">
-                <div class="row border-bottom">
+                <div class="row border-bottom fixed-navbar">
                     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
                         <ul class="nav navbar-top-links navbar-right">
                             <li class="dropdown">
                                 <a class="dropdown-toggle count-info balance-style" data-toggle="dropdown" href="#">
-                                    Ваш баланс USDT: <strong><?= (double)Yii::$app->user->identity->USDT_money; ?></strong>
+                                    <strong>Ваш баланс USDT:</strong> <?= (double)Yii::$app->user->identity->USDT_money; ?>
                                     <b class="caret"></b>
                                 </a>
                                     <?php \yii\widgets\Pjax::begin(['id'=>'balance_pjax',
@@ -120,7 +130,7 @@ AppAsset::register($this);
                                          '../image/user_icon.png';?>" />
                                     <a data-toggle="dropdown" class="dropdown-toggle styling-settings" href="#">
                                         <span class="text-muted text-xs block">
-                                            <?php echo Yii::$app->user->identity->username ?>
+                                            <strong><?php echo Yii::$app->user->identity->username ?></strong>
                                             <b class="caret"></b>
                                         </span>
                                     </a>

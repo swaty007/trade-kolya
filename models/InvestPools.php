@@ -20,9 +20,11 @@ use yii\db\ActiveRecord;
  * @property int $diversification
  * @property string $date_start
  * @property string $date_end
+ * @property string $src
  */
 class InvestPools extends ActiveRecord
 {
+    public $file;
     /**
      * {@inheritdoc}
      */
@@ -44,6 +46,7 @@ class InvestPools extends ActiveRecord
             [['name'], 'string', 'max' => 50],
             [['invest_method'], 'string', 'max' => 50],
             [['description'], 'string', 'max' => 255],
+            [['file'], 'file', 'extensions' => 'png, jpg'],
         ];
     }
 

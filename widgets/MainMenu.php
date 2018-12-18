@@ -67,6 +67,12 @@ class MainMenu extends Widget
             );
         }
 
+        $subMenu[] = array(
+            'label' => 'Мои биржи',
+            'url' => Url::to(['cabinet/accounts']),
+            'template' => '<a href="{url}" class="main-li">{label}</a>',
+        );
+
         $this->menu[] = array(
             'label' => 'Трейдинг',
             'class' => 'fa-area-chart',
@@ -123,6 +129,14 @@ class MainMenu extends Widget
             'url' => Url::to(['market/index'])
         );
 
+        $this->menu[] = array(
+            'label' => 'Копирование',
+            'class' => 'fa-info-circle',
+            'template' => '<a href="{url}"><i class="fa fa-copy"></i> <span class="nav-label">{label}</span></a>',
+            'active' => Yii::$app->controller->module->requestedRoute == 'cabinet/copy-index',
+            'url' => Url::to(['cabinet/copy-index'])
+        );
+
         if (Yii::$app->user->identity->user_role == "admin") {
             $this->menu[] = array(
                 'label' => 'Транзакции',
@@ -148,6 +162,6 @@ class MainMenu extends Widget
             ],
             'firstItemCssClass' => 'nav-header',
 
-            'submenuTemplate' => "\n<ul class='nav nav-second-level collapse' role='menu'>\n{items}\n</ul>\n",]);
+            'submenuTemplate' => "\n<ul class='nav nav-second-level collapse in' aria-expanded='true' role='menu'>\n{items}\n</ul>\n",]);
     }
 }

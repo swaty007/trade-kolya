@@ -6,14 +6,30 @@ $(document).on('click',"#create_market", function(e) {
         description: $('#market_description').val(),
         cost: $('#market_cost').val(),
         time_action: $('#market_time_action').val(),
-        count_api: $('#market_count_api').val()
+        count_api: $('#market_count_api').val(),
+        file: $("#market_file")[0].files[0]
     };
+
+    let formData = new FormData();
+
+    formData.append("title", data.title);
+    formData.append("type", data.type);
+    formData.append("description", data.description);
+    formData.append("cost", data.cost);
+    formData.append("time_action", data.time_action);
+    formData.append("count_api", data.count_api);
+    formData.append("file", data.file);
+
     console.log(data);
 
     $.ajax({
         type: "POST",
         url: "/market/create-market",
-        data: data,
+        cache : false,
+        processData: false,
+        dataType: 'json',
+        contentType: false,
+        data: formData,
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
@@ -32,14 +48,30 @@ $(document).on('click',"#update_market", function(e) {
         cost: $('#market_cost_edit').val(),
         time_action: $('#market_time_action_edit').val(),
         count_api: $('#market_count_api_edit').val(),
-        market_id: Number($(this).attr('data-id'))
+        market_id: Number($(this).attr('data-id')),
+        file: $("#market_file_update")[0].files[0]
     };
+
+    let formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("type", data.type);
+    formData.append("description", data.description);
+    formData.append("cost", data.cost);
+    formData.append("time_action", data.time_action);
+    formData.append("count_api", data.count_api);
+    formData.append("market_id", data.market_id);
+    formData.append("file", data.file);
+
     console.log(data);
 
     $.ajax({
         type: "POST",
         url: "/market/update-market",
-        data: data,
+        cache : false,
+        processData: false,
+        dataType: 'json',
+        contentType: false,
+        data: formData,
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
@@ -55,13 +87,17 @@ function editMarket(market_id,_this) {
         type = block.find('.market-type').text(),
         cost = block.find('.market-cost').text(),
         time_action = block.find('.market-end').text(),
-        count_api = block.find('.market-count_api').text();
+        count_api = block.find('.market-count_api').text(),
+        src = block.parent().find('.market_image').attr('src');
+
 
     $('#market-edit').find('#market_name_edit').val(title);
     $('#market-edit').find('#market_description_edit').val(description);
     $('#market-edit').find('#market_cost_edit').val(cost);
     $('#market-edit').find('#market_time_action_edit').val(time_action);
     $('#market-edit').find('#market_count_api_edit').val(count_api);
+    $('#image_market_src').attr('src', src);
+
     $.each( $('#market_type_edit option'),function () {
         if( $(this).val() == type) {$(this).prop("selected", true)}
     });

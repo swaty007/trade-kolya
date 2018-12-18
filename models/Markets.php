@@ -17,9 +17,12 @@ use Yii;
  * @property int $count_api
  * @property string $date_create
  * @property string $date_update
+ * @property string $src
  */
 class Markets extends \yii\db\ActiveRecord
 {
+
+    public $file;
     /**
      * {@inheritdoc}
      */
@@ -37,8 +40,9 @@ class Markets extends \yii\db\ActiveRecord
             [['title', 'type', 'description', 'cost', 'time_action'], 'required'],
             [['id', 'time_action', 'count_api'], 'integer'],
             [['cost'], 'number'],
-            [['type', 'description', 'status', 'title'], 'string'],
+            [['type', 'description', 'status', 'title', 'src'], 'string'],
             [['date_create', 'date_update'], 'safe'],
+            [['file'], 'file', 'extensions' => 'png, jpg'],
         ];
     }
 

@@ -120,10 +120,11 @@
     padding: 8px 0;
 }
 .new-navbar {
-    position: absolute;
+    position: fixed;
     left: 0;
     bottom: 0;
     top: 0;
+    z-index: 1000;
 }
 .logo-element {
     padding: 6px 0;
@@ -144,7 +145,7 @@ body.mini-navbar .nav-header {
 }
 
 .wrapper {
-    margin-top: 10px;
+    margin-top: 61px;
 }
 .clip {
     white-space: nowrap; /* Запрещаем перенос строк */
@@ -167,16 +168,20 @@ body.mini-navbar .nav-header {
     border-right: none;
     padding: 0 0 0 25px;
 }
+.navbar-top-links>li:first-child {
+    border-right: none;
+    padding: 0;
+}
 .navbar-top-links>li>button {
     border: none;
     outline: none;
     margin-top: -3px;
 }
 .bell>a>i {
-    margin-top: 12px;
+    margin-top: 9px;
 }
 .bell>a>span {
-    top: 2px !important;
+    top: 1px !important;
     right: -2px !important;
 }
 .modal-dialog .modal-footer {
@@ -277,4 +282,81 @@ body.mini-navbar .navbar-default .nav>li>a {
     right: 0;
     text-align: right;
     top: 0;
+}
+
+.fixed-navbar {
+    position: fixed;
+    left: 235px;
+    right: 0;
+    top: 0;
+    background: white;
+    z-index: 999;
+    -webkit-transition: ease 0.7s; /* Safari */
+    transition: ease 0.7s;
+}
+
+body.mini-navbar .fixed-navbar {
+    left: 85px;
+    -webkit-transition: ease 0.7s; /* Safari */
+    transition: ease 0.7s;
+}
+
+.social-block {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+.faq a {
+    background: #293846;
+    margin: 0;
+    line-height: 40px;
+    display: block;
+    width: 100%;
+    color: #ffffff;
+}
+.copyright-block a {
+    color: #ffffff;
+    display: inline-block;
+    margin: 0 5px 5px;
+}
+.copyright-block p {
+    color: #ffffff;
+}
+
+body.mini-navbar .copyright {
+    display: none;
+}
+
+body.mini-navbar .copyright-block a {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.informer-html {
+    line-height: 15px;
+    -webkit-line-clamp: 4;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-height: 61px;
+    margin-bottom: 0px;
+}
+.market_image, .pool_image {
+    width: 100%;
+
+    max-width: 100px;
+    display: block;
+    margin: 0 auto 25px;
+}
+.main-li {
+    color: white;
+    text-decoration: underline;
+}
+.image-table {
+    width: 50px;
+}
+.table-btn-style {
+    display: block;
 }

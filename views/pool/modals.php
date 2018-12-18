@@ -20,6 +20,10 @@
                     <input id="pool_diversification" type="text" class="form-control">
                 </div>
                 <div class="form-group">
+                    <label class="main-label">Картинка</label>
+                    <input id="pool_file" type="file" class="form-control">
+                </div>
+                <div class="form-group">
                     <label class="main-label">Описание</label>
                     <textarea id="pool_description" type="text" class="form-control"></textarea>
                 </div>
@@ -84,6 +88,13 @@
                 <div class="form-group">
                     <label class="main-label">Количество выплат</label>
                     <input id="pool_diversification_edit" type="text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <div class="text-center">
+                        <img id="image_pool_src" alt="image" class="m-t-xs img-responsive" src="" style="width: 200px; margin-left: calc(50% - 100px);">
+                    </div>
+                    <label class="main-label">Картинка</label>
+                    <input id="pool_file_update" type="file" class="form-control">
                 </div>
                 <div class="form-group">
                     <label class="main-label">Описание</label>

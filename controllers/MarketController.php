@@ -11,10 +11,12 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use app\models\Markets;
 use app\models\UserMarketplace;
+use yii\web\UploadedFile;
 
 class MarketController extends Controller
 {
     public $layout = 'dashboard-layout';
+
 
     public function behaviors()
     {
@@ -111,6 +113,7 @@ class MarketController extends Controller
             $cost        = (double)Yii::$app->request->post('cost', 0);
             $time_action = (int)Yii::$app->request->post('time_action', '');
             $count_api   = (int)Yii::$app->request->post('count_api', '');
+            $file             = UploadedFile::getInstanceByName('file');
 
             $market              = new Markets();
             $market->title       = $title;
@@ -119,6 +122,17 @@ class MarketController extends Controller
             $market->cost        = $cost;
             $market->time_action = $time_action;
             $market->count_api   = $count_api;
+
+            if ($file) {
+                if (!is_null($market->src)) {
+                    unlink(Yii::getAlias('@webroot') . $market->src);
+                }
+                $filePath = '/image/market/' . time(). $file->baseName . '.' .$file->extension;
+                if ($file->saveAs(Yii::getAlias('@webroot') . $filePath)) {
+                    $market->src = $filePath;
+                }
+            }
+
 
             if ($market->save()) {
                 return ['msg' => 'ok', 'status' => 'Маркет создан', 'market' => $market];
@@ -142,6 +156,7 @@ class MarketController extends Controller
                 $cost        = (double)Yii::$app->request->post('cost', 0);
                 $time_action = (int)Yii::$app->request->post('time_action', '');
                 $count_api   = (int)Yii::$app->request->post('count_api', '');
+                $file             = UploadedFile::getInstanceByName('file');
 
                 if (!($market = Markets::findOne(['id'=>$market_id]) )) {
                     return ['msg' => 'error', 'status' => "No Market finded"];
@@ -153,6 +168,16 @@ class MarketController extends Controller
                 $market->cost        = $cost;
                 $market->time_action = $time_action;
                 $market->count_api   = $count_api;
+
+                if ($file) {
+                    if (!is_null($market->src)) {
+                        unlink(Yii::getAlias('@webroot') . $market->src);
+                    }
+                    $filePath = '/image/market/' . time(). $file->baseName . '.' .$file->extension;
+                    if ($file->saveAs(Yii::getAlias('@webroot') . $filePath)) {
+                        $market->src = $filePath;
+                    }
+                }
 
                 if ($market->save()) {
                     return ['msg' => 'ok', 'status' => "Market updated"];
@@ -183,6 +208,9 @@ class MarketController extends Controller
                     }
                     return ['msg' => 'error', 'status' => 'Have money in invest => moved to archive'];
                 } else {
+                    if (!is_null($market->src)) {
+                        unlink(Yii::getAlias('@webroot') . $market->src);
+                    }
                     if ($market->delete()) {
                         return ['msg' => 'ok', 'status' => "Market deleted"];
                     } else {

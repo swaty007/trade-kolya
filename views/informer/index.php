@@ -63,9 +63,8 @@ $this->title = 'Информер';
                                                 class="chosen-select"
                                                 tabindex="2"
                                         >
-                                            <?php foreach ($full_categories as $category) : ?>
-                                                <option value="<?= $category['id'] ?>" <?php if (isset($select->category)) if (in_array($category['id'], $select->category)) echo 'selected' ?>><?= $category['cat_name'] ?></option>
-                                            <?php endforeach; ?>
+
+
                                         </select>
                                     </div>
                                     <div class="col-lg-12">
@@ -137,7 +136,7 @@ $this->title = 'Информер';
                                         <div class="col-sm-8">
                                             <h3 class="clip"><strong><?= $informer->title ?></strong></h3>
                                             <p><i class="fa fa-clock-o"></i> <?= substr($informer->date, 0, 10) ?></p>
-                                            <p><?= $informer->html ?></p>
+                                            <div class="informer-html"><?= $informer->html ?></div>
                                             <?php if (!empty($informer->tag)) : ?>
                                                 <div class="tags">
                                                     <h5 style="display: inline-block;">Tags:</h5>

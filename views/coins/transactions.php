@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 use app\models\User;
-$this->title = 'My Yii Application';
+$this->title = 'Транзакции';
 ?>
 <div class="row wrapper border-bottom white-bg">
     <div class="col-lg-10">
@@ -111,7 +111,8 @@ $this->title = 'My Yii Application';
                                         <?php if($transaction->type === "coin" &&
                                             $transaction->sub_type === "withdraw" &&
                                             $transaction->status == 0):?>
-                                            <button class="btn btn-success label label-success" onclick="transationDone(<?=$transaction->id?>)">Выплатить</button>
+                                            <button class="btn btn-success label label-success" onclick="transactionDone(<?=$transaction->id?>)">Выплатить</button>
+                                            <button class="btn btn-warning label label-success" onclick="transactionReturn(<?=$transaction->id?>)">Отменить</button>
                                         <?php endif;?>
                                     </td>
                                 <?php endif;?>

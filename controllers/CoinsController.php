@@ -6,6 +6,7 @@ use app\models\Notifications;
 use app\models\Transactions;
 use app\models\User;
 use app\models\AdminSettings;
+use poloniex\api\tools\Request;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
@@ -177,7 +178,7 @@ class CoinsController extends Controller
 
             $transaction              = new Transactions();
             $transaction->amount1     = -1*$amount;
-            $transaction->amount2     = $transaction->amount1/100*(double)AdminSettings::findOne(['id' => 5])->value;
+            $transaction->amount2     = $amount/100*(double)AdminSettings::findOne(['id' => 5])->value;
             $transaction->currency1   = $curr1;
             $transaction->currency2   = $curr1;
             $transaction->type        = 'coin';
@@ -262,6 +263,41 @@ class CoinsController extends Controller
                         'Вы успещно получили выплату на кошелек',
                         $transaction->attributes);
                     return ['msg' => 'ok', 'status'=>'Транзакция отмечена выплаченной', 'transaction' => $transaction];
+                } else {
+                    return ['msg' => 'error', 'status' => "Don't save transaction"];
+                }
+
+            }
+        }
+    }
+
+    public function actionTransactionReturn()
+    {
+        if (Yii::$app->request->isAjax) {
+            if (User::canAdmin()) {
+                Yii::$app->response->format = 'json';
+
+                $transaction_id = (int)Yii::$app->request->post('transaction_id', '');
+
+                if (!($transaction = Transactions::findOne(['id' => $transaction_id]) )) {
+                    return ['msg' => 'error', 'status' => "No Transaction finded"];
+                }
+
+                $user = User::find()->where(['id' => $transaction->user_id])->one();
+
+                if (User::allowedCurrency($transaction->currency1)) {
+                    $user->{$transaction->currency1.'_money'} += (-1*$transaction->amount1)-$transaction->amount2;
+                } else {
+                    return ['msg' => 'error', 'status' => "Failed currency"];
+                }
+
+                if ($transaction->delete()) {
+                    $notification = new Notifications();
+                    $notification->createNotification($transaction->user_id,
+                        'info',
+                        'Вам отменили выплату',
+                        $transaction->attributes);
+                    return ['msg' => 'ok', 'status'=>'Отмена выплаты'];
                 } else {
                     return ['msg' => 'error', 'status' => "Don't save transaction"];
                 }

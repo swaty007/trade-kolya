@@ -12,7 +12,8 @@ use yii\db\ActiveRecord;
 
 /**
  * Description of Marketplace
- *
+ * @property InformerCategory[] $informerCategories
+ * @property UserMarketplaceBuy[] $marketplaceUser
  * @author Дмитрий
  */
 class UserMarketplace extends ActiveRecord{
@@ -20,5 +21,26 @@ class UserMarketplace extends ActiveRecord{
     public static function tableName()
     {
         return 'user_marketplace';
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
+    public function getMarketplace()
+    {
+        return $this->hasOne(Marketplace::className(), ['marketplace_id' => 'marketplace_id']);
+    }
+
+
+
+    public function getMarketplaceUser()
+    {
+        return $this->hasMany(User::className(), ['id' => 'user_id'])
+            ->viaTable('user_marketplace_buy', ['user_marketplace_id' => 'user_marketplace_id']);
     }
 }

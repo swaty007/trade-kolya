@@ -157,7 +157,7 @@ class TraderController extends Controller {
             //exit;
         }
         $data['marketplaces'] = array();
-        foreach (Marketplace::find()->asArray()->all() as $value) {
+        foreach (Marketplace::find()->where('is_active', 1)->asArray()->all() as $value) {
             $data['marketplaces'][$value['marketplace_id']] = $value['marketplace_name'];
         };
 

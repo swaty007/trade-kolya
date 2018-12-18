@@ -70,7 +70,6 @@
         <div class="modal-content animated bounceInRight">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <i class="fa fa-paypal modal-icon"></i>
                 <h4 class="modal-title">Редактировать новость</h4>
             </div>
             <div class="modal-body">

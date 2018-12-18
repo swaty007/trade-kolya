@@ -45,7 +45,7 @@ $this->title = 'Магазин';
                                         <?php foreach ($row as $market) :?>
                                         <div class="col-lg-3">
                                             <div class="widget lazur-bg p-xl">
-
+                                                <img src="<?= $market->src ? $market->src : '/image/tp_image.png' ?>"  class="market_image" alt="market">
                                                 <h2 class="market-title"><?=$market->title;?></h2>
                                                 <ul class="list-unstyled m-t-md">
                                                     <li style="margin-bottom: 20px">

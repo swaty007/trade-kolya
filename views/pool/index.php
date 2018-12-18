@@ -6,7 +6,8 @@
  * and open the template in the editor.
  */
 
-$this->title = 'My Yii Application';
+$this->title = 'Инвестпул';
+use yii\helpers\Url;
 ?>
 <div class="row wrapper border-bottom white-bg">
     <div class="col-lg-10">
@@ -50,6 +51,7 @@ $this->title = 'My Yii Application';
                                                 <strong class="pull-title"><?=$pool_new['name'];?></strong>
                                             </div>
                                             <div class="panel-body">
+                                                <img src="<?= $pool_new->src ? $pool_new->src : '/image/tp_image.png' ?>" alt="pool" class="pool_image">
                                                 <p class="style-pull-card pull-description"><?=$pool_new['description'];?></p>
                                                 <p class="style-pull-card pull-start">Сбор средств до: <strong><?=$pool_new['date_start'];?></strong></p>
                                                 <p class="style-pull-card pull-end">Окончание пула: <strong><?=$pool_new['date_end'];?></strong></p>
@@ -137,6 +139,7 @@ $this->title = 'My Yii Application';
                                                 <strong class="pull-title"><?=$pool_a['name'];?></strong>
                                             </div>
                                             <div class="panel-body">
+                                                <img src="<?= $pool_a->src ? $pool_a->src : '/image/tp_image.png' ?>" alt="pool" class="pool_image">
                                                 <p class="style-pull-card pull-description"><?=$pool_a['description'];?></p>
                                                 <p class="style-pull-card pull-start">Сбор средств до: <strong><?=$pool_a['date_start'];?></strong></p>
                                                 <p class="style-pull-card pull-end">Окончание пула: <strong><?=$pool_a['date_end'];?></strong></p>
@@ -213,6 +216,7 @@ $this->title = 'My Yii Application';
                                                 <strong class="pull-title"><?=$pool['name'];?></strong>
                                             </div>
                                             <div class="panel-body">
+                                                <img src="<?= $pool->src ? $pool->src : '/image/tp_image.png' ?>" alt="pool" class="pool_image">
                                                 <p class="style-pull-card pull-description"><?=$pool['description'];?></p>
                                                 <p class="style-pull-card pull-start">Сбор средств до: <strong><?=$pool['date_start'];?></strong></p>
                                                 <p class="style-pull-card pull-end">Окончание пула: <strong><?=$pool['date_end'];?></strong></p>
@@ -286,7 +290,7 @@ $this->title = 'My Yii Application';
                                 <?php foreach ($user_pools as $u_pool):?>
                                 <div class="col-lg-3">
                                     <div class="widget navy-bg p-xl">
-
+                                        <img src="<?= $u_pool->src ? $u_pool->src : '/image/tp_image.png' ?>" alt="pool" class="pool_image">
                                         <h2>
                                             <?= $info_pools[$u_pool['pool_id']]['name']?>
                                         </h2>

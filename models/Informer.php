@@ -11,7 +11,8 @@ use Yii;
  * @property string $html
  * @property string $link
  * @property string $date
- * @property string $src
+
+ *
  * @property InformerCategory[] $informerCategories
  * @property InformerTag[] $informerTags
  */

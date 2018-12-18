@@ -20,13 +20,32 @@ $(document).on('click',"#create_pool", function(e) {
         date_end: $('#datepicker2').val(),
         min_size: $('#pool_min_size').val(),
         max_size: $('#pool_max_size').val(),
+        file: $("#pool_file")[0].files[0]
     };
     console.log(data);
+
+    let formData = new FormData();
+
+    formData.append("profit", data.profit);
+    formData.append("min_invest", data.min_invest);
+    formData.append("pool_method", data.pool_method);
+    formData.append("name", data.name);
+    formData.append("pool_diversification_edit", data.pool_diversification_edit);
+    formData.append("description", data.description);
+    formData.append("date_start", data.date_start);
+    formData.append("date_end", data.date_end);
+    formData.append("min_size", data.min_size);
+    formData.append("max_size", data.max_size);
+    formData.append("file", data.file);
 
     $.ajax({
         type: "POST",
         url: "/pool/create-pool",
-        data: data,
+        cache : false,
+        processData: false,
+        dataType: 'json',
+        contentType: false,
+        data: formData,
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
@@ -49,13 +68,33 @@ $(document).on('click',"#update_pool", function(e) {
         min_size: $('#pool_min_size_edit').val(),
         max_size: $('#pool_max_size_edit').val(),
         pool_id: Number($(this).attr('data-id')),
+        file: $("#pool_file_update")[0].files[0],
     };
+
+    let formData = new FormData();
+
+    formData.append("profit", data.profit);
+    formData.append("min_invest", data.min_invest);
+    formData.append("pool_method", data.pool_method);
+    formData.append("name", data.name);
+    formData.append("pool_diversification_edit", data.pool_diversification_edit);
+    formData.append("description", data.description);
+    formData.append("date_start", data.date_start);
+    formData.append("date_end", data.date_end);
+    formData.append("min_size", data.min_size);
+    formData.append("max_size", data.max_size);
+    formData.append("file", data.file);
+
     console.log(data);
 
     $.ajax({
         type: "POST",
         url: "/pool/update-pool",
-        data: data,
+        cache : false,
+        processData: false,
+        dataType: 'json',
+        contentType: false,
+        data: formData,
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
@@ -73,7 +112,8 @@ function editPool(id,_this) {
         diversification = block.find('.pull-diversification strong').text(),
         end = block.find('.pull-end strong').text(),
         min_value = block.find('.pull-invest strong').text(),
-        profit = block.find('.pull-profit strong').text();
+        profit = block.find('.pull-profit strong').text(),
+        src = block.find('.pool_image').attr('src');
 
     $('#pull-edit').find('#pool_profit_edit').val(profit);
     $('#pull-edit').find('#pool_name_edit').val(title);
@@ -83,6 +123,7 @@ function editPool(id,_this) {
     $('#pull-edit').find('#datepicker2_edit').val(end);
     $('#pull-edit').find('#pool_min_invest_edit').val(min_value);
     $('#update_pool').attr('data-id', id);
+    $('#image_pool_src').attr('src', src);
     $('#pull-edit').modal('show');
 }
 

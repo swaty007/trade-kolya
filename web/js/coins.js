@@ -46,6 +46,7 @@ $(document).on('click',"#send_withdraw", function(e) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            finishPjax();
             let answer = $('#withdraw');
             if (msg.msg === 'ok') {
                 answer.find('.address').text(msg.result.user_purse);
@@ -82,7 +83,7 @@ $(document).on('click',"#switch_coin", function(e) {
     })
 });
 
-function transationDone(transaction_id) {
+function transactionDone(transaction_id) {
     event.preventDefault();
     let data = {
         transaction_id: transaction_id,
@@ -92,6 +93,25 @@ function transationDone(transaction_id) {
     $.ajax({
         type: "POST",
         url: "/coins/transaction-done",
+        data: data,
+        success: function (msg) {
+            console.log(msg);
+            showToastr(msg);
+            finishPjax();
+        }
+    })
+}
+
+function transactionReturn(transaction_id) {
+    event.preventDefault();
+    let data = {
+        transaction_id: transaction_id,
+    };
+    console.log(data);
+
+    $.ajax({
+        type: "POST",
+        url: "/coins/transaction-return",
         data: data,
         success: function (msg) {
             console.log(msg);

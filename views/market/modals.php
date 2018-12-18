@@ -34,6 +34,10 @@
                     <input id="market_cost" type="text" class="form-control">
                 </div>
                 <div class="form-group">
+                    <label class="main-label">Картинка</label>
+                    <input id="market_file" type="file" class="form-control">
+                </div>
+                <div class="form-group">
                     <label class="main-label">Количество дней</label>
                     <input id="market_time_action" type="text" class="form-control">
                 </div>
@@ -90,6 +94,13 @@
                 <div class="form-group">
                     <label class="main-label">Количество дней</label>
                     <input id="market_time_action_edit" type="text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <div class="text-center">
+                        <img id="image_market_src" alt="image" class="m-t-xs img-responsive" src="" style="width: 200px; margin-left: calc(50% - 100px);">
+                    </div>
+                    <label class="main-label">Картинка</label>
+                    <input id="market_file_update" type="file" class="form-control">
                 </div>
                 <div class="form-group">
                     <label class="main-label">Количество апи</label>

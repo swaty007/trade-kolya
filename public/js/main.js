@@ -87,7 +87,7 @@ $(function () {
     });
 
     // cabinet/account
-    $("#BtnFindMaster").click(function () {
+    $(document).on('click', "#BtnFindMaster", function () {
         $("#Masters").load('/cabinet/masters', {'marketplace_id': $("#usermarketplceform-marketplace_id").val()}, function(){
             $("#Masters [set-slave]").click(function(event){
                 event.preventDefault();
