@@ -61,10 +61,10 @@ $this->title = 'Информер';
                                                 data-placeholder="Выбор категорий"
                                                 multiple
                                                 class="chosen-select"
-                                                tabindex="2"
-                                        >
-
-
+                                                tabindex="2">
+                                            <?php foreach ($full_categories as $category) : ?>
+                                                <option value="<?= $category['id'] ?>" <?php if (isset($select->category)) if (in_array($category['id'], $select->category)) echo 'selected' ?>><?= $category['cat_name'] ?></option>
+                                            <?php endforeach; ?>
                                         </select>
                                     </div>
                                     <div class="col-lg-12">

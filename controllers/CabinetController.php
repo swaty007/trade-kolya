@@ -307,13 +307,39 @@ class CabinetController extends Controller
     {
         $data = [];
 
-        $data['information_title'] = AdminSettings::find()->select('value')->where(['id' => 8])->one();
-        $data['information_text']  = AdminSettings::find()->select('value')->where(['id' => 9])->one();
-        $data['marketplaces']      = Marketplace::find()->all();
-        $data['user_marketplaces'] = UserMarketplace::find()->where(['is_seen_activated' => 1])->all();
-        $data['user_marketplaces_my'] = UserMarketplace::find()->where(['is_seen_activated' => 1, 'user_id' => Yii::$app->user->getId()])->all();
-        $data['user_marketplaces_buy'] = UserMarketplace::find()->where(['user_id' => Yii::$app->user->getId()])->all();
+        $user_marketplace_id_modal = Yii::$app->request->get('user_marketplace_id_modal', null);
+        $marketplace_filter = Yii::$app->request->get('marketplace', null);
+        if ($user_marketplace_id_modal !== null) {
+            $data['marketplace_modal'] = UserMarketplace::find()->where(['user_marketplace_id' => $user_marketplace_id_modal])->one();
+        }
 
+        $data['information_title']       = AdminSettings::find()->select('value')->where(['id' => 8])->one();
+        $data['information_text']        = AdminSettings::find()->select('value')->where(['id' => 9])->one();
+
+        $user_marketplaces       = UserMarketplace::find()->where(['is_seen_activated' => 1]);
+        $user_marketplaces_my    = UserMarketplace::find()->where(['is_seen_activated' => 1, 'user_id' => Yii::$app->user->getId()]);
+        $user_marketplaces_buy   = User::find()->where(['id' => Yii::$app->user->getId()])->innerJoin('marketplace');
+
+//        $data['user_marketplace'] = UserMarketplace::find()
+//            ->select(['user_marketplace_id', 'name', 'marketplace_name'])
+//            ->innerJoin('marketplace', 'marketplace.marketplace_id = user_marketplace.marketplace_id')
+//            ->where(['user_id' => $id])
+//            ->andWhere(['user_market_id' => 0])
+//            ->orderBy('order')
+//            ->asArray()
+//            ->all();
+
+        if ($marketplace_filter !== null) {
+            $marketplace_filter      = explode(',', $marketplace_filter);
+            $user_marketplaces       = $user_marketplaces->andWhere(['IN','marketplace_id',$marketplace_filter]);
+            $user_marketplaces_my    = $user_marketplaces_my->andWhere(['IN','marketplace_id',$marketplace_filter]);
+            $user_marketplaces_buy   = $user_marketplaces_buy->andWhere(['IN','marketplace_id',$marketplace_filter]);
+    }
+
+        $data['marketplaces']            = Marketplace::find()->where(['is_active' => 1])->all();
+        $data['user_marketplaces']       = $user_marketplaces->all();
+        $data['user_marketplaces_my']    = $user_marketplaces_my->all();
+        $data['user_marketplaces_buy']   = $user_marketplaces_buy->one();
 
         return $this->render('copy', $data);
     }
@@ -333,7 +359,9 @@ class CabinetController extends Controller
             $user_buy->user_marketplace_id = $user_marketplace_id;
 
             $user_buy->save();
-            $userTrader = User::findOne(['id' => $user_buy->userMarketplace->user->id ]);
+
+//            $userTrader = User::findOne(['id' => $user_buy->userMarketplace->user_id ]);
+            $userTrader = User::findOne(['id' => UserMarketplace::find()->where(['user_marketplace_id' => $user_buy->user_marketplace_id])->one()->user_id ]);
             $updateUser = User::findOne(['id' => $userAction ]);
 
             $updateUser->USDT_money -= $user_buy->userMarketplace->pay_copy;
