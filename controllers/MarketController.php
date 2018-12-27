@@ -80,6 +80,7 @@ class MarketController extends Controller
               user_markets.time_action,
               user_markets.count_api_full,
                markets.title,
+               markets.description,
                 markets.cost')
             ->leftJoin('markets', 'markets.id = user_markets.market_id')
             ->where(['user_id' => $id])

@@ -64,6 +64,11 @@ $this->title = 'Редактирование биржи';
                     'uncheck' => null,
                     'onchange' => 'activateIsSeen(this.checked)'
                 ]);?>
+                <?= $form->field($model, 'master')->checkbox([
+                    'template' => $checkboxTemplate,
+                    'label'=>'Мастер (разрешить повторять операции)',
+                    'uncheck' => null,
+                ]);?>
                 <div id="copy_box" class="<?=$model->is_seen_activated == 0 ? 'hidden': ''?>">
                     <?php echo $form->field($model, 'risk')
                         ->label('Риск')
@@ -76,7 +81,7 @@ $this->title = 'Редактирование биржи';
                     <?php echo $form->field($model, 'description')->label('Описание')->textarea(['rows' => '6']); ?>
                 </div>
 
-                <?php echo $form->field($model, 'slave')->label(false)->hiddenInput(['readonly'=>true]); ?>
+                <?php echo $form->field($model, 'slave')->label('Мастер Id')->textInput(['readonly'=>true]); ?>
 
                 <div class="form-group">
                     <div class="col-lg-offset-2 col-lg-4">
@@ -92,36 +97,36 @@ $this->title = 'Редактирование биржи';
                 </div>
             </div>
         </div>
-<!--        <div class="col-lg-12">-->
-<!--            <div class="ibox float-e-margins">-->
-<!--                <div class="ibox-title">-->
-<!--                    <h5>Редактирование</h5>-->
-<!--                    <div class="ibox-tools">-->
-<!--                        <a class="collapse-link">-->
-<!--                            <i class="fa fa-chevron-up"></i>-->
-<!--                        </a>-->
-<!--                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">-->
-<!--                            <i class="fa fa-wrench"></i>-->
-<!--                        </a>-->
-<!--                        <ul class="dropdown-menu dropdown-user">-->
-<!--                            <li><a href="#">Config option 1</a>-->
-<!--                            </li>-->
-<!--                            <li><a href="#">Config option 2</a>-->
-<!--                            </li>-->
-<!--                        </ul>-->
-<!--                        <a class="close-link">-->
-<!--                            <i class="fa fa-times"></i>-->
-<!--                        </a>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="ibox-content">-->
-<!--                     <div class="row">-->
-<!--                        <button class="button btn-primary" id="BtnFindMaster">Найти мастера (плечо)</button>-->
-<!--                        <div id="Masters"></div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Редактирование</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li><a href="#">Config option 1</a>
+                            </li>
+                            <li><a href="#">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                     <div class="row">
+                        <button class="button btn-primary" id="BtnFindMaster">Найти мастера (плечо)</button>
+                        <div id="Masters"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

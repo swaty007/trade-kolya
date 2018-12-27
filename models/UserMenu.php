@@ -24,7 +24,7 @@ class UserMenu extends Model
     public static function get($user_id = null)
     {
         //$marketplace = new Marketplace();
-        $records = Marketplace::find()->where('is_active', 1)->all();
+        $records = Marketplace::find()->where(['is_active' => 1])->all();
         $user_id = Yii::$app->user->getId();
         
         $UserMarketplace = UserMarketplace::find()

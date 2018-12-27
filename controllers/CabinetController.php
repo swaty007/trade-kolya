@@ -132,6 +132,7 @@ class CabinetController extends Controller
              market_id,
               user_markets.time_action,
                markets.title,
+               markets.description,
                 markets.cost')
             ->leftJoin('markets', 'markets.id = user_markets.market_id')
             ->where(['user_id' => $user_id])
@@ -181,7 +182,7 @@ class CabinetController extends Controller
                 'user_id' => $user_id])->attributes);
         }
         $data['marketplaces'] = array();
-        foreach (Marketplace::find()->where('is_active', 1)->asArray()->all() as $value) {
+        foreach (Marketplace::find()->where(['is_active' => 1])->asArray()->all() as $value) {
             $data['marketplaces'][$value['marketplace_id']] = $value['marketplace_name'];
         };
 
@@ -311,7 +312,7 @@ class CabinetController extends Controller
         $data['marketplaces']      = Marketplace::find()->all();
         $data['user_marketplaces'] = UserMarketplace::find()->where(['is_seen_activated' => 1])->all();
         $data['user_marketplaces_my'] = UserMarketplace::find()->where(['is_seen_activated' => 1, 'user_id' => Yii::$app->user->getId()])->all();
-        $data['user_marketplaces_buy'] = UserMarketplace::find()->joinWith(['marketplaceUser'])->where(['user_id' => Yii::$app->user->getId()])->all();
+        $data['user_marketplaces_buy'] = UserMarketplace::find()->where(['user_id' => Yii::$app->user->getId()])->all();
 
 
         return $this->render('copy', $data);
