@@ -288,37 +288,36 @@ use yii\helpers\Url;
                         <div id="tab-4" class="tab-pane">
                             <div class="row">
                                 <?php if (isset($user_pools)) {?>
-                                <?php foreach ($user_pools as $u_pool):?>
-                                <div class="col-lg-3">
-                                    <div class="widget navy-bg p-xl">
-                                        <img src="<?= $info_pools[$u_pool['pool_id']]['src'] ? $info_pools[$u_pool['pool_id']]['src'] : '/image/tp_image.png' ?>" alt="pool" class="pool_image">
-                                        <h2>
-                                            <?= $info_pools[$u_pool['pool_id']]['name']?>
-                                        </h2>
-                                        <ul class="list-unstyled m-t-md">
-                                            <li>
-                                                <label>Статус:</label>
-                                                <?= $info_pools[$u_pool['pool_id']]['status']?>
-                                            </li>
-                                            <li>
-                                                <label>Старт пула:</label>
-                                                <?= $info_pools[$u_pool['pool_id']]['date_start']?>
-                                            </li>
-                                            <li>
-                                                <label>Окончание пула:</label>
-                                                <?= $info_pools[$u_pool['pool_id']]['date_end']?>
-                                            </li>
-                                            <li>
-                                                <label>Ивестирование в пул:</label>
-                                                <?= (double)$u_pool['invest'].' '.$info_pools[$u_pool['pool_id']]['invest_method']?>
-                                            </li>
-                                        </ul>
+                                    <?php foreach ($user_pools as $u_pool):?>
+                                        <div class="col-lg-3">
+                                            <div class="widget navy-bg p-xl">
+                                                <img src="<?= $info_pools[$u_pool['pool_id']]['src'] ? $info_pools[$u_pool['pool_id']]['src'] : '/image/tp_image.png' ?>" alt="pool" class="pool_image">
+                                                <h2>
+                                                    <?= $info_pools[$u_pool['pool_id']]['name']?>
+                                                </h2>
+                                                <ul class="list-unstyled m-t-md">
+                                                    <li>
+                                                        <label>Статус:</label>
+                                                        <?= $info_pools[$u_pool['pool_id']]['status']?>
+                                                    </li>
+                                                    <li>
+                                                        <label>Старт пула:</label>
+                                                        <?= $info_pools[$u_pool['pool_id']]['date_start']?>
+                                                    </li>
+                                                    <li>
+                                                        <label>Окончание пула:</label>
+                                                        <?= $info_pools[$u_pool['pool_id']]['date_end']?>
+                                                    </li>
+                                                    <li>
+                                                        <label>Ивестирование в пул:</label>
+                                                        <?= (double)$u_pool['invest'].' '.$info_pools[$u_pool['pool_id']]['invest_method']?>
+                                                    </li>
+                                                </ul>
 
-                                    </div>
-                                </div>
-                                <?php endforeach;?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach;?>
                                 <?php }?>
-
                             </div>
                         </div>
 

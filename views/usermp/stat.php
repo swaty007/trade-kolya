@@ -8,7 +8,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
-$this->title = 'My Yii Application';
+$this->title = 'Статистика';
 ?>
 
 <?php
@@ -76,6 +76,7 @@ if(isset($marketplaces)) {
     </div>
 
 <?php } ?>
+
 <script>
     
     var flotr_data = <?php echo json_encode($flotr_data); ?>;

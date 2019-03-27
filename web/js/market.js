@@ -171,33 +171,3 @@ function marketToApi(id,_this) {
     $('#market_to_api').attr('data-id', id);
     $('#market-to-api').modal('show');
 }
-
-
-
-
-
-function marketplacePostParametrs() {
-
-    let marketplace_filter = $('#copy_filter_marketplace').val(),
-        link = $('#marketplace_modal_pjax_link'),
-        href = '?';
-
-    if(marketplace_filter.length > 0) {
-        href += 'marketplace='+marketplace_filter+'&';
-    }
-
-    link.attr('href',href);
-    link.click();
-}
-
-$(document).on('change','#copy_filter_marketplace',function(){
-    marketplacePostParametrs();
-});
-
-function openModalMarketPlaceInform(id) {
-    var link = $('#marketplace_modal_pjax_link');
-    link.attr('href','/cabinet/copy-index?user_marketplace_id_modal='+id);
-    link.click();
-    finishPjax('#marketplace_modal');
-    $('#inform_copy_modal').modal('show');
-}
