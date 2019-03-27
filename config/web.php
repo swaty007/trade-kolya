@@ -16,6 +16,7 @@ $config = [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'insert a secret key in the following',
+            'baseUrl'=> '',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -51,11 +52,28 @@ $config = [
             'rules' => [
             ],
         ],
-        
+        'i18n' => [
+            'translations' => [
+                'global*' => [
+// app название нашего php файла переводов который нужно создать app.php (может быть любым)
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@app/translate/messages',
+                ],
+
+            ],
+        ],
+        'formatter'          => [
+            'class'          => 'yii\i18n\Formatter',
+            'defaultTimeZone'=> 'UTC',
+            'timeZone'       => "UTC",
+        ],
+
     ],
+    'timeZone' => 'UTC',
+    'sourceLanguage' => 'ru-RU',
+    'language' => 'ru-RU',
     'params' => $params,
 ];
-
 if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';

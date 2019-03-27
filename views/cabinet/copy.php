@@ -48,8 +48,7 @@ $this->title = 'Копирование трейдеров';
                                             data-placeholder="Выбор биржи"
                                             multiple
                                             class="chosen-select"
-                                            tabindex="2"
-                                    >
+                                            tabindex="2">
                                         <?php foreach ($marketplaces as $marketplace) : ?>
                                             <option value="<?= $marketplace['marketplace_id'] ?>" <?php if (isset($select->marketplace)) if (in_array($marketplace['marketplace_id'], $select->marketplace)) echo 'selected' ?>><?= $marketplace['marketplace_name'] ?></option>
                                         <?php endforeach; ?>
@@ -106,7 +105,10 @@ $this->title = 'Копирование трейдеров';
                     </div>
                 </div>
                 <div class="panel-body">
-                    <?php \yii\widgets\Pjax::begin(); ?>
+                    <?php \yii\widgets\Pjax::begin(['enablePushState'=>false]); ?>
+
+
+
                     <div class="tab-content pull-content">
 
                         <div id="tab-1" class="tab-pane active">
@@ -160,7 +162,7 @@ $this->title = 'Копирование трейдеров';
                                                     <td><?= $user_marketplace->pay_copy;?></td>
                                                     <td><?= $user_marketplace->profit_percent;?></td>
                                                     <td>
-                                                        <a class="btn btn-outline btn-info btn-xs table-btn-style" onclick="">Подробности</a>
+                                                        <a class="btn btn-outline btn-info btn-xs table-btn-style" onclick="openModalMarketPlaceInform(<?= $user_marketplace->user_marketplace_id; ?>)">Подробности</a>
                                                         <a class="btn btn-outline btn-primary btn-xs table-btn-style" onclick="buyCopy(<?= $user_marketplace->user_marketplace_id; ?>)">Подключиться</a>
                                                     </td>
                                                 </tr>
@@ -222,7 +224,7 @@ $this->title = 'Копирование трейдеров';
                                                     <td><?= $user_marketplace->pay_copy;?></td>
                                                     <td><?= $user_marketplace->profit_percent;?></td>
                                                     <td>
-                                                        <a class="btn btn-outline btn-info btn-xs table-btn-style" onclick="marketToApi(<?= $user_marketplace->user_marketplace_id; ?>)">Подробности</a>
+                                                        <a class="btn btn-outline btn-info btn-xs table-btn-style" onclick="openModalMarketPlaceInform(<?= $user_marketplace->user_marketplace_id; ?>)">Подробности</a>
                                                     </td>
                                                 </tr>
                                             <?php } ?>
@@ -272,7 +274,8 @@ $this->title = 'Копирование трейдеров';
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <?php foreach ($user_marketplaces_buy as $user_marketplace) { ?>
+
+                                            <?php foreach ($user_marketplaces_buy->marketplace as $user_marketplace): ?>
                                                 <tr>
                                                     <td><img src="<?= $user_marketplace->user->logo_src != null ? $user_marketplace->user->logo_src : '../image/user_icon.png';?>" alt="" class="image-table"></td>
                                                     <td><?= $user_marketplace->user->username;?></td>
@@ -283,10 +286,10 @@ $this->title = 'Копирование трейдеров';
                                                     <td><?= $user_marketplace->pay_copy;?></td>
                                                     <td><?= $user_marketplace->profit_percent;?></td>
                                                     <td>
-                                                        <a class="btn btn-outline btn-info btn-xs table-btn-style" onclick="marketToApi(<?= $user_marketplace->user_marketplace_id; ?>)">Подробности</a>
+                                                        <a class="btn btn-outline btn-info btn-xs table-btn-style" onclick="openModalMarketPlaceInform(<?= $user_marketplace->user_marketplace_id; ?>)">Подробности</a>
                                                     </td>
                                                 </tr>
-                                            <?php } ?>
+                                            <?php endforeach; ?>
                                             </tbody>
                                         </table>
                                     </form>
@@ -296,11 +299,17 @@ $this->title = 'Копирование трейдеров';
                     </div>
                     <script>
                         dataTablePajax();
+                        if(typeof $ !== 'undefined') {
+                            let active_href = $('.nav-tabs li.active a').attr('href');
+                            $('.tab-content .tab-pane').removeClass('active');
+                            $(active_href).addClass('active');
+                        }
                     </script>
+                    <a id="marketplace_modal_pjax_link" class="hidden" href="/cabinet/copy-index?user_marketplace_id_modal=1"></a>
                     <?php \yii\widgets\Pjax::end(); ?>
                 </div>
             </div>
-         </div>
+        </div>
     </div>
 </div>
 
@@ -321,6 +330,30 @@ $this->title = 'Копирование трейдеров';
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Закрыть</button>
                 <button id="buy_copy" type="button" data-id="" class="btn btn-primary">Купить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal inmodal" id="inform_copy_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">Подробности трейдера</h4>
+            </div>
+            <div class="modal-body">
+                <?php \yii\widgets\Pjax::begin(['id'=>'marketplace_modal']); ?>
+                <img src="<?= $marketplace_modal->user->logo_src != null ? $marketplace_modal->user->logo_src : '../image/user_icon.png';?>" alt="" class="image-table">
+                <p>Риски: <strong><?= $marketplace_modal->risk;?></strong></p>
+                <p>Подробности: <strong><?= $marketplace_modal->description;?></strong></p>
+                <?php \yii\widgets\Pjax::end(); ?>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Закрыть</button>
             </div>
         </div>
     </div>
