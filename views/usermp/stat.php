@@ -11,9 +11,10 @@ use yii\bootstrap\ActiveForm;
 $this->title = 'My Yii Application';
 ?>
 
-<?php 
-foreach ($marketplaces as $marketplace) {
-?>
+<?php
+if(isset($marketplaces)) {
+    foreach ($marketplaces as $marketplace) {
+        ?>
         <div class="ibox">
             <div class="ibox-title">
                 <h5><?php echo $marketplace['name']?></h5>
@@ -39,34 +40,41 @@ foreach ($marketplaces as $marketplace) {
                 <div class="row">
                     <div class="col-lg-4">
                         <div id="user_marketplace_id_<?php echo $marketplace['user_marketplace_id']; ?>" style="width : 100%;height: 384px;margin: 8px auto;">
-                            
+
                         </div>
                     </div>
                     <div class="col-lg-8">
                         <table class="table table-bordered table-striped">
                             <thead>
-                                <tr>
-                                    <td class="col-lg-3">Валюта</td>
-                                    <td class="col-lg-3">Количество</td>
-                                    <td class="col-lg-3">Количество в ордерах</td>
-                                    <td class="col-lg-3">В долларовом эквиваленте</td>
-                                </tr>
+                            <tr>
+                                <td class="col-lg-3">Валюта</td>
+                                <td class="col-lg-3">Количество</td>
+                                <td class="col-lg-3">Количество в ордерах</td>
+                                <td class="col-lg-3">В долларовом эквиваленте</td>
+                            </tr>
                             </thead>
                             <tbody>
-                        <?php foreach ($marketplace['balance'] as $key => $value) { ?>
+                            <?php foreach ($marketplace['balance'] as $key => $value) { ?>
                                 <tr>
                                     <td><?php echo $key; ?></td>
                                     <td><?php echo $value['available']; ?></td>
                                     <td><?php echo $value['onOrder']; ?></td>
                                     <td><?php echo $value['usd']; ?></td>
                                 </tr>
-                        <?php } ?>
-                          </tbody>
+                            <?php } ?>
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
+    <?php } } else {?>
+    <div class="row wrapper border-bottom white-bg">
+        <div class="col-lg-10">
+            <h2>Нет статистики</h2>
+        </div>
+    </div>
+
 <?php } ?>
 <script>
     

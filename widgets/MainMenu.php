@@ -50,7 +50,13 @@ class MainMenu extends Widget
         );
 
         $user_id = Yii::$app->user->getId();
-        $user_marketplace = UserMarketplace::find()
+
+        $check = UserMarketplace::find()->where(['user_id' => $user_id])->asArray()->all();
+
+        $subMenu = array();
+
+        if (!empty($check)) {
+            $user_marketplace = UserMarketplace::find()
                 ->select(['user_marketplace_id', 'name', 'marketplace_name'])
                 ->innerJoin('marketplace', 'marketplace.marketplace_id = user_marketplace.marketplace_id')
                 ->where(['user_id' => $user_id])
@@ -59,12 +65,12 @@ class MainMenu extends Widget
                 ->asArray()
                 ->all();
 
-        $subMenu = array();
-        foreach ($user_marketplace as $value) {
-            $subMenu[] = array(
-                'label' => $value['name'],
-                'url' => Url::to(['usermp/account', 'user_marketplace_id' => $value['user_marketplace_id']])
-            );
+            foreach ($user_marketplace as $value) {
+                $subMenu[] = array(
+                    'label' => $value['name'],
+                    'url' => Url::to(['usermp/account', 'user_marketplace_id' => $value['user_marketplace_id']])
+                );
+            }
         }
 
         $subMenu[] = array(

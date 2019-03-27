@@ -287,6 +287,7 @@ use yii\helpers\Url;
 
                         <div id="tab-4" class="tab-pane">
                             <div class="row">
+                                <?php if (isset($user_pools)) {?>
                                 <?php foreach ($user_pools as $u_pool):?>
                                 <div class="col-lg-3">
                                     <div class="widget navy-bg p-xl">
@@ -316,6 +317,8 @@ use yii\helpers\Url;
                                     </div>
                                 </div>
                                 <?php endforeach;?>
+                                <?php }?>
+
                             </div>
                         </div>
 
