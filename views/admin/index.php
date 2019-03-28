@@ -93,7 +93,7 @@ $this->title = 'Админка';
                                             <td><?=(double)$user->BTC_money?></td>
                                             <td><?=(double)$user->BTC_money?></td>
                                             <td><?=$user->status == 10 ? 'STATUS_ACTIVE' : 'STATUS_DELETED';?></td>
-                                            <td><?=$user->status == 10 ? 'STATUS_ACTIVE' : 'STATUS_DELETED';?></td>
+                                            <td><?=$user->created_at;?> / <?=$user->updated_at;?></td>
                                             <td>
                                                 <a class="pjax-modal-btn" href="<?= Url::to(['admin/index','user_id'=>$user->id])?>" class="btn btn-success label label-success">Подробнее</a>
                                                 <?php if ($user->status == 10):?>

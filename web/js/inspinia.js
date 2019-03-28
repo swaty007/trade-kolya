@@ -33,10 +33,15 @@ $(document).ready(function () {
         return false;
     });
 
-    $('.new-navbar').hover(function () {
+    // $('.new-navbar').hover(function () {
+    //     $("body").toggleClass("mini-navbar");
+    //     SmoothlyMenu();
+    // });
+    // minimalize menu
+    $('.navbar-minimalize:not(.binded)').addClass("binded").click(function () {
         $("body").toggleClass("mini-navbar");
         SmoothlyMenu();
-    });
+    })
  
     // tooltips
     $('.tooltip-demo').tooltip({

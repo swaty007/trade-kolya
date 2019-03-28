@@ -96,13 +96,13 @@ class MainMenu extends Widget
             'active' => Yii::$app->controller->module->requestedRoute == 'usermp/stat'
         );
 
-        $this->menu[] = array(
-            'label' => 'Лучшие трейдеры',
-            'class' => 'fa-users',
-            'template' => '<a href="{url}"><i class="fa fa-users"></i> <span class="nav-label">{label}</span></a>',
-            'url' => Url::to(['trader/top']),
-            'active' => Yii::$app->controller->module->requestedRoute == 'trader/top'
-        );
+//        $this->menu[] = array(
+//            'label' => 'Лучшие трейдеры',
+//            'class' => 'fa-users',
+//            'template' => '<a href="{url}"><i class="fa fa-users"></i> <span class="nav-label">{label}</span></a>',
+//            'url' => Url::to(['trader/top']),
+//            'active' => Yii::$app->controller->module->requestedRoute == 'trader/top'
+//        );
 
 //        $this->menu[] = array(
 //            'label' => 'Сигналы трейдеров',
