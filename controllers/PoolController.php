@@ -1,8 +1,10 @@
 <?php
 namespace app\controllers;
 
+use app\models\AdminSettings;
 use app\models\CommentsPools;
 use app\models\InvestPools;
+use app\models\ReferralsPromocode;
 use app\models\Transactions;
 use app\models\Notifications;
 use app\models\User;
@@ -15,7 +17,7 @@ use yii\web\UploadedFile;
 use yii\widgets\Menu;
 use app\models\UserMenu;
 
-class PoolController extends Controller
+class PoolController extends UserAccessController
 {
     public $layout = 'dashboard-layout';
 
@@ -64,32 +66,35 @@ class PoolController extends Controller
                                 $invest_method = $pool->invest_method;
 
                                 if (User::allowedCurrency($invest_method)) {
-                                    $user->{$invest_method.'_money'} += $u_pool->invest;
+//                                    $user->{$invest_method.'_money'} += $u_pool->invest;
+                                    $user_update = $user->updateCounters([$invest_method.'_money' => $u_pool->invest]);
                                 } else {
                                      Yii::error("Failed currency");
                                     return ['msg' => 'error', 'status' => "Failed currency"];
                                 }
 
                                 $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
-                                $global_admin->{$invest_method.'_money'} -= $u_pool->invest;
+//                                $global_admin->{$invest_method.'_money'} -= $u_pool->invest;
+                                $admin_update = $global_admin->updateCounters([$invest_method.'_money' => -$u_pool->invest]);
                                 $transaction_admin = new Transactions();
                                 $transaction_admin->amount1     = -1*$u_pool->invest;
                                 $transaction_admin->currency1   = $invest_method;
                                 $transaction_admin->type        = 'pool';
                                 $transaction_admin->sub_type    = 'refund';
                                 $transaction_admin->comment     = 'Возврат с пула (не собралась нужная сума для старта)';
-                                $transaction_admin->status      = 1;
-                                $transaction_admin->user_id     = $user->id;
+                                $transaction_admin->status      = Transactions::STATUS_DONE;
+                                $transaction_admin->user_id     = $global_admin->id;
                                 $transaction_admin->buyer_name  = $user->username;
                                 $transaction_admin->buyer_email = $user->email;
 
-                                if ($user->save() && $global_admin->save()) {
+//                                if ($user->save() && $global_admin->save()) {
+                                if ($user_update && $admin_update) {
                                     $transaction              = new Transactions();
                                     $transaction->type        = 'pool';
                                     $transaction->sub_type    = 'refund';
                                     $transaction->comment     = 'Возврат с пула (не собралась нужная сума для старта)';
                                     $transaction->user_id     = $user->id;
-                                    $transaction->status      = -1;
+                                    $transaction->status      = Transactions::STATUS_REFUND;
                                     $transaction->amount1     = $u_pool->invest;
                                     //$transaction->amount2     = $amount2;
                                     $transaction->currency1   = $invest_method;
@@ -135,7 +140,8 @@ class PoolController extends Controller
 
                             if (User::allowedCurrency($pool->invest_method)) {
                                 $transaction_pay_val = (($u_pool->invest*$pool->profit)/100)/$pool->diversification;
-                                $user->{$pool->invest_method.'_money'} +=  $transaction_pay_val;
+//                                $user->{$pool->invest_method.'_money'} +=  $transaction_pay_val;
+                                $user_update = $user->updateCounters([$pool->invest_method.'_money' => $transaction_pay_val]);
                             } else {
                                 Yii::error("Failed invest method");
                                 return ['msg' => 'error', 'status' => "Failed invest method"];
@@ -143,8 +149,48 @@ class PoolController extends Controller
 
                             if ($u_pool->diversification == $pool->diversification) {
                                 $u_pool->status = 'withdraw';
-                                $user->{$pool->invest_method.'_money'} +=  $u_pool->invest;
+//                                $user->{$pool->invest_method.'_money'} +=  $u_pool->invest;
+                                $user_update2 = $user->updateCounters([$pool->invest_method.'_money' => $u_pool->invest]);
                                 $transaction_pay_val += $u_pool->invest;
+
+                                // Начисления по рефералам тут
+                                if (!!($parent_referral_id = ReferralsPromocode::findReferralId($user->promocode_id))) {
+                                    if (!!($user_referral = User::findOne(['id'=>$parent_referral_id]) )) {
+
+                                        $referral_bonus_percent = (($u_pool->invest*(int)AdminSettings::findOne(['id' => 14])->value)/100);
+//                                        $user_referral->{$pool->invest_method.'_money'} += $referral_bonus_percent;
+                                        $referral_update = $user_referral->updateCounters([$pool->invest_method.'_money' => $referral_bonus_percent]);
+
+                                        $transaction_referral              = new Transactions();
+                                        $transaction_referral->type        = 'pool';
+                                        $transaction_referral->sub_type    = 'referral';
+                                        $transaction_referral->comment     = 'Начисление '.AdminSettings::findOne(['id' => 14])->value.'% за пул (реферальный)';
+                                        $transaction_referral->user_id     = $user_referral->id;
+                                        $transaction_referral->status      = Transactions::STATUS_DONE;
+                                        $transaction_referral->amount1     = $referral_bonus_percent;
+                                        $transaction_referral->amount2     = $u_pool->invest;
+                                        $transaction_referral->currency1   = $pool->invest_method;
+                                        $transaction_referral->buyer_name  = $user->username;
+                                        $transaction_referral->buyer_email = $user->email;
+
+                                        $notification_referral = new Notifications();
+                                        $notification_referral->createNotification($user_referral->id,
+                                            'success',
+                                            'Вы успещно получили выплату % за пул (реферальный)',
+                                            $transaction_referral->attributes);
+
+//                                        if (!$user_referral->save()) {
+                                        if (!$referral_update) {
+                                            Yii::error("Don't save user balance");
+                                            return ['msg' => 'error', 'status' => "Don't save user balance"];
+                                        }
+                                        if (!$transaction_referral->save()) {
+                                            Yii::error("Транзакция реферала не сохранилась");
+                                            return ['msg' => 'error', 'status' => "Транзакция реферала не сохранилась"];
+                                        }
+                                    }
+                                }
+//                                конец реферальных начислений
                             }
 
                             $u_pool->diversification += 1;
@@ -155,22 +201,23 @@ class PoolController extends Controller
                                 $transaction->sub_type    = 'withdraw';
                                 $transaction->comment     = 'Начисление % за пул';
                                 $transaction->user_id     = $user->id;
-                                $transaction->status      = 1;
+                                $transaction->status      = Transactions::STATUS_DONE;
                                 $transaction->amount1     = $transaction_pay_val;
                                 $transaction->currency1   = $pool->invest_method;
                                 $transaction->buyer_name  = $user->username;
                                 $transaction->buyer_email = $user->email;
 
                                 $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
-                                $global_admin->{$pool->invest_method.'_money'} -= $transaction_pay_val;
+//                                $global_admin->{$pool->invest_method.'_money'} -= $transaction_pay_val;
+                                $admin_update = $global_admin->updateCounters([$pool->invest_method.'_money' => -$transaction_pay_val]);
                                 $transaction_admin = new Transactions();
                                 $transaction_admin->amount1     = -1*$transaction_pay_val;
                                 $transaction_admin->currency1   = $pool->invest_method;
                                 $transaction_admin->type        = 'pool';
                                 $transaction_admin->sub_type    = 'withdraw';
                                 $transaction_admin->comment     = 'Начисление % за пул';
-                                $transaction_admin->status      = 1;
-                                $transaction_admin->user_id     = $user->id;
+                                $transaction_admin->status      = Transactions::STATUS_DONE;
+                                $transaction_admin->user_id     = $global_admin->id;
                                 $transaction_admin->buyer_name  = $user->username;
                                 $transaction_admin->buyer_email = $user->email;
 
@@ -180,7 +227,8 @@ class PoolController extends Controller
                                     'Вы успещно получили выплату % за пул',
                                     $transaction->attributes);
 
-                                if (!$user->save() || !$global_admin->save()) {
+//                                if (!$user->save() || !$global_admin->save()) {
+                                if (!$user_update || !$user_update2 || !$admin_update) {
                                     Yii::error("Don't save user balance");
                                     return ['msg' => 'error', 'status' => "Don't save user balance"];
                                 }
@@ -441,7 +489,8 @@ class PoolController extends Controller
                     return ['msg' => 'error', 'status' => "Bigger than max_pool_size"];
                 }
 
-                $user->{$invest_method.'_money'} -= $u_pool->invest;
+//                $user->{$invest_method.'_money'} -= $u_pool->invest;
+                $user_update = $user->updateCounters([$invest_method.'_money' => -$u_pool->invest]);
             } else {
                 return ['msg' => 'error', 'status' => "Failed currency"];
             }
@@ -449,19 +498,21 @@ class PoolController extends Controller
             if ($u_pool->save()) {
 
                 $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
-                $global_admin->{$invest_method.'_money'} += $u_pool->invest;
+//                $global_admin->{$invest_method.'_money'} += $u_pool->invest;
+                $admin_update = $global_admin->updateCounters([$invest_method.'_money' => $u_pool->invest]);
                 $transaction_admin = new Transactions();
                 $transaction_admin->amount1     = $u_pool->invest;
                 $transaction_admin->currency1   = $invest_method;
                 $transaction_admin->type        = 'pool';
                 $transaction_admin->sub_type    = 'deposit';
                 $transaction_admin->comment     = 'Покупка пула';
-                $transaction_admin->status      = 1;
-                $transaction_admin->user_id     = $user->id;
+                $transaction_admin->status      = Transactions::STATUS_DONE;
+                $transaction_admin->user_id     = $global_admin->id;
                 $transaction_admin->buyer_name  = $user->username;
                 $transaction_admin->buyer_email = $user->email;
 
-                if (!$user->save() || !$global_admin->save()) {
+//                if (!$user->save() || !$global_admin->save()) {
+                if (!$user_update || !$admin_update) {
                     $u_pool->delete();
                     return ['msg' => 'error', 'status' => "User don't save"];
                 }
@@ -471,7 +522,7 @@ class PoolController extends Controller
                 $transaction->sub_type    = 'deposit';
                 $transaction->comment     = 'Покупка пула';
                 $transaction->user_id     = $id;
-                $transaction->status      = 1;
+                $transaction->status      = Transactions::STATUS_DONE;
                 $transaction->amount1     = -1*$u_pool->invest;
 //                $transaction->amount2 = $amount2;
                 $transaction->currency1   = $invest_method;
@@ -513,32 +564,35 @@ class PoolController extends Controller
                 $invest        = $u_pool->invest;
 
                 if (User::allowedCurrency($invest_method)) {
-                    $user->{$invest_method.'_money'} += $invest;
+//                    $user->{$invest_method.'_money'} += $invest;
+                    $user_update = $user->updateCounters([$invest_method.'_money' => $invest]);
                 } else {
                     return ['msg' => 'error', 'status' => "Failed currency"];
                 }
 
                 $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
-                $global_admin->{$invest_method.'_money'} -= $invest;
+//                $global_admin->{$invest_method.'_money'} -= $invest;
+                $admin_update = $global_admin->updateCounters([$invest_method.'_money' => -$invest]);
                 $transaction_admin = new Transactions();
                 $transaction_admin->amount1     = -1*$invest;
                 $transaction_admin->currency1   = $invest_method;
                 $transaction_admin->type        = 'pool';
                 $transaction_admin->sub_type    = 'refund';
                 $transaction_admin->comment     = 'Возврат с пула';
-                $transaction_admin->status      = 1;
-                $transaction_admin->user_id     = $user->id;
+                $transaction_admin->status      = Transactions::STATUS_DONE;
+                $transaction_admin->user_id     = $global_admin->id;
                 $transaction_admin->buyer_name  = $user->username;
                 $transaction_admin->buyer_email = $user->email;
 
-                if ($user->save() && $global_admin->save()) {
+//                if ($user->save() && $global_admin->save()) {
+                if ($user_update->save() && $admin_update->save()) {
                     if ($u_pool->delete()) {
                         $transaction              = new Transactions();
                         $transaction->type        = 'pool';
                         $transaction->sub_type    = 'refund';
                         $transaction->comment     = 'Возврат с пула';
                         $transaction->user_id     = $user->id;
-                        $transaction->status      = 1;
+                        $transaction->status      = Transactions::STATUS_DONE;
                         $transaction->amount1     = $invest;
 //                $transaction->amount2 = $amount2;
                         $transaction->currency1   = $invest_method;

@@ -3,12 +3,14 @@ $(document).on('click',"#user_update_data", function(e) {
     let data = {
         username: $('#user_username').val(),
         timezone: $('#user_timezone_select').val(),
+        telegram: $('#user_telegram').val(),
         lang: $('#user_language_select').val(),
         file: $('#user_avatar')[0].files[0],//$('#informer_file').prop('files')[0],
     };
     let formData = new FormData();
     formData.append("username", data.username);
     formData.append("timezone", data.timezone);
+    formData.append("telegram", data.telegram);
     formData.append("lang", data.lang);
     formData.append("file", data.file);
 

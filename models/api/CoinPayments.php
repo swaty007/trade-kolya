@@ -32,7 +32,20 @@ class CoinPayments extends Model
     public function getRates($short = true)
     {
         $short = $short ? 1:0;
-        return $this->apiCall('rates', array('short' => $short));
+
+
+        // Пробуем извлечь $data из кэша.
+        $data = Yii::$app->cache->get("CoinPaymentsRates");
+
+        if ($data === false) {
+            // $data нет в кэше, вычисляем заново
+            $data = $this->apiCall('rates', array('short' => $short));
+
+            // Сохраняем значение $data в кэше. Данные можно получить в следующий раз.
+            Yii::$app->cache->set("CoinPaymentsRates", $data, 1200);
+        }
+        // Значение $data доступно здесь.
+        return $data;
     }
 
     /**

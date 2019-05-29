@@ -73,20 +73,24 @@ class MainMenu extends Widget
             }
         }
 
+
         $subMenu[] = array(
             'label' => 'Мои биржи',
             'url' => Url::to(['cabinet/accounts']),
             'template' => '<a href="{url}" class="main-li">{label}</a>',
         );
 
-        $this->menu[] = array(
-            'label' => 'Трейдинг',
-            'class' => 'fa-area-chart',
-            'template' => '<a href="{url}"><i class="fa fa-tasks"></i> <span class="nav-label">{label}</span><span class="fa arrow"></span></a>',
-            'url' => Url::to(['cabinet/accounts']),
-            'active' => Yii::$app->controller->module->requestedRoute == '',
-            'items' => $subMenu
-        );
+        if( !in_array(Yii::$app->user->identity->user_role, ['user','client-ad']) ) {
+            $this->menu[] = array(
+                'label' => 'Трейдинг',
+                'class' => 'fa-area-chart',
+                'template' => '<a href="{url}"><i class="fa fa-tasks"></i> <span class="nav-label">{label}</span><span class="fa arrow"></span></a>',
+                'url' => Url::to(['cabinet/accounts']),
+                'active' => Yii::$app->controller->module->requestedRoute == '',
+                'items' => $subMenu
+            );
+        }
+
 
         $this->menu[] = array(
             'label' => 'Статистика',
@@ -127,13 +131,15 @@ class MainMenu extends Widget
             'url' => Url::to(['pool/index'])
         );
 
-        $this->menu[] = array(
-            'label' => 'Магазин',
-            'class' => 'fa-info-circle',
-            'template' => '<a href="{url}"><i class="fa fa-shopping-cart"></i> <span class="nav-label">{label}</span></a>',
-            'active' => Yii::$app->controller->module->requestedRoute == 'market/index',
-            'url' => Url::to(['market/index'])
-        );
+        if( !in_array(Yii::$app->user->identity->user_role, ['user','client-ad']) ) {
+            $this->menu[] = array(
+                'label' => 'Магазин',
+                'class' => 'fa-info-circle',
+                'template' => '<a href="{url}"><i class="fa fa-shopping-cart"></i> <span class="nav-label">{label}</span></a>',
+                'active' => Yii::$app->controller->module->requestedRoute == 'market/index',
+                'url' => Url::to(['market/index'])
+            );
+        }
 
         $this->menu[] = array(
             'label' => 'Копирование',
@@ -143,14 +149,26 @@ class MainMenu extends Widget
             'url' => Url::to(['cabinet/copy-index'])
         );
 
-        if (Yii::$app->user->identity->user_role == "admin") {
+        $this->menu[] = array(
+            'label' => 'Транзакции',
+            'class' => 'fa-info-circle',
+            'template' => '<a href="{url}"><i class="fa fa-money"></i> <span class="nav-label">{label}</span></a>',
+            'active' => Yii::$app->controller->module->requestedRoute == 'coins/transactions',
+            'url' => Url::to(['coins/transactions'])
+        );
+
+        if( !in_array(Yii::$app->user->identity->user_role, ['user','client-trader']) ) {
             $this->menu[] = array(
-                'label' => 'Транзакции',
+                'label' => 'Рефералы',
                 'class' => 'fa-info-circle',
-                'template' => '<a href="{url}"><i class="fa fa-money"></i> <span class="nav-label">{label}</span></a>',
-                'active' => Yii::$app->controller->module->requestedRoute == 'coins/transactions',
-                'url' => Url::to(['coins/transactions'])
+                'template' => '<a href="{url}"><i class="fa fa-registered"></i> <span class="nav-label">{label}</span></a>',
+                'active' => Yii::$app->controller->module->requestedRoute == 'referral/index',
+                'url' => Url::to(['referral/index'])
             );
+        }
+
+        if (Yii::$app->user->identity->user_role == "admin") {
+
             $this->menu[] = array(
                 'label' => 'Админка',
                 'class' => 'fa-info-circle',

@@ -14,8 +14,9 @@ use app\models\SignupForm;
 use app\models\ContactForm;
 use app\models\User;
 use yii\web\UploadedFile;
+use yii\helpers\Url;
 
-class UserController extends Controller {
+class UserController extends UserAccessController {
 
     /**
      * {@inheritdoc}
@@ -116,7 +117,38 @@ class UserController extends Controller {
 
         return $this->render('singup', ['model' => $model]);
     }
+    public function actionActivation($token = ""){
 
+        try{
+            User::confirmation($token);
+            Yii::$app->session->setFlash('success', 'You have successfully confirmed your registration.');
+            return $this->redirect(Url::toRoute('/cabinet/index'));
+        } catch (\Exception $e){
+            Yii::$app->errorHandler->logException($e);
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+
+        return $this->goHome();
+    }
+    public function actionSignupConfirm()
+    {
+        $code = Yii::$app->request->get('token');
+        //ищем код подтверждения в БД
+        $find = User::find()->where(['email_confirm_token'=>$code])->one();
+        if($find){
+            $find->status = 10;
+            if ($find->save()) {
+                $text = '<p>Поздравляю!</p>
+            <p>Ваш e-mail подтвержден и Вы оформили подписку на обновления.</p>';
+                //страница подтверждения
+                return $this->render('activation', [
+                    'text' => $text
+                ]);
+            }
+        }
+        $absoluteHomeUrl = Url::home(true);
+        return $this->redirect('/'); //на главную
+    }
     /**
      * Login action.
      *
@@ -132,9 +164,19 @@ class UserController extends Controller {
         $model->scenario = 'login';
         $gcapcha = Yii::$app->request->post("g-recaptcha-response", '');
         $model->gc = $this->validateGoogleCapcha($gcapcha);
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->redirect(['cabinet/index']);
+//        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+//            return $this->redirect(['cabinet/index']);
             //return $this->goBack();
+//        }
+        if ($model->load(Yii::$app->request->post())) {
+            try{
+                if($model->login()){
+                    return $this->redirect(['cabinet/index']);
+                }
+            } catch (\DomainException $e){
+                Yii::$app->session->setFlash('error', $e->getMessage());
+                return $this->redirect(['user/activation']);
+            }
         }
 
         $model->password = '';
@@ -260,6 +302,7 @@ class UserController extends Controller {
             $id                     = Yii::$app->user->getId();
             $user                   = User::findOne(['id'=>$id]);
             $username               = (string)Yii::$app->request->post('username', '');
+            $telegram               = (string)Yii::$app->request->post('telegram', '');
             $timezone               = (string)Yii::$app->request->post('timezone', '');
             $lang                   = (string)Yii::$app->request->post('lang', '');
             $file                   = UploadedFile::getInstanceByName('file');
@@ -267,6 +310,7 @@ class UserController extends Controller {
             $user->username     = $username;
             $user->timezone     = $timezone;
             $user->lang         = $lang;
+            $user->telegram     = $telegram;
 
             if ($file) {
                 if (!is_null($user->logo_src)) {
@@ -303,7 +347,7 @@ class UserController extends Controller {
     public function actionAbout() {
         return $this->render('about');
     }
-    
+
     public function actionEdit() {
         
     }

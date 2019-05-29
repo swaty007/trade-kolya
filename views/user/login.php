@@ -81,5 +81,8 @@ $this->params['breadcrumbs'][] = $this->title;
     }
     window.addEventListener("load", function () {
         checkAccount($('#loginemailform-email').val());
+        $('#loginemailform-email').on('autocompleteselect autocompletefocus', function (e, ui) {
+            checkAccount(ui.item.value);
+        });
     });
 </script>

@@ -29,6 +29,21 @@ AppAsset::register($this);
 		<?php $this->beginBody() ?>
 		<?= $content ?>
 		<?php $this->endBody() ?>
+
+        <?php if (Yii::$app->session->hasFlash('success')): ?>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    toastr['success']("<?= Yii::$app->session->getFlash('success');?>", '');
+                });
+            </script>
+        <?php endif; ?>
+        <?php if (Yii::$app->session->hasFlash('error')): ?>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    toastr['error']("<?= Yii::$app->session->getFlash('error');?>", '');
+                });
+            </script>
+        <?php endif; ?>
 	</body>
 </html>
 <?php $this->endPage() ?>

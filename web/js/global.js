@@ -55,8 +55,7 @@ function finishPjax(el) {
     }
 }
 
-function
-dataTablePajax(el) {
+function dataTablePajax(el) {
     if (el !== undefined) {
         el = $(el);
     } else {
@@ -81,18 +80,25 @@ dataTablePajax(el) {
                 "sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
             },
             "language": {
-                "lengthMenu": "Відображати по _MENU_ записів на кожній сторінці",
-                "zeroRecords": "Нічого не знайшлося - вибачте",
-                "info": "Показана _PAGE_ сторінка з _PAGES_",
-                "infoEmpty": "Немає записів",
-                "infoFiltered": "(відфільтровано з загальної кількості записів - _MAX_)",
-                "search": "Пошук ",
-                "processing": "Завантаження. Будь ласка зачекайте...",
+                "processing": "Подождите...",
+                "search": "Поиск:",
+                "lengthMenu": "Показать _MENU_ записей",
+                "info": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "infoEmpty": "Записи с 0 до 0 из 0 записей",
+                "infoFiltered": "(отфильтровано из _MAX_ записей)",
+                "infoPostFix": "",
+                "loadingRecords": "Загрузка записей...",
+                "zeroRecords": "Записи отсутствуют.",
+                "emptyTable": "В таблице отсутствуют данные",
                 "paginate": {
-                    "first":      "Перша",
-                    "last":       "Остання",
-                    "next":       "Далі",
-                    "previous":   "Назад"
+                    "first": "Первая",
+                    "previous": "Предыдущая",
+                    "next": "Следующая",
+                    "last": "Последняя"
+                },
+                "aria": {
+                    "sortAscending": ": активировать для сортировки столбца по возрастанию",
+                    "sortDescending": ": активировать для сортировки столбца по убыванию"
                 }
             },
             "order": [[ 2, "desc" ]]
@@ -124,7 +130,7 @@ $(document).on('mouseleave',"#notification_wrap li.notification-item:not(.show)"
             console.log(msg);
             if (msg.msg === 'ok') {
                 _this.addClass('show');
-                finishPjax('#notification_pjax');
+                // finishPjax('#notification_pjax');
             }
         }
     })

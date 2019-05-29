@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'adminEmail'                    => 'admin@example.com',
+    'adminEmail'                    => 'info@takeprofit.cf',
     'globalAdminId'                 => 1,
     'coinPaymentsPrivateKey'        => '9dDc78613f02Cd4b4383efcfeb4ae53F731F64605716ecBD84fa7D5E700d04c0',
     'coinPaymentsPublicKey'         => 'e7970bb8eb4b8f16ac5f10f7b17a31d03ddf3e91ffac4b301c7b8c866ace5f87',

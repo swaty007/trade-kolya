@@ -13,6 +13,7 @@ use Yii;
  */
 class AdminSettings extends \yii\db\ActiveRecord
 {
+    const MinWithdraw = 13;
     /**
      * {@inheritdoc}
      */
@@ -29,7 +30,7 @@ class AdminSettings extends \yii\db\ActiveRecord
         return [
             [['id', 'name', 'value'], 'required'],
             [['id'], 'integer'],
-            [['name', 'value'], 'string', 'max' => 255],
+            [['name', 'value'], 'string'],
             [['name'], 'unique'],
             [['id'], 'unique'],
         ];

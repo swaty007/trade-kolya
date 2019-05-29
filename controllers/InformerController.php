@@ -14,7 +14,7 @@ use app\models\InformerCategory;
 use app\models\Tags;
 use yii\web\UploadedFile;
 
-class InformerController extends Controller
+class InformerController extends UserAccessController
 {
     public $layout = 'dashboard-layout';
 

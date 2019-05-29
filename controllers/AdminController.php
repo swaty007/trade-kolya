@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\AdminSettings;
 use app\models\Categories;
 use app\models\Notifications;
+use app\models\ReferralsPromocode;
 use app\models\Transactions;
 use app\models\User;
 use Yii;
@@ -14,7 +15,7 @@ use yii\web\Controller;
 use app\models\Tags;
 use app\models\UserMarketplace;
 
-class AdminController extends Controller
+class AdminController extends UserAccessController
 {
     public $layout = 'dashboard-layout';
 
@@ -60,6 +61,14 @@ class AdminController extends Controller
             $data['tags']  = substr($items, 0, (strlen($items)-1));
 
 
+            $data['user_referrals'] = User::find()
+                ->select(['user.username', 'referrals_promocode.promocode','user.created_at','user1.username as username_parent'])
+                ->leftJoin('referrals_promocode', 'referrals_promocode.id = user.promocode_id')
+                ->leftJoin('user as user1', 'referrals_promocode.user_id = user1.id')
+                ->where(['!=','user.promocode_id', ''])
+                ->asArray()
+                ->all();
+
             $data['types'] = ['api','telegram'];
             $data['user_marketplace'] = UserMarketplace::find()
                 ->select(['user_marketplace_id', 'name', 'marketplace_name'])
@@ -71,11 +80,21 @@ class AdminController extends Controller
                 ->all();
 
             $data['users'] = User::find()->all();
+            $data['user_single'] = User::find()->where(['id'=>$user_id])->one();
             $data['admin_settings'] = AdminSettings::find()->all();
 
 
             $data['notifications'] = Notifications::find()->where(['user_id'=>$user_id])->orderBy('time DESC')->all();
-            $data['transactions'] = Transactions::find()->where(['user_id'=>$user_id])->orderBy('date_start DESC')->all();
+            $data['transactions_single'] = Transactions::find()
+                ->where(['user_id'=>$user_id])
+                ->andWhere(['!=','status',Transactions::STATUS_WAIT_EMAIL_ACTIVATION])
+                ->orderBy('date_start DESC')->all();
+
+            if (User::canAdmin()) {
+                $data['transactions'] = Transactions::find()
+                    ->where(['!=','status',Transactions::STATUS_WAIT_EMAIL_ACTIVATION])
+                    ->orderBy('date_start DESC')->all();
+            }
 
             return $this->render('index', $data);
         } else {

@@ -44,7 +44,7 @@ AppAsset::register($this);
                         <p class="copyright"><i class="fa fa-copyright"></i> TakeProfit, 2018. Все праза защищены.</p>
                     </div>
                     <div class="faq">
-                        <a href="#"><i class="fa fa-question-circle"></i> <strong>FAQ</strong></a>
+                        <a href="<?= Url::to(['cabinet/faq'])?>"><i class="fa fa-question-circle"></i> <strong>FAQ</strong></a>
                     </div>
                 </div>
             </nav>
@@ -102,7 +102,8 @@ AppAsset::register($this);
                                     <li class="divider"></li>
                                     <li>
                                         <div class="text-center link-block">
-                                            <button type="button"
+                                            <button id="switchRateInit"
+                                                    type="button"
                                                     class="btn btn-w-m btn-primary"
                                                     data-toggle="modal"
                                                     data-target="#switchRate"
@@ -172,6 +173,7 @@ AppAsset::register($this);
             </div>
         </div>
 
+
         <div class="modal inmodal" id="payments" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content animated bounceInRight">
@@ -185,6 +187,7 @@ AppAsset::register($this);
                         <small class="font-bold">
                             Пополнением своего кошелька в нашей системе, вы получаете дополнительные возможности
                         </small>
+                        <h4>Комисия при пополнении составляет: <strong><?=AdminSettings::findOne(['id' => 4])->value?></strong>%</h4>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
@@ -228,6 +231,7 @@ AppAsset::register($this);
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-white" data-dismiss="modal">Закрыть</button>
+                        <button id="payments_refresh" type="button" class="btn btn-white hidden">Обновить</button>
                         <button id="send" type="button" class="btn btn-primary">Пополнить</button>
                     </div>
                 </div>
@@ -242,17 +246,17 @@ AppAsset::register($this);
                             <span aria-hidden="true">&times;</span>
                             <span class="sr-only">Close</span>
                         </button>
-                        <i class="fa fa-paypal modal-icon"></i>
+                        <img alt="image-logo" class="modal-icon-img" src="../image/logo4.png" />
                         <h4 class="modal-title">Обмен средств</h4>
                         <small class="font-bold">
-                            Пополнением своего кошелька в нашей системе, вы получаете дополнительные возможности
+                            <?= AdminSettings::findOne(['id' => 12])->value?>
                         </small>
                         <h4>Комисия при обмене составляет: <strong><?= AdminSettings::findOne(['id' => 1])->value?></strong>%</h4>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
                             <label class="main-label" for="culture_main_switch1">
-                                Выберете валюту которую хотите списать с баланса:
+                                Выберете валюту которую хотите списать с баланса: <span id="switch_rate1"></span>
                             </label>
                             <select class="form-control m-b main-select" id="culture_main_switch1">
                                 <option value="BTC">BTC (<?= (double)Yii::$app->user->identity->BTC_money; ?>)</option>
@@ -262,7 +266,7 @@ AppAsset::register($this);
                         </div>
                         <div class="form-group">
                             <label class="main-label" for="culture_main_switch2">
-                                Выберете валюту в которую хотите перевести деньги:
+                                Выберете валюту в которую хотите перевести деньги: <span id="switch_rate2"></span>
                             </label>
                             <select class="form-control m-b main-select" id="culture_main_switch2">
                                 <option value="BTC">BTC (<?= (double)Yii::$app->user->identity->BTC_money; ?>)</option>
@@ -271,7 +275,7 @@ AppAsset::register($this);
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="main-label" for="value_switch">Количество:</label>
+                            <label class="main-label" for="value_switch">Количество: <span id="switch_value"></span></label>
                             <input id="value_switch" type="text" title="money" name="money" class="form-control">
                         </div>
                     </div>
@@ -312,16 +316,6 @@ AppAsset::register($this);
                             <label class="main-label" for="money_withdraw">Цена:</label>
                             <input id="money_withdraw" type="text" title="money" name="money" class="form-control">
                         </div>
-<!--                        <div class="form-group">-->
-<!--                            <label class="main-label" for="culture_main_withdraw2">-->
-<!--                                Выберите валюту на которую хотите получить деньги:-->
-<!--                            </label>-->
-<!--                            <select class="form-control m-b main-select" id="culture_main_withdraw2">-->
-<!--                                <option value="BTC">BTC</option>-->
-<!--                                <option value="LTC">LTC</option>-->
-<!--                                <option value="ETH">ETH</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
                         <div class="form-group">
                             <label class="main-label" for="purse_withdraw">Адресс кошелька:</label>
                             <input id="purse_withdraw"
@@ -335,34 +329,55 @@ AppAsset::register($this);
                         <div id="answer_withdraw" class="answer">
                             <label class="control-label">Адресс Кошелька</label>
                             <p class="address form-copy-text" onclick="copyText(this);"></p>
-                            <div class="row"><div class="col-md-6"> <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                         <label class="control-label">Сума в <span class="currency1"></span></label>
                                         <p class="text-am-cur">
                                             <span class="amount1"></span>
                                             <span class="currency1"></span>
                                         </p>
-                                    </div></div>
-                                <div class="col-md-6"><div class="form-group">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                         <label class="control-label">Комиссия</label>
                                         <p class="text-am-cur">
                                             <span class="amount2"></span>
                                             <span class="currency2">BTC</span>
                                         </p>
-                                    </div></div></div>
-                            <div class="img-qr-block">
-                                <img src="" class="qrcode_url">
+                                    </div>
+                                </div>
                             </div>
-                            <a class="status_url" href="">Подробнее</a>
+                            <small class="font-bold">
+                                Для подверждения операции, мы выслали вам подверждение на Email
+                            </small>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-white" data-dismiss="modal">Закрыть</button>
+                        <button id="withdraw_refresh" type="button" class="btn btn-white hidden">Обновить</button>
                         <button id="send_withdraw" type="button" class="btn btn-primary">Вывести</button>
                     </div>
                 </div>
             </div>
         </div>
+
         <?php $this->endBody() ?>
+        <?php if (Yii::$app->session->hasFlash('success')): ?>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    toastr['success']("<?= Yii::$app->session->getFlash('success');?>", '');
+                });
+            </script>
+        <?php endif; ?>
+        <?php if (Yii::$app->session->hasFlash('error')): ?>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    toastr['error']("<?= Yii::$app->session->getFlash('error');?>", '');
+                });
+            </script>
+        <?php endif; ?>
     </body>
 </html>
 <?php $this->endPage() ?>

@@ -58,6 +58,5 @@ class Categories extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Informer::className(), ['id' => 'informer_id'])
             ->viaTable('informer_category', ['category_id' => 'id']);
-
     }
 }

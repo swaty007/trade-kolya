@@ -22,11 +22,18 @@ $(document).on('click',"#send", function(e) {
                 answer.find('.amount2').text(msg.transaction.amount2); //in BTC
                 answer.find('.currency1').text(msg.transaction.currency1);
                 answer.find('.modal-body').toggleClass('hidden');
+                answer.find('#payments_refresh').toggleClass('hidden');
             } else {
                 answer.after(msg.msg);
             }
         }
     })
+});
+$(document).on('click','#payments_refresh', function (e) {
+    e.preventDefault();
+    let answer = $('#payments');
+    answer.find('.modal-body').toggleClass('hidden');
+    $(this).toggleClass('hidden');
 });
 
 $(document).on('click',"#send_withdraw", function(e) {
@@ -54,11 +61,20 @@ $(document).on('click',"#send_withdraw", function(e) {
                 answer.find('.amount2').text(msg.result.amount2); //in BTC
                 answer.find('.currency1').text(msg.result.currency1);
                 answer.find('.modal-body').toggleClass('hidden');
+                answer.find('#withdraw_refresh').toggleClass('hidden');
+                answer.find('#send_withdraw').toggleClass('hidden');
             } else {
                 answer.after(msg.msg);
             }
         }
     })
+});
+$(document).on('click','#withdraw_refresh', function (e) {
+    e.preventDefault();
+    let answer = $('#withdraw');
+    answer.find('.modal-body').toggleClass('hidden');
+    answer.find('#send_withdraw').removeClass('hidden');
+    $(this).toggleClass('hidden');
 });
 
 $(document).on('click',"#switch_coin", function(e) {
@@ -83,7 +99,7 @@ $(document).on('click',"#switch_coin", function(e) {
     })
 });
 
-function transactionDone(transaction_id) {
+function transactionDone(transaction_id,pjax_el) {
     event.preventDefault();
     let data = {
         transaction_id: transaction_id,
@@ -97,12 +113,17 @@ function transactionDone(transaction_id) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
-            finishPjax();
+            if(pjax_el != undefined) {
+                finishPjax(pjax_el);
+            } else {
+                finishPjax();
+            }
+
         }
     })
 }
 
-function transactionReturn(transaction_id) {
+function transactionReturn(transaction_id,pjax_el) {
     event.preventDefault();
     let data = {
         transaction_id: transaction_id,
@@ -116,7 +137,11 @@ function transactionReturn(transaction_id) {
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
-            finishPjax();
+            if(pjax_el != undefined) {
+                finishPjax(pjax_el);
+            } else {
+                finishPjax();
+            }
         }
     })
 }

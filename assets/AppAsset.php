@@ -64,6 +64,8 @@ class AppAsset extends AssetBundle
         "js/market.js",
         "js/user.js",
         "js/copy.js",
+        "js/referral.js",
+        "js/calculator.js",
     ];
     public $jsOptions = array(
         'position' => \yii\web\View::POS_HEAD

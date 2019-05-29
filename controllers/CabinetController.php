@@ -22,7 +22,7 @@ use app\models\User;
 use app\models\UserMarkets;
 use app\models\AdminSettings;
 
-class CabinetController extends Controller
+class CabinetController extends UserAccessController
 {
 
     public $layout = 'dashboard-layout';
@@ -232,7 +232,7 @@ class CabinetController extends Controller
     public function action2fa()
     {
         if(Yii::$app->user->isGuest) {
-            return $this->redirect(Url::toRoute('/site/login'));
+            return $this->redirect(Url::toRoute('/user/login'));
         }
         $params = [];
         $id     = Yii::$app->user->getId();
@@ -345,6 +345,12 @@ class CabinetController extends Controller
         return $this->render('copy', $data);
     }
 
+    public function actionFaq()
+    {
+        $data = [];
+        return $this->render('faq', $data);
+    }
+
     public function actionCopyBuy()
     {
         if (Yii::$app->request->isAjax) {
@@ -412,7 +418,7 @@ class CabinetController extends Controller
             $transaction_admin->type        = 'copy-trader';
             $transaction_admin->sub_type    = 'commission';
             $transaction_admin->comment     = 'Покупка копирования трейдера';
-            $transaction_admin->status      = 1;
+            $transaction_admin->status      = Transactions::STATUS_DONE;
             $transaction_admin->user_id     = $userAction;
             $transaction_admin->buyer_name  = $updateUser->username;
             $transaction_admin->buyer_email = $updateUser->email;

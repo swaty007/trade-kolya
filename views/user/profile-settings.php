@@ -48,9 +48,22 @@ $success = Yii::$app->session->getFlash('success');
                                         <input type="text"
                                                id="user_username"
                                                name="username"
-                                               placeholder="placeholder"
+                                               placeholder="username"
                                                class="form-control"
                                                value="<?=$user->username?>">
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Telegram аккаунт</label>
+                                    <div class="col-sm-10">
+                                        <input type="text"
+                                               id="user_telegram"
+                                               name="telegram"
+                                               placeholder="telegram"
+                                               class="form-control"
+                                               value="<?=$user->telegram?>">
                                     </div>
                                 </div>
                                 <div class="hr-line-dashed"></div>
@@ -211,7 +224,7 @@ $success = Yii::$app->session->getFlash('success');
                                     }
                                 </script>
 
-                                <button id="user_update_data" class="btn btn-primary btn-sm" type="submit">Save changes</button>
+                                <button id="user_update_data" class="btn btn-primary block full-width m-b" type="submit">Save changes</button>
                                 <?php \yii\widgets\Pjax::end(); ?>
 
                                 <div class="hr-line-dashed"></div>

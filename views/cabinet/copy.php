@@ -136,39 +136,41 @@ $this->title = 'Копирование трейдеров';
                                 <div class="ibox-content">
                                     <form method="POST">
                                         <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
-                                        <table id="data_table_1" class="table table-striped table-bordered table-hover dataTables-example dataTable dtr-inline">
-                                            <thead>
-                                            <tr>
-                                                <th>Фото</th>
-                                                <th>Никнейм</th>
-                                                <th>Биржа</th>
-                                                <th>Риски</th>
-                                                <th>Портфель в USDT</th>
-                                                <th>Успешных/неуспешных сделок</th>
-                                                <th>Стоимость за подключение</th>
-                                                <th>Профит</th>
-                                                <th>Действия</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <?php foreach ($user_marketplaces as $user_marketplace) { ?>
+                                        <div class="table-responsive">
+                                            <table id="data_table_1" class="table table-striped table-bordered table-hover dataTables-example dataTable dtr-inline">
+                                                <thead>
                                                 <tr>
-                                                    <td><img src="<?= $user_marketplace->user->logo_src != null ? $user_marketplace->user->logo_src : '../image/user_icon.png';?>" alt="" class="image-table"></td>
-                                                    <td><?= $user_marketplace->user->username;?></td>
-                                                    <td><?= $user_marketplace->marketplace->marketplace_name;?></td>
-                                                    <td><?= $user_marketplace->risk;?></td>
-                                                    <td><?= $user_marketplace->api_money_usdt;?></td>
-                                                    <td><?= $user_marketplace->amount_deals_success . '/' . $user_marketplace->amount_deals_error;?></td>
-                                                    <td><?= $user_marketplace->pay_copy;?></td>
-                                                    <td><?= $user_marketplace->profit_percent;?></td>
-                                                    <td>
-                                                        <a class="btn btn-outline btn-info btn-xs table-btn-style" onclick="openModalMarketPlaceInform(<?= $user_marketplace->user_marketplace_id; ?>)">Подробности</a>
-                                                        <a class="btn btn-outline btn-primary btn-xs table-btn-style" onclick="buyCopy(<?= $user_marketplace->user_marketplace_id; ?>)">Подключиться</a>
-                                                    </td>
+                                                    <th>Фото</th>
+                                                    <th>Никнейм</th>
+                                                    <th>Биржа</th>
+                                                    <th>Риски</th>
+                                                    <th>Портфель в USDT</th>
+                                                    <th>Успешных/неуспешных сделок</th>
+                                                    <th>Стоимость за подключение</th>
+                                                    <th>Профит</th>
+                                                    <th>Действия</th>
                                                 </tr>
-                                            <?php } ?>
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                <?php foreach ($user_marketplaces as $user_marketplace) { ?>
+                                                    <tr>
+                                                        <td><img src="<?= $user_marketplace->user->logo_src != null ? $user_marketplace->user->logo_src : '../image/user_icon.png';?>" alt="" class="image-table"></td>
+                                                        <td><?= $user_marketplace->user->username;?></td>
+                                                        <td><?= $user_marketplace->marketplace->marketplace_name;?></td>
+                                                        <td><?= $user_marketplace->risk;?></td>
+                                                        <td><?= $user_marketplace->api_money_usdt;?></td>
+                                                        <td><?= $user_marketplace->amount_deals_success . '/' . $user_marketplace->amount_deals_error;?></td>
+                                                        <td><?= $user_marketplace->pay_copy;?></td>
+                                                        <td><?= $user_marketplace->profit_percent;?></td>
+                                                        <td>
+                                                            <a class="btn btn-outline btn-info btn-xs table-btn-style" onclick="openModalMarketPlaceInform(<?= $user_marketplace->user_marketplace_id; ?>)">Подробности</a>
+                                                            <a class="btn btn-outline btn-primary btn-xs table-btn-style" onclick="buyCopy(<?= $user_marketplace->user_marketplace_id; ?>)">Подключиться</a>
+                                                        </td>
+                                                    </tr>
+                                                <?php } ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -198,6 +200,7 @@ $this->title = 'Копирование трейдеров';
                                 <div class="ibox-content">
                                     <form  action="" method="POST">
                                         <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
+                                        <div class="table-responsive">
                                         <table id="data_table_2" class="table table-striped table-bordered table-hover dataTables-example dataTable dtr-inline">
                                             <thead>
                                             <tr>
@@ -230,6 +233,7 @@ $this->title = 'Копирование трейдеров';
                                             <?php } ?>
                                             </tbody>
                                         </table>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -259,6 +263,7 @@ $this->title = 'Копирование трейдеров';
                                 <div class="ibox-content">
                                     <form  action="" method="POST">
                                         <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
+                                        <div class="table-responsive">
                                         <table id="data_table_3" class="table table-striped table-bordered table-hover dataTables-example dataTable dtr-inline">
                                             <thead>
                                             <tr>
@@ -292,6 +297,7 @@ $this->title = 'Копирование трейдеров';
                                             <?php endforeach; ?>
                                             </tbody>
                                         </table>
+                                        </div>
                                     </form>
                                 </div>
                             </div>

@@ -15,7 +15,7 @@ use yii\helpers\Url;
 use yii\web\Response;
 use app\models\UserMenu;
 
-class TraderController extends Controller {
+class TraderController extends UserAccessController {
 
     public $layout = 'dashboard-layout';
     

@@ -13,7 +13,7 @@ use app\models\Markets;
 use app\models\UserMarketplace;
 use yii\web\UploadedFile;
 
-class MarketController extends Controller
+class MarketController extends UserAccessController
 {
     public $layout = 'dashboard-layout';
 
@@ -271,7 +271,7 @@ class MarketController extends Controller
             $transaction_admin->type        = 'market';
             $transaction_admin->sub_type    = 'deposit';
             $transaction_admin->comment     = 'Покупка товара';
-            $transaction_admin->status      = 1;
+            $transaction_admin->status      = Transactions::STATUS_DONE;
             $transaction_admin->user_id     = $user->id;
             $transaction_admin->buyer_name  = $user->username;
             $transaction_admin->buyer_email = $user->email;
@@ -285,7 +285,7 @@ class MarketController extends Controller
             $transaction->sub_type    = 'deposit';
             $transaction->comment     = 'Покупка товара';
             $transaction->user_id     = $id;
-            $transaction->status      = 1;
+            $transaction->status      = Transactions::STATUS_DONE;
             $transaction->amount1     = $market->cost;
             $transaction->currency1   = $invest_method;
             $transaction->buyer_name  = Yii::$app->user->identity->username;

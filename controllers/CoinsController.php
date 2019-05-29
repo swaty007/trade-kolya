@@ -13,7 +13,7 @@ use yii\helpers\Url;
 use yii\web\Controller;
 use app\models\api\CoinPayments;
 
-class CoinsController extends Controller
+class CoinsController extends UserAccessController
 {
     public $layout = 'dashboard-layout';
     public function behaviors()
@@ -81,9 +81,6 @@ class CoinsController extends Controller
 
     public function actionChangeRateBalance()
     {
-        $cps = new CoinPayments();
-        $rates_btc = $cps->GetRates();
-
         if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = 'json';
 
@@ -106,14 +103,15 @@ class CoinsController extends Controller
 
             if (User::allowedCurrency($curr1) && User::allowedCurrency($curr2)) {
                 if ($amount1 <= $user->{$curr1.'_money'}) {
-                    $user->{$curr1.'_money'} -= $amount1;
+//                    $user->{$curr1.'_money'} -= $amount1;
                     $amount2 = ($amount1*$rates_btc['result'][$curr1]['rate_btc'])
                                 /
                                ($rates_btc['result'][$curr2]['rate_btc']);
 
                     $exchangeCommission = $amount2*($exchangeCommissionRate/100);
 
-                    $user->{$curr2.'_money'} += $amount2-$exchangeCommission;
+//                    $user->{$curr2.'_money'} += $amount2-$exchangeCommission;
+                    $user_update = $user->updateCounters([$curr2.'_money' => $amount2-$exchangeCommission, $curr1.'_money' => -$amount1]);
                 } else {
                     return ['msg' => 'error', 'status' => "No money on balance"];
                 }
@@ -122,25 +120,27 @@ class CoinsController extends Controller
             }
 
             $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
-            $global_admin->{$curr2.'_money'} += $exchangeCommission;
+//            $global_admin->{$curr2.'_money'} += $exchangeCommission;
+            $admin_update = $global_admin->updateCounters([$curr2.'_money' => $exchangeCommission]);
             $transaction_admin              = new Transactions();
             $transaction_admin->amount1     = $exchangeCommission;
             $transaction_admin->currency1   = $curr2;
             $transaction_admin->type        = 'coin';
             $transaction_admin->sub_type    = 'commission';
             $transaction_admin->comment     = 'exchange';
-            $transaction_admin->status      = 1;
-            $transaction_admin->user_id     = $user->id;
+            $transaction_admin->status      = Transactions::STATUS_DONE;
+            $transaction_admin->user_id     = $global_admin->id;
             $transaction_admin->buyer_name  = $user->username;
             $transaction_admin->buyer_email = $user->email;
 
-            if ($user->save() && $global_admin->save()) {
+            if ($user_update && $admin_update) {
+//            if ($user->save() && $global_admin->save()) {
                 $transaction                 = new Transactions();
                 $transaction->type           = 'coin';
                 $transaction->sub_type       = 'exchange';
                 $transaction->comment        = $exchangeCommission;
                 $transaction->user_id        = $id;
-                $transaction->status         = 1;
+                $transaction->status         = Transactions::STATUS_DONE;
                 $transaction->amount1        = -1*$amount1;
                 $transaction->amount2        = $amount2-$exchangeCommission;
                 $transaction->currency1      = $curr1;
@@ -184,29 +184,43 @@ class CoinsController extends Controller
             $transaction->type        = 'coin';
             $transaction->sub_type    = 'withdraw';
             $transaction->user_purse  = $user_purse;
-            $transaction->status      = 0;
+//            $transaction->status      = Transactions::STATUS_WAIT_ACTIVATION;
+            $transaction->status      = Transactions::STATUS_WAIT_EMAIL_ACTIVATION;
             $transaction->user_id     = $id;
             $transaction->buyer_name  = Yii::$app->user->identity->username;
             $transaction->buyer_email = Yii::$app->user->identity->email;
 
             $user = User::find()->where(['id' => $id])->one();
+            $transaction->generateActivationEmailCode($user);
 
             if (User::allowedCurrency($curr1)) {
                 if ($user->{$curr1.'_money'} < $amount) {
                     return ['msg' => 'error', 'status' => "Don't have balance"];
                 }
-                $user->{$curr1.'_money'} -= $amount;
 
+                $cps                    = new CoinPayments();
+                $rates_btc              = $cps->GetRates();
+
+                $amountToUSD = ($amount*$rates_btc['result'][$curr1]['rate_btc'])
+                    /
+                    ($rates_btc['result']['USDT']['rate_btc']);
+                if (AdminSettings::findOne(['id' => AdminSettings::MinWithdraw])->value > $amountToUSD) {
+                    return ['msg' => 'error', 'status' => "Failed min Amount", 'result' => $amountToUSD];
+                }
+//                $user->{$curr1.'_money'} -= $amount;
+                $user_update = $user->updateCounters([$curr1.'_money' => -$amount]);
                 $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
-                $global_admin->{$curr1.'_money'} += $transaction->amount2;
+//                $global_admin->{$curr1.'_money'} += $transaction->amount2;
+                $admin_update = $global_admin->updateCounters([$curr1.'_money' => $transaction->amount2]);
+
                 $transaction_admin = new Transactions();
                 $transaction_admin->amount1     = $transaction->amount2;
                 $transaction_admin->currency1   = $curr1;
                 $transaction_admin->type        = 'coin';
                 $transaction_admin->sub_type    = 'commission';
                 $transaction_admin->comment     = 'withdraw';
-                $transaction_admin->status      = 1;
-                $transaction_admin->user_id     = $user->id;
+                $transaction_admin->status      = Transactions::STATUS_DONE;
+                $transaction_admin->user_id     = $global_admin->id;
                 $transaction_admin->buyer_name  = $user->username;
                 $transaction_admin->buyer_email = $user->email;
 
@@ -214,8 +228,13 @@ class CoinsController extends Controller
                 return ['msg' => 'error', 'status' => "Failed currency"];
             }
 
-            if ($transaction->save() && $transaction_admin->save()) {
-                if (!$user->save() || !$global_admin->save()) {
+            if ($transaction_admin->save()) {
+                $transaction->txn_id = (string)$transaction_admin->id;
+                if (!$transaction->save()) {
+                    return ['msg' => 'error', 'status' => "Don't save transaction"];
+                }
+//                if (!$user->save() || !$global_admin->save()) {
+                if (!$user_update || !$admin_update) {
                     $transaction->delete();
                     return ['msg' => 'error', 'status' => "Don't save user"];
                 }
@@ -226,6 +245,18 @@ class CoinsController extends Controller
 
         }
     }
+    public function actionActivation($token){
+
+        try{
+            Transactions::confirmation($token);
+            Yii::$app->session->setFlash('success', 'You have successfully confirmed your transaction.');
+        } catch (\Exception $e){
+            Yii::$app->errorHandler->logException($e);
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+
+        return $this->redirect(Url::toRoute('/cabinet/index'));
+    }
 
     public function actionTransactions()
     {
@@ -233,9 +264,14 @@ class CoinsController extends Controller
         $id   = Yii::$app->user->getId();
 
         if (User::canAdmin()) {
-            $data['transactions'] = Transactions::find()->orderBy('date_start DESC')->all();
+            $data['transactions'] = Transactions::find()
+                ->where(['!=','status',Transactions::STATUS_WAIT_EMAIL_ACTIVATION])
+                ->orderBy('date_start DESC')->all();
         } else {
-            $data['transactions'] = Transactions::find()->where(['user_id'=>$id])->orderBy('date_start DESC')->all();
+            $data['transactions'] = Transactions::find()
+                ->where(['user_id'=>$id])
+                ->andWhere(['!=','status',Transactions::STATUS_WAIT_EMAIL_ACTIVATION])
+                ->orderBy('date_start DESC')->all();
         }
 
         return $this->render('transactions', $data);
@@ -250,11 +286,11 @@ class CoinsController extends Controller
 
                 $transaction_id = (int)Yii::$app->request->post('transaction_id', '');
 
-                if (!($transaction = Transactions::findOne(['id' => $transaction_id]) )) {
+                if (!($transaction = Transactions::findOne(['id' => $transaction_id, '!=','status',Transactions::STATUS_WAIT_EMAIL_ACTIVATION]) )) {
                     return ['msg' => 'error', 'status' => "No Transaction finded"];
                 }
 
-                $transaction->status = 1;
+                $transaction->status = Transactions::STATUS_DONE;
 
                 if ($transaction->save()) {
                     $notification = new Notifications();
@@ -279,19 +315,27 @@ class CoinsController extends Controller
 
                 $transaction_id = (int)Yii::$app->request->post('transaction_id', '');
 
-                if (!($transaction = Transactions::findOne(['id' => $transaction_id]) )) {
+                if (!($transaction = Transactions::findOne(['id' => $transaction_id, '!=','status',Transactions::STATUS_WAIT_EMAIL_ACTIVATION]) )) {
                     return ['msg' => 'error', 'status' => "No Transaction finded"];
                 }
 
                 $user = User::find()->where(['id' => $transaction->user_id])->one();
+                $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
 
                 if (User::allowedCurrency($transaction->currency1)) {
-                    $user->{$transaction->currency1.'_money'} += (-1*$transaction->amount1)-$transaction->amount2;
+                    $user_update = $user->updateCounters([$transaction->currency1.'_money' => (-1*$transaction->amount1)]);
+                    $admin_update = $global_admin->updateCounters([$transaction->currency1.'_money' => -$transaction->amount2]);
                 } else {
                     return ['msg' => 'error', 'status' => "Failed currency"];
                 }
-
-                if ($transaction->delete()) {
+                if (( $transaction_admin = Transactions::findOne(['id' => $transaction->txn_id, '!=','status',Transactions::STATUS_WAIT_EMAIL_ACTIVATION]) )) {
+                    $transaction_admin->status = Transactions::STATUS_CANCEL;
+                    if (!$transaction_admin->save()) {
+                        return ['msg' => 'error', 'status' => "Don't admin transaction save"];
+                    }
+                }
+                $transaction->status = Transactions::STATUS_CANCEL;
+                if ($transaction->save() && $user_update) {
                     $notification = new Notifications();
                     $notification->createNotification($transaction->user_id,
                         'info',
@@ -305,7 +349,24 @@ class CoinsController extends Controller
             }
         }
     }
+    public function actionCalculatorRate()
+    {
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = 'json';
 
+
+
+            $cps                    = new CoinPayments();
+            $rates_btc              = $cps->GetRates();
+
+
+            return [
+                'msg' => 'ok',
+                'status'=>'Транзакция создана успешно',
+                'result'=>$rates_btc['result'],
+            ];
+        }
+    }
     public function actionApiAnswer()
     {
         Yii::trace($_POST);
@@ -377,32 +438,35 @@ class CoinsController extends Controller
                 $this->errorAndDie('User id not equaled!');
             }
 
-            $txn->status = 1;
+            $txn->status = Transactions::STATUS_DONE;
 
             if ($txn->save()) {
                 $usr = User::find()->where(['id' => $user_id])->one();
                 $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
 
                 if (User::allowedCurrency($currency1)) {
-                        $usr->{$currency1.'_money'} += $amount1-$txn->amount2;
+                    $usr->{$currency1.'_money'} += $amount1-$txn->amount2;
+                    $user_update = $usr->updateCounters([$currency1.'_money' => $amount1-$txn->amount2]);
                 } else {
                     Yii::trace("Dont available CURRENCY");
                     $this->errorAndDie('Save error CUR');
                 }
 
-                $global_admin->{$currency1.'_money'} += $txn->amount2;
+//                $global_admin->{$currency1.'_money'} += $txn->amount2;
+                $admin_update = $global_admin->updateCounters([$currency1.'_money' => $txn->amount2]);
                 $transaction_admin = new Transactions();
                 $transaction_admin->amount1     = $txn->amount2;
                 $transaction_admin->currency1   = $currency1;
                 $transaction_admin->type        = 'coin';
                 $transaction_admin->sub_type    = 'commission';
                 $transaction_admin->comment     = 'deposit';
-                $transaction_admin->status      = 1;
-                $transaction_admin->user_id     = $usr->id;
+                $transaction_admin->status      = Transactions::STATUS_DONE;
+                $transaction_admin->user_id     = $global_admin->id;
                 $transaction_admin->buyer_name  = $usr->username;
                 $transaction_admin->buyer_email = $usr->email;
 
-                if (!$usr->save() || !$transaction_admin->save() || !$global_admin->save()) {
+//                if (!$usr->save() || !$transaction_admin->save() || !$global_admin->save()) {
+                if (!$user_update || !$transaction_admin->save() || !$admin_update) {
                     Yii::trace("Dont save balance to users/admin and create transaction");
                     $this->errorAndDie('Save error 1');
                 }

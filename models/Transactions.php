@@ -18,6 +18,7 @@ use yii\helpers\Url;
  * @property double $amount2
  * @property string $currency1
  * @property string $currency2
+ * @property string $email_confirm_token
  * @property string $type
  * @property string $sub_type
  * @property string $buyer_name
@@ -31,6 +32,11 @@ use yii\helpers\Url;
  */
 class Transactions extends ActiveRecord
 {
+    const STATUS_REFUND = -1;
+    const STATUS_CANCEL = -10;
+    const STATUS_WAIT_ACTIVATION = 0;
+    const STATUS_WAIT_EMAIL_ACTIVATION = -5;
+    const STATUS_DONE = 1;
     /**
      * @inheritdoc
      */
@@ -50,6 +56,7 @@ class Transactions extends ActiveRecord
             [['amount1', 'amount2'], 'number'],
             [['date_start', 'date_last'], 'safe'],
             [['currency1', 'currency2'], 'string', 'max' => 20],
+            [['email_confirm_token'], 'string', 'max' => 55],
             [['buyer_name', 'buyer_email'], 'string', 'max' => 100],
             [['txn_id'], 'string', 'max' => 255],
             [['user_purse'], 'string', 'max' => 255],
@@ -98,7 +105,7 @@ class Transactions extends ActiveRecord
         $rates_btc = $cps->GetRates();
 
         //($this->amount1 - $rates_btc['result'][$this->currency1]['tx_fee']) * $rates_btc['result'][$this->currency1]['rate_btc'])
-        $commission_persent = (double)AdminSettings::findOne(['id'=>4])->value;
+        $commission_persent = (double)AdminSettings::findOne(['id' => 4])->value;
         $commission = ($this->amount1/100)*$commission_persent;
         $amount_in_btc = number_format(
         ($this->amount1 - $commission), 15,'.','');
@@ -129,7 +136,7 @@ class Transactions extends ActiveRecord
         $result['result']['qrcode_url'];
 
         if ($result['error'] == 'ok') {
-            $this->status = 0;
+            $this->status = Transactions::STATUS_WAIT_ACTIVATION;
             $this->amount2 = $commission;
 //            $this->currency2 =  "BTC";
             $this->txn_id = $result['result']['txn_id'];
@@ -144,6 +151,45 @@ class Transactions extends ActiveRecord
             return $result['error'];
         }
     }
+
+
+    public function generateActivationEmailCode(User $user){
+        $this->email_confirm_token = Yii::$app->security->generateRandomString(16);
+        $this->status = Transactions::STATUS_WAIT_EMAIL_ACTIVATION;
+
+        $email = $user->email;
+        $sent = Yii::$app->mailer
+            ->compose(
+                ['html' => 'user-transaction-confirm-html'],
+                ['user' => $user, 'code' => $this->email_confirm_token])
+            ->setTo($email)
+            ->setFrom(Yii::$app->params['adminEmail'])
+            ->setSubject('Confirmation of Transaction Withdraw')
+            ->send();
+
+        if (!$sent) {
+            throw new \RuntimeException('Sending error.');
+        }
+    }
+    public static function confirmation($token): void
+    {
+        if (empty($token)) {
+            throw new \DomainException('Empty confirm token.');
+        }
+
+        $transaction = Transactions::findOne(['email_confirm_token' => $token]);
+        if (!$transaction) {
+            throw new \DomainException('Transaction is not found.');
+        }
+
+        $transaction->email_confirm_token = null;
+        $transaction->status = Transactions::STATUS_WAIT_ACTIVATION;
+        if (!$transaction->save()) {
+            throw new \RuntimeException('Saving error.');
+        }
+
+    }
+
 
     public function getUser()
     {

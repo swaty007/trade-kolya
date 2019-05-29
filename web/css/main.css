@@ -223,7 +223,7 @@ body.mini-navbar .navbar-default .nav>li>a {
 
 @media only screen and (min-width: 768px) {
     .dropdown:hover .dropdown-menu {
-        display: block;
+        /*display: block;*/
     }
 }
 .fileContainer {
@@ -359,4 +359,38 @@ body.mini-navbar .copyright-block a {
 }
 .table-btn-style {
     display: block;
+}
+.grey-bg {
+    background-color: #2f4050;
+}
+.grey-bg h2,.grey-bg p {
+    color: #fff;
+}
+.fa.fa-paypal{
+    color: #009ae0;
+    color: #002d8b;
+}
+.lazur-bg,
+.navy-bg {
+    background-color: #2f4050;
+}
+.ibox-tools {
+    display: none;
+}
+.intl-tel-input {
+    display: block;
+}
+.modal-icon-img {
+    filter: invert(0.3);
+    width: 70px;
+}
+.inmodal .modal-icon.fa {
+    font-size: 84px;
+    color: #e2e3e3;
+}
+#admin_more_info_user .modal-dialog {
+    width: auto;
+}
+.notification-item.show {
+    background-color: #f5f5f5;
 }

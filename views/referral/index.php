@@ -4,20 +4,12 @@ use app\models\User;
 use yii\bootstrap\Html;
 use yii\helpers\Url;
 
-$this->title = 'Админка';
+$this->title = 'Рефералы';
 ?>
-
-
-
 
 <div class="row wrapper border-bottom white-bg">
     <div class="col-lg-10">
-        <h2><strong>Админка</strong></h2>
-    </div>
-    <div class="col-lg-12 btn-block-style">
-        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#pull"><strong>Создать новый пул</strong></button>
-        <button class="btn btn-sm btn-primary" type="button" data-toggle="modal" data-target="#informer-create"><strong>Создать новость</strong></button>
-        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#market-create"><strong>Создать продукт</strong></button>
+        <h2><strong><?=$this->title?></strong></h2>
     </div>
 </div>
 
@@ -27,7 +19,6 @@ $this->title = 'Админка';
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
 
-
                     <div class="row">
 
 
@@ -36,9 +27,7 @@ $this->title = 'Админка';
 
                                 <ul class="nav nav-tabs">
                                     <li class="active"><a data-toggle="tab" href="#tab-admin-1">Общие настройки</a></li>
-                                    <li><a data-toggle="tab" href="#tab-admin-2">Пользователи</a></li>
-                                    <li><a data-toggle="tab" href="#tab-admin-3">Транзакции</a></li>
-                                    <li><a data-toggle="tab" href="#tab-admin-4">Рефералы</a></li>
+                                    <li><a data-toggle="tab" href="#tab-admin-2">Ваши рефералы</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -46,204 +35,63 @@ $this->title = 'Админка';
 
                             <div id="tab-admin-1" class="tab-pane active">
 
-                                <?php foreach ($admin_settings as $setting) :?>
-
                                     <div class="col-lg-12">
                                         <div class="setting_block m-t col-md-12">
                                             <div class="form-group row">
-                                                <label class="col-md-3 col-form-label"><?=$setting->name?></label>
-
-                                                <?php if ($setting->id == 15):?>
-                                                <div class="col-md-9">
-                                                    <div class="summernote"><?=$setting->value?></div>
-                                                    <button data-type="summernote" onclick="changeAdminSetting(<?=$setting->id?>,this)" type="button" class="btn btn-w-m btn-primary btn-sm">Изменить</button>
-                                                </div>
-                                                </div>
-                                                </div>
-                                                </div>
-                                                <?php continue;endif;?>
-
+                                                <label class="col-md-3 col-form-label">Создать промокод</label>
                                                 <div class="col-md-5">
-                                                    <?php if( in_array($setting->id, [3,9,12] )) :?>
-                                                        <textarea type="text" class="form-control value setting" value="<?=$setting->value?>"><?=$setting->value?></textarea>
-                                                    <?php else:?>
-                                                        <input type="text" class="form-control value setting" value="<?=$setting->value?>">
-                                                    <?php endif;?>
+                                                    <input id="promocode_ref" type="text" class="form-control value setting" value="">
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <button onclick="changeAdminSetting(<?=$setting->id?>,this)" type="button" class="btn btn-w-m btn-primary btn-sm">Изменить</button>
+                                                    <button id="referral_code_create" type="button" class="btn btn-w-m btn-primary btn-sm">Создать</button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                <?php endforeach?>
 
-                            </div>
-
-                            <div id="tab-admin-2" class="tab-pane">
-
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="table-responsive">
-                                        <table id="data_table" class="table table-striped table-bordered table-hover dataTables-example dataTable dtr-inline">
-                                            <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>NICKNAME</th>
-                                                <th>USER_ROLE</th>
-                                                <th>EMAIL</th>
-<!--                                                <th>USDT_money</th>-->
-<!--                                                <th>ETH_money</th>-->
-<!--                                                <th>BTC_money</th>-->
-<!--                                                <th>BTC_money</th>-->
-                                                <th>Статус акаунта</th>
-                                                <th>Создан/Последнее действие</th>
-                                                <th></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <?php foreach ($users as $user):?>
-                                                <tr class="">
-                                                    <td><?=$user->id?></td>
-                                                    <td><?=$user->username?></td>
-                                                    <td><?=$user->user_role?></td>
-                                                    <td><?=$user->email?></td>
-<!--                                                    <td>--><?//=(double)$user->USDT_money?><!--</td>-->
-<!--                                                    <td>--><?//=(double)$user->ETH_money?><!--</td>-->
-<!--                                                    <td>--><?//=(double)$user->BTC_money?><!--</td>-->
-<!--                                                    <td>--><?//=(double)$user->BTC_money?><!--</td>-->
-                                                    <td>
-                                                        <?php switch ($user->status){
-                                                            case 10: echo 'STATUS_ACTIVE';break;
-                                                            case 1 : echo 'STATUS_WAIT_ACTIVATION';break;
-                                                            case 0 : echo 'STATUS_DELETED';break;
-                                                        };?>
-                                                    </td>
-                                                    <td><?=$user->created_at;?> / <?=$user->updated_at;?></td>
-                                                    <td>
-                                                        <a class="pjax-modal-btn btn label label-success" href="<?= Url::to(['admin/index','user_id'=>$user->id])?>">Подробнее</a>
-                                                        <?php if ($user->status == 10):?>
-                                                            <a onclick="banUser(<?=$user->id?>, true, this)" href="#" class="btn label label-success">Забанить</a>
-                                                        <?php elseif ($user->status == 0):?>
-                                                            <a onclick="banUser(<?=$user->id?>, false, this)" href="#" class="btn label label-success">Разбанить</a>
-                                                        <?php endif;?>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach;?>
-                                            </tbody>
-                                        </table>
-                                        </div>
-                                        <script>
-                                            dataTablePajax();
-                                            document.addEventListener('DOMContentLoaded',function () {
-                                                $(document).pjax('a.pjax-modal-btn', '#admin_user_more_info_pjax');
-                                                $("#admin_user_more_info_pjax").on('pjax:send', function() {
-                                                    $('#admin_more_info_user').modal('show');
-                                                })
-                                            })
-                                        </script>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div id="tab-admin-3" class="tab-pane">
-
-                                <?php \yii\widgets\Pjax::begin(['id'=>'transactions_pjax']); ?>
-                                <div class="table-responsive">
-                                <table id="data_table_transactions" class="table table-striped table-bordered table-hover dataTables-example dataTable dtr-inline">
-                                    <thead>
-                                    <tr>
-                                        <?php if (User::canAdmin()) :?>
-                                            <th>
-                                                #ID
-                                            </th>
-                                            <th>
-                                                Никнейм
-                                            </th>
-                                            <th>Email</th>
-                                            <th>Кошелек</th>
-                                        <?php endif;?>
-                                        <th>Тип</th>
-                                        <th>Вид операции</th>
-                                        <th>Original Currency</th>
-                                        <th>Comment</th>
-                                        <th>STATUS</th>
-                                        <th>Time start</th>
-                                        <th>Time end</th>
-                                        <?php if (User::canAdmin()) :?>
-                                            <th>
-                                                Manual payout
-                                            </th>
-                                        <?php endif;?>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php $transaction_statuses = [
-                                        0=>'В выполнении',
-                                        1=>'Выполнена',
-                                        -10=> 'Отменена',
-                                        -1 => 'Возврат'
-                                    ] ?>
-                                    <?php foreach ($transactions as $n => $transaction) :?>
-                                        <tr class="">
-                                            <?php if (User::canAdmin()) :?>
-                                                <td>
-                                                    <?=$transaction->user_id?>
-                                                </td>
-                                                <td>
-                                                    <?=$transaction->user->username?>
-                                                </td>
-                                                <td>
-                                                    <?=$transaction->user->email?>
-                                                </td>
-                                                <td><?=$transaction->user_purse?></td>
-                                            <?php endif;?>
-                                            <td class="<?php if ($transaction->type == "deposit" ) {echo "text-danger"; }
-                                            else if ($transaction->type == "withdraw") {echo "text-success"; } ?>">
-                                                <?=$transaction->type?>
-                                            </td>
-                                            <td>
-                                                <?=$transaction->sub_type?>
-                                            </td>
-                                            <td><?=(double)$transaction->amount1.' '.$transaction->currency1?> / <?=(double)$transaction->amount2.' '.$transaction->currency2?></td>
-                                            <td><?=$transaction->comment?></td>
-                                            <td><span class="label <?=($transaction->status == 1 ) ? "label-primary" : "label-warning" ?>">
-                                        <?=$transaction_statuses[$transaction->status] ?></span>
-                                            </td>
-                                            <td><?=$transaction->date_start?></td>
-                                            <td><?=$transaction->date_last?></td>
-                                            <?php if(Yii::$app->user->identity->user_role == "admin"):?>
-                                                <td>
-                                                    <?php if($transaction->type === "coin" &&
-                                                        $transaction->sub_type === "withdraw" &&
-                                                        $transaction->status == 0):?>
-                                                        <button class="btn btn-success label label-success" onclick="transactionDone(<?=$transaction->id?>,'#transactions_pjax')">Выплатить</button>
-                                                        <button class="btn btn-warning label label-success" onclick="transactionReturn(<?=$transaction->id?>,'#transactions_pjax)">Отменить</button>
-                                                    <?php endif;?>
-                                                </td>
-                                            <?php endif;?>
-                                        </tr>
-                                    <?php endforeach;?>
-                                    </tbody>
-                                </table>
-                                </div>
-                                <script>
-                                    dataTablePajax("#data_table_transactions");
-                                </script>
-                                <?php \yii\widgets\Pjax::end(); ?>
-
-                            </div>
-
-                            <div id="tab-admin-4" class="tab-pane">
+                                <?php \yii\widgets\Pjax::begin(['id'=>'referral_pjax']); ?>
+                                <div class="ibox-content">
                                 <div class="table-responsive">
                                     <table id="data_table" class="table table-striped table-bordered table-hover dataTables-example dataTable dtr-inline">
                                         <thead>
                                         <tr>
-                                            <th>Имя юзера который пришел</th>
+                                            <th>#ID</th>
+                                            <th>Промокод</th>
+                                            <th>Created at</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php foreach ($promocodes as $n => $promocode) :?>
+                                            <tr class="">
+                                                <td><?=$promocode->id?></td>
+                                                <td><?=$promocode->promocode?></td>
+                                                <td><?=$promocode->created_at?></td>
+                                                <td>
+                                                    <button class="btn btn-warning label label-success" onclick="deletePromocode(<?=$promocode->id?>)">Удалить</button>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach;?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <script>
+                                    dataTablePajax();
+                                </script>
+                                <?php \yii\widgets\Pjax::end(); ?>
+
+                            </div>
+                            </div>
+
+                            <div id="tab-admin-2" class="tab-pane">
+
+                                <div class="table-responsive">
+                                    <table id="data_table" class="table table-striped table-bordered table-hover dataTables-example dataTable dtr-inline">
+                                        <thead>
+                                        <tr>
+                                            <th>Имя юзера</th>
                                             <th>Промокод активации</th>
                                             <th>Дата регистрации</th>
-                                            <th>Имя юзера к которому пришли</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -252,12 +100,13 @@ $this->title = 'Админка';
                                                 <td><?=$user['username']?></td>
                                                 <td><?=$user['promocode']?></td>
                                                 <td><?=$user['created_at']?></td>
-                                                <td><?=$user['username_parent']?></td>
                                             </tr>
                                         <?php endforeach;?>
                                         </tbody>
                                     </table>
                                 </div>
+
+
                             </div>
 
                         </div>
@@ -494,17 +343,11 @@ $this->title = 'Админка';
 <script>
     function changeAdminSetting(id,_this) {
         event.preventDefault();
-
         let el = $(_this).closest('.setting_block'),
             data = {
-                id: Number(id),
-            };
-
-        if ($(_this).attr('data-type') == 'summernote') {
-            data.value = el.find('div.note-editable').html();
-        } else {
-            data.value = el.find('input.setting, textarea.setting').val();
-        }
+            id: Number(id),
+            value: el.find('input.setting, textarea.setting').val(),
+        };
         console.log(data);
 
         $.ajax({

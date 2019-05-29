@@ -7,6 +7,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
+use borales\extensions\phoneInput\PhoneInput;
 
 $this->title = 'Регистрация пользователя';
 $this->params['breadcrumbs'][] = $this->title;
@@ -33,7 +34,18 @@ $this->params['breadcrumbs'][] = $this->title;
     
         <?= $form->field($model, 'email')->textInput(['autofocus' => true, 'placeholder' => 'Email'])->label(false); ?>
 
+<!--        --><?//= $form->field($model, 'phone')->textInput(['autofocus' => true, 'placeholder' => 'Номер Телефона'])->label(false); ?>
+
+        <?= $form->field($model, 'phone')->widget(PhoneInput::className(), [
+        'jsOptions' => [
+        'preferredCountries' => ['ua', 'ru', 'pl'],
+        ]
+        ])->label(false);;?>
+
         <?= $form->field($model, 'password')->passwordInput()->textInput(['placeholder' => 'Пароль', 'type' => 'password'])->label(false);?>
+
+        <?= $form->field($model, 'promo_code')->textInput(['autofocus' => true, 'placeholder' => 'Промокод'])->label(false); ?>
+
         <div class="recaptcha-block">
             <script src='https://www.google.com/recaptcha/api.js?render=<?=Yii::$app->params['capcha_frontkey'] ?>'></script>
             <textarea id="g-recaptcha-response"

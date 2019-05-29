@@ -8,7 +8,7 @@
 
 $this->title = 'Магазин';
 ?>
-<div class="row wrapper border-bottom white-bg">
+<div class="row wrapper border-bottom grey-bg">
     <div class="col-lg-10">
         <h2><strong>Магазин</strong></h2>
     </div>

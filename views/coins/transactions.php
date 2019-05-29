@@ -46,6 +46,7 @@ $this->title = 'Транзакции';
                 </div>
                 <div class="ibox-content">
                     <?php \yii\widgets\Pjax::begin(); ?>
+                    <div class="table-responsive">
                     <table id="data_table" class="table table-striped table-bordered table-hover dataTables-example dataTable dtr-inline">
                         <thead>
                         <tr>
@@ -76,7 +77,9 @@ $this->title = 'Транзакции';
                         <tbody>
                         <?php $transaction_statuses = [
                                  0=>'В выполнении',
-                                1=>'Выполнена',
+                            1=>'Выполнена',
+                            -10=> 'Отменена',
+                            -1 => 'Возврат'
                         ] ?>
                         <?php foreach ($transactions as $n => $transaction) :?>
                             <tr class="">
@@ -102,7 +105,7 @@ $this->title = 'Транзакции';
                                 <td><?=(double)$transaction->amount1.' '.$transaction->currency1?> / <?=(double)$transaction->amount2.' '.$transaction->currency2?></td>
                                 <td><?=$transaction->comment?></td>
                                 <td><span class="label <?=($transaction->status == 1 ) ? "label-primary" : "label-warning" ?>">
-                                        <?=$transaction_statuses[$transaction->status == 1] ?></span>
+                                        <?=$transaction_statuses[$transaction->status] ?></span>
                                 </td>
                                 <td><?=$transaction->date_start?></td>
                                 <td><?=$transaction->date_last?></td>
@@ -120,6 +123,7 @@ $this->title = 'Транзакции';
                         <?php endforeach;?>
                         </tbody>
                     </table>
+                    </div>
                     <script>
                         dataTablePajax();
                     </script>

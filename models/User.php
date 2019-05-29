@@ -6,17 +6,22 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\helpers\Url;
 use yii\web\IdentityInterface;
 
 /**
  * User model
  *
  * @property integer $id
+ * @property integer $promocode_id
  * @property string $user_role
  * @property string $username
+ * @property string $telegram
  * @property string $password_hash
  * @property string $password_reset_token
+ * @property string $email_confirm_token
  * @property string $email
+ * @property string $phone
  * @property string $auth_key
  * @property string $lang
  * @property string $logo_src
@@ -29,6 +34,7 @@ use yii\web\IdentityInterface;
 class User extends ActiveRecord implements IdentityInterface {
 
     const STATUS_DELETED = 0;
+    const STATUS_WAIT_ACTIVATION = 1;
     const STATUS_ACTIVE = 10;
     public $file;
     /**
@@ -63,8 +69,8 @@ class User extends ActiveRecord implements IdentityInterface {
     public function rules()
     {
         return [
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            ['status', 'default', 'value' => self::STATUS_WAIT_ACTIVATION],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_WAIT_ACTIVATION, self::STATUS_DELETED]],
             [['file'], 'file', 'extensions' => 'png, jpg'],
         ];
     }
@@ -74,7 +80,7 @@ class User extends ActiveRecord implements IdentityInterface {
      */
     public static function findIdentity($id)
     {
-        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['id' => $id, 'status' => [self::STATUS_ACTIVE,self::STATUS_WAIT_ACTIVATION]]);
     }
 
     /**
@@ -93,12 +99,13 @@ class User extends ActiveRecord implements IdentityInterface {
      */
     public static function findByUsername($username)
     {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+//        return static::findOne(['username' => $username]);
+        return static::findOne(['username' => $username, 'status' => [self::STATUS_ACTIVE,self::STATUS_WAIT_ACTIVATION]]);
     }
 
     public static function findByEmail($email)
     {
-        return static::findOne(['email' => $email, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['email' => $email, 'status' => [self::STATUS_ACTIVE,self::STATUS_WAIT_ACTIVATION]]);
     }
 
     /**
@@ -138,7 +145,6 @@ class User extends ActiveRecord implements IdentityInterface {
     }
     public static function allowedCurrency($curr)
     {
-
         $wordsArray = ['USDT','BTC','ETH'];
         if(in_array($curr,$wordsArray)){
             return true;
@@ -179,9 +185,58 @@ class User extends ActiveRecord implements IdentityInterface {
         $this->auth_key = Yii::$app->security->generateRandomString();
     }
 
+
+
+    public function generateActivationEmailCode(User $user){
+        $this->email_confirm_token = Yii::$app->security->generateRandomString(16);
+
+        $email = $user->email;
+        $sent = Yii::$app->mailer
+            ->compose(
+                ['html' => 'user-signup-confirm-html'],//, 'text' => 'user-signup-confirm-text'
+                ['user' => $user])
+            ->setTo($email)
+            ->setFrom(Yii::$app->params['adminEmail'])
+            ->setSubject('Confirmation of registration')
+            ->send();
+
+        if (!$sent) {
+            throw new \RuntimeException('Sending error.');
+        }
+        return $this->email_confirm_token;
+    }
+
+    public static function confirmation($token): void
+    {
+        if (empty($token)) {
+            throw new \DomainException('Требуется подтверждение email');
+        }
+
+        $user = User::findOne(['email_confirm_token' => $token]);
+        if (!$user) {
+            throw new \DomainException('User is not found.');
+        }
+
+        $user->email_confirm_token = null;
+        $user->status = User::STATUS_ACTIVE;
+        if (!$user->save()) {
+            throw new \RuntimeException('Saving error.');
+        }
+
+        if (!Yii::$app->getUser()->login($user)){
+            throw new \RuntimeException('Error authentication.');
+        }
+    }
+
+
+
+
+
+
     public function getMarketplace()
     {
         return $this->hasMany(UserMarketplace::className(), ['user_marketplace_id' => 'user_marketplace_id'])
             ->viaTable('user_marketplace_buy', ['user_id' => 'id']);
     }
+
 }

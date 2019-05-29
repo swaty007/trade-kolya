@@ -21,7 +21,7 @@ use app\components\Binance\Api;
 use yii\db\Expression;
 use app\models\api\Poloniex;
 
-class UsermpController extends Controller {
+class UsermpController extends UserAccessController {
 
     public $layout = 'dashboard-layout';
 
@@ -60,11 +60,14 @@ class UsermpController extends Controller {
         $data["flotr_data"] = array();
 
         foreach ($UserMarketplaces as $UserMarketplace) {
-            $api = $this->getClassApi($UserMarketplace->marketplace_id, $UserMarketplace->key, $UserMarketplace->secret);
 
-
-            $balance = $api->getBalancesUSD();
-
+            try{
+                $api = $this->getClassApi($UserMarketplace->marketplace_id, $UserMarketplace->key, $UserMarketplace->secret);
+                $balance = $api->getBalancesUSD();
+            } catch (\Exception $e){
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
             $d = array();
             foreach ($balance as $currency => $value) {
                 $d[] = array(
@@ -101,7 +104,9 @@ class UsermpController extends Controller {
         $symbol = Yii::$app->request->get('symbol', '');
 
         $UserMarketplace = UserMarketplace::findOne(['user_marketplace_id' => $user_marketplace_id, 'user_id' => $user_id])->toArray();
+
         $api = $this->getClassApi($UserMarketplace['marketplace_id'], $UserMarketplace['key'], $UserMarketplace['secret']);
+
 
         //$api = new Api($UserMarketplace['key'], $UserMarketplace['secret']);
         //$openorders = $api->openOrders("BNBBTC");
