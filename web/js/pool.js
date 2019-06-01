@@ -1,12 +1,13 @@
-$('#data_1 .input-group.date,#data_2 .input-group.date').datepicker({
-    todayBtn: "linked",
-    keyboardNavigation: false,
-    forceParse: false,
-    calendarWeeks: true,
-    autoclose: true,
-    format: 'yyyy-mm-dd'
+document.addEventListener("DOMContentLoaded", function () {
+    $('#data_1 .input-group.date,#data_2 .input-group.date').datepicker({
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        calendarWeeks: true,
+        autoclose: true,
+        format: 'yyyy-mm-dd'
+    });
 });
-
 $(document).on('click',"#create_pool", function(e) {
     e.preventDefault();
     let data = {
@@ -77,7 +78,7 @@ $(document).on('click',"#update_pool", function(e) {
     formData.append("min_invest", data.min_invest);
     formData.append("pool_method", data.pool_method);
     formData.append("name", data.name);
-    formData.append("pool_diversification_edit", data.pool_diversification_edit);
+    formData.append("diversification_edit", data.pool_diversification_edit);
     formData.append("description", data.description);
     formData.append("date_start", data.date_start);
     formData.append("date_end", data.date_end);

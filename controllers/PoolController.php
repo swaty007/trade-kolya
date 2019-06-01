@@ -325,7 +325,7 @@ class PoolController extends UserAccessController
             $name            = (string)Yii::$app->request->post('name', '');
             $desc            = (string)Yii::$app->request->post('description', '');
             $date_start      = Yii::$app->request->post('date_start', '');
-            $date_end        = Yii::$app->request->post('date_start', '');
+            $date_end        = Yii::$app->request->post('date_end', '');
             $min_size        = (double)Yii::$app->request->post('min_size', '');
             $max_size        = (double)Yii::$app->request->post('max_size', '');
             $file            = UploadedFile::getInstanceByName('file');
@@ -373,7 +373,7 @@ class PoolController extends UserAccessController
                 $name            = (string)Yii::$app->request->post('name', '');
                 $desc            = (string)Yii::$app->request->post('description', '');
                 $date_start      = Yii::$app->request->post('date_start', '');
-                $date_end        = Yii::$app->request->post('date_start', '');
+                $date_end        = Yii::$app->request->post('date_end', '');
                 $min_size        = (double)Yii::$app->request->post('min_size', '');
                 $max_size        = (double)Yii::$app->request->post('max_size', '');
                 $file             = UploadedFile::getInstanceByName('file');
