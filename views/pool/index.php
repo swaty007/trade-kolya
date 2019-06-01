@@ -57,10 +57,10 @@ use yii\helpers\Url;
                                                 <p class="style-pull-card pull-end">Окончание пула: <strong><?=$pool_new['date_end'];?></strong></p>
                                                 <p class="style-pull-card pull-profit">Процент: <strong><?= $pool_new['profit']?></strong>%</p>
                                                 <p class="style-pull-card pull-diversification">Количество выплат: <strong><?= $pool_new['diversification']?></strong></p>
-                                                <p class="style-pull-card pull-invest">Минимальный вклад: <strong><?=(double)$pool_new['min_invest'].' '.$pool_new['invest_method'];?></strong></p>
-                                                <p class="style-pull-card pull-invest">Уже в пуле всего: <strong><?php if(isset($info_pools[$pool_new['id']]['sum_invest'])) echo (double)$info_pools[$pool_new['id']]['sum_invest'].' '.$pool_new['invest_method']?></strong></p>
-                                                <p class="style-pull-card pull-invest">Минимальная общая сумма: <strong><?= (double)$pool_new['min_size_invest'].' '.$pool_new['invest_method']?></strong></p>
-                                                <p class="style-pull-card pull-invest">Максимальная общая сумма: <strong><?= (double)$pool_new['max_size_invest'].' '.$pool_new['invest_method']?></strong></p>
+                                                <p class="style-pull-card pull-invest">Минимальный вклад: <strong><?=(double)$pool_new['min_invest'];?></strong><?=$pool_new['invest_method']?></p>
+                                                <p class="style-pull-card">Уже в пуле всего: <strong><?php if(isset($info_pools[$pool_new['id']]['sum_invest'])) echo (double)$info_pools[$pool_new['id']]['sum_invest'].' '.$pool_new['invest_method']?></strong></p>
+                                                <p class="style-pull-card pull-invest-min">Минимальная общая сумма: <strong><?= (double)$pool_new['min_size_invest']?></strong><?=$pool_new['invest_method']?></p>
+                                                <p class="style-pull-card pull-invest-max">Максимальная общая сумма: <strong><?= (double)$pool_new['max_size_invest']?></strong><?=$pool_new['invest_method']?></p>
                                                 <ul class="list-group">
                                                     <?php foreach ($pool_new['comments'] as $comment):?>
                                                         <li class="list-group-item">

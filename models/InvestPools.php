@@ -42,7 +42,7 @@ class InvestPools extends ActiveRecord
             [['status'], 'string'],
             [['min_invest','diversification'], 'number'],
             [['profit'], 'integer'],
-            [['date_start', 'date_end'], 'safe'],
+//            [['date_start', 'date_end'], 'safe'],
             [['name'], 'string', 'max' => 50],
             [['invest_method'], 'string', 'max' => 50],
             [['description'], 'string', 'max' => 255],

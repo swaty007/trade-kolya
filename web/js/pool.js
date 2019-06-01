@@ -14,7 +14,7 @@ $(document).on('click',"#create_pool", function(e) {
         min_invest: $('#pool_min_invest').val(),
         pool_method: $('#pool_method').val(),
         name: $('#pool_name').val(),
-        pool_diversification_edit: $('#pool_diversification').val(),
+        pool_diversification: $('#pool_diversification').val(),
         description: $('#pool_description').val(),
         date_start: $('#datepicker1').val(),
         date_end: $('#datepicker2').val(),
@@ -30,7 +30,7 @@ $(document).on('click',"#create_pool", function(e) {
     formData.append("min_invest", data.min_invest);
     formData.append("pool_method", data.pool_method);
     formData.append("name", data.name);
-    formData.append("pool_diversification_edit", data.pool_diversification_edit);
+    formData.append("pool_diversification", data.pool_diversification);
     formData.append("description", data.description);
     formData.append("date_start", data.date_start);
     formData.append("date_end", data.date_end);
@@ -61,7 +61,7 @@ $(document).on('click',"#update_pool", function(e) {
         min_invest: $('#pool_min_invest_edit').val(),
         pool_method: $('#pool_method_edit').val(),
         name: $('#pool_name_edit').val(),
-        diversification: $('#pool_diversification_edit').val(),
+        pool_diversification_edit: $('#pool_diversification_edit').val(),
         description: $('#pool_description_edit').val(),
         date_start: $('#datepicker1_edit').val(),
         date_end: $('#datepicker2_edit').val(),
@@ -84,6 +84,7 @@ $(document).on('click',"#update_pool", function(e) {
     formData.append("min_size", data.min_size);
     formData.append("max_size", data.max_size);
     formData.append("file", data.file);
+    formData.append("pool_id", data.pool_id);
 
     console.log(data);
 
@@ -112,6 +113,8 @@ function editPool(id,_this) {
         diversification = block.find('.pull-diversification strong').text(),
         end = block.find('.pull-end strong').text(),
         min_value = block.find('.pull-invest strong').text(),
+        min_value_invest = block.find('.pull-invest-min strong').text(),
+        max_value_invest = block.find('.pull-invest-max strong').text(),
         profit = block.find('.pull-profit strong').text(),
         src = block.find('.pool_image').attr('src');
 
@@ -122,6 +125,8 @@ function editPool(id,_this) {
     $('#pull-edit').find('#datepicker1_edit').val(start);
     $('#pull-edit').find('#datepicker2_edit').val(end);
     $('#pull-edit').find('#pool_min_invest_edit').val(min_value);
+    $('#pull-edit').find('#pool_min_size_edit').val(min_value_invest);
+    $('#pull-edit').find('#pool_max_size_edit').val(max_value_invest);
     $('#update_pool').attr('data-id', id);
     $('#image_pool_src').attr('src', src);
     $('#pull-edit').modal('show');

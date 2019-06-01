@@ -365,12 +365,11 @@ class PoolController extends UserAccessController
             $id = Yii::$app->user->getId();
             if (User::canAdmin()) {
                 Yii::$app->response->format = 'json';
-
                 $pool_id         = (int)Yii::$app->request->post('pool_id', '');
                 $profit          = (int)Yii::$app->request->post('profit', '');
                 $min_invest      = (double)Yii::$app->request->post('min_invest', '');
                 $pool_method     = (string)Yii::$app->request->post('pool_method', '');
-                $diversification = (string)Yii::$app->request->post('diversification', '');
+                $diversification = (string)Yii::$app->request->post('diversification_edit', '');
                 $name            = (string)Yii::$app->request->post('name', '');
                 $desc            = (string)Yii::$app->request->post('description', '');
                 $date_start      = Yii::$app->request->post('date_start', '');
@@ -378,7 +377,6 @@ class PoolController extends UserAccessController
                 $min_size        = (double)Yii::$app->request->post('min_size', '');
                 $max_size        = (double)Yii::$app->request->post('max_size', '');
                 $file             = UploadedFile::getInstanceByName('file');
-
                 if (!($pool = InvestPools::findOne(['id'=>$pool_id]) )) {
                     return ['msg' => 'error', 'status' => "No Invest Pool finded"];
                 }
