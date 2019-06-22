@@ -39,6 +39,8 @@ $this->title = 'Админка';
                                     <li><a data-toggle="tab" href="#tab-admin-2">Пользователи</a></li>
                                     <li><a data-toggle="tab" href="#tab-admin-3">Транзакции</a></li>
                                     <li><a data-toggle="tab" href="#tab-admin-4">Рефералы</a></li>
+                                    <li><a data-toggle="tab" href="#tab-admin-5">FAQ</a></li>
+                                    <li><a data-toggle="tab" href="#tab-admin-6">Титулка</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -47,21 +49,14 @@ $this->title = 'Админка';
                             <div id="tab-admin-1" class="tab-pane active">
 
                                 <?php foreach ($admin_settings as $setting) :?>
-
+                                    <?php if ($setting->id == 15 || $setting->id == 16) {continue;};?>
                                     <div class="col-lg-12">
                                         <div class="setting_block m-t col-md-12">
                                             <div class="form-group row">
                                                 <label class="col-md-3 col-form-label"><?=$setting->name?></label>
 
-                                                <?php if ($setting->id == 15):?>
-                                                <div class="col-md-9">
-                                                    <div class="summernote"><?=$setting->value?></div>
-                                                    <button data-type="summernote" onclick="changeAdminSetting(<?=$setting->id?>,this)" type="button" class="btn btn-w-m btn-primary btn-sm">Изменить</button>
-                                                </div>
-                                                </div>
-                                                </div>
-                                                </div>
-                                                <?php continue;endif;?>
+
+
 
                                                 <div class="col-md-5">
                                                     <?php if( in_array($setting->id, [3,9,12] )) :?>
@@ -260,6 +255,43 @@ $this->title = 'Админка';
                                 </div>
                             </div>
 
+                            <div id="tab-admin-5" class="tab-pane">
+                                <div class="col-lg-12">
+                                    <div class="setting_block m-t col-md-12">
+                                        <div class="form-group row">
+                                            <?php foreach ($admin_settings as $setting) :?>
+                                                <?php if ($setting->id == 15):?>
+                                            <label class="col-md-3 col-form-label"><?=$setting->name?></label>
+                                            <div class="col-md-9">
+                                                <div class="summernote"><?=$setting->value?></div>
+                                                <button data-type="summernote" onclick="changeAdminSetting(<?=$setting->id?>,this)" type="button" class="btn btn-w-m btn-primary btn-sm">Изменить</button>
+                                            </div>
+                                                    <?php break;endif;?>
+                                            <?php endforeach?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tab-admin-6" class="tab-pane">
+                                <div class="col-lg-12">
+                                    <div class="setting_block m-t col-md-12">
+                                        <div class="form-group row">
+                                            <?php foreach ($admin_settings as $setting) :?>
+                                                <?php if ($setting->id == 16):?>
+                                                    <label class="col-md-3 col-form-label"><?=$setting->name?></label>
+                                                    <div class="col-md-9">
+                                                        <div class="summernote"><?=$setting->value?></div>
+                                                        <button data-type="summernote" onclick="changeAdminSetting(<?=$setting->id?>,this)" type="button" class="btn btn-w-m btn-primary btn-sm">Изменить</button>
+                                                    </div>
+                                                    <?php break;endif;?>
+                                            <?php endforeach?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
                         </div>
                     </div>
 
@@ -345,14 +377,12 @@ $this->title = 'Админка';
                                             <th>USDT_money</th>
                                             <th>ETH_money</th>
                                             <th>BTC_money</th>
-                                            <th>BTC_money</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                             <tr class="">
                                                 <td><?=(double)$user_single->USDT_money?></td>
                                                 <td><?=(double)$user_single->ETH_money?></td>
-                                                <td><?=(double)$user_single->BTC_money?></td>
                                                 <td><?=(double)$user_single->BTC_money?></td>
                                             </tr>
                                         </tbody>
@@ -545,4 +575,4 @@ $this->title = 'Админка';
         'tags'           => $tags
 ]) ?>
 <?php echo $this->render('../pool/modals') ?>
-<?php echo $this->render('../market/modals', ['types' => $types,'user_marketplace' => $user_marketplace]) ?>
+<?php echo $this->render('../market/modals', ['types' => $types, 'user_marketplace' => $user_marketplace]) ?>

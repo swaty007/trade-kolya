@@ -214,6 +214,9 @@ $success = Yii::$app->session->getFlash('success');
                                     function readURL(input) {
                                         if (input.files && input.files[0]) {
                                             var reader = new FileReader();
+                                            if (input.files[0].size/1024/1024 > 2) {
+                                                toastr['error']("Файл превышает размер в 2мб", '');
+                                            }
                                             reader.onload = function(e) {
                                                 $(input).siblings('img').attr('src', e.target.result).show();
                                                 $(input).siblings('.select-text').hide();

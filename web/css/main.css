@@ -118,6 +118,7 @@
 .profile-element .user-icon {
     margin-top: -3px;
     padding: 8px 0;
+    width: 100%;
 }
 .new-navbar {
     position: fixed;
@@ -322,6 +323,9 @@ body.mini-navbar .fixed-navbar {
     margin: 0 5px 5px;
 }
 .copyright-block p {
+    color: #ffffff;
+}
+.copyright.text {
     color: #ffffff;
 }
 

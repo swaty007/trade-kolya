@@ -37,15 +37,14 @@ class MainMenu extends Widget
 
         $this->menu[] = array(
             'label' => 'TAKE',
-            'class' => Url::to(['cabinet/accounts']),
-            'template' => '<div class="dropdown profile-element">                             
-                                <img alt="image" class="user-icon" src="../image/logo4.png" />
-                                <strong class="">Take</strong>Profit                            
-                            </div>
+            'class' => Url::to(['cabinet/index']),
+            'template' => '<div class="dropdown profile-element"><a href="{url}">                             
+                                <img alt="image" class="user-icon" src="../image/logo6.png" />      
+                            </a></div>
                             <div class="logo-element">
-                                 <img alt="image" class="user-icon" src="../image/logo4.png" />
+                                 <a href="{url}"><img alt="image" class="user-icon" src="../image/logo4.png" /></a>
                             </div>',
-            'url' => Url::to(['cabinet/accounts']),
+            'url' => Url::to(['cabinet/index']),
 
         );
 
@@ -157,7 +156,7 @@ class MainMenu extends Widget
             'url' => Url::to(['coins/transactions'])
         );
 
-        if( !in_array(Yii::$app->user->identity->user_role, ['user','client-trader']) ) {
+//        if( !in_array(Yii::$app->user->identity->user_role, ['user','client-trader']) ) {
             $this->menu[] = array(
                 'label' => 'Рефералы',
                 'class' => 'fa-info-circle',
@@ -165,7 +164,7 @@ class MainMenu extends Widget
                 'active' => Yii::$app->controller->module->requestedRoute == 'referral/index',
                 'url' => Url::to(['referral/index'])
             );
-        }
+//        }
 
         if (Yii::$app->user->identity->user_role == "admin") {
 
@@ -177,6 +176,14 @@ class MainMenu extends Widget
                 'url' => Url::to(['admin/index'])
             );
         }
+
+        $this->menu[] = array(
+            'label' => 'FAQ',
+            'class' => 'fa-question-circle',
+            'template' => '<a href="{url}"><i class="fa fa-gear"></i> <span class="nav-label">{label}</span></a>',
+            'active' => Yii::$app->controller->module->requestedRoute == 'cabinet/faq',
+            'url' => Url::to(['cabinet/faq'])
+        );
 
         echo Menu::widget([
             'items' => $this->menu,

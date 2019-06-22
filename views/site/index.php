@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 use yii\helpers\Url;
-$this->title = 'TakeProfit';
+$this->title = 'X capital';
 ?>
 <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
             
@@ -24,6 +24,7 @@ $this->title = 'TakeProfit';
     <ul class="nav navbar-top-links navbar-right">
         <?php if (Yii::$app->user->isGuest) { ?>
             <li><a href="<?php echo Url::to(['user/login']); ?>"><i class="fa fa-sign-out"></i>Войти</a></li>
+            <li><a href="<?php echo Url::to(['user/signup']); ?>"><i class="fa fa-sign-out"></i>Регистрация</a></li>
         <?php } else { ?>
             <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown"><?php echo Yii::$app->user->identity->username; ?> <span class="caret"></span></a>
                 <ul id="w2" class="dropdown-menu">

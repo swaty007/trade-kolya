@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="middle-box text-center loginscreen   animated fadeInDown">
     <div>
         <div>
-            <h1 class="logo-name">TP</h1>
+            <h1 class="logo-name"><?= Html::img('@web/image/logo6.png', ['class' => '']); ?></h1>
         </div>
         <h3><?= Html::encode($this->title) ?></h3>
         <p>Заполните форму регистрации:</p>
@@ -66,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php ActiveForm::end(); ?>
     
-        <p class="m-t"> <small>&copy; TakeProfit <?= date('Y') ?></small> </p>
+        <p class="m-t"> <small>&copy; X capital <?= date('Y') ?></small> </p>
     </div>
 </div>
 

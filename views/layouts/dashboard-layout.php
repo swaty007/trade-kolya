@@ -41,11 +41,11 @@ AppAsset::register($this);
                     <div class="copyright-block">
                         <a href="#"><i class="fa fa-telegram fa-2x"></i></a>
                         <a href="#"><i class="fa fa-facebook-square fa-2x"></i></a>
-                        <p class="copyright"><i class="fa fa-copyright"></i> TakeProfit, 2018. Все праза защищены.</p>
+                        <p class="copyright"><i class="fa fa-copyright"></i> X capital, 2018. Все праза защищены.</p>
                     </div>
-                    <div class="faq">
-                        <a href="<?= Url::to(['cabinet/faq'])?>"><i class="fa fa-question-circle"></i> <strong>FAQ</strong></a>
-                    </div>
+<!--                    <div class="faq">-->
+<!--                        <a href="--><?//= Url::to(['cabinet/faq'])?><!--"><i class="fa fa-question-circle"></i> <strong>FAQ</strong></a>-->
+<!--                    </div>-->
                 </div>
             </nav>
 
