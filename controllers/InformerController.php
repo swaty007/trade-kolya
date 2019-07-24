@@ -61,7 +61,7 @@ class InformerController extends UserAccessController
 
         if ($category_id !== null) {
             $category_id = explode(',', $category_id);
-            $informers = $informers->orWhere(['IN','category_id',$category_id]);
+            $informers = $informers->andWhere(['IN','category_id',$category_id]);
             $data['select']->category = $category_id;
         }
 

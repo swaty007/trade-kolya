@@ -52,15 +52,21 @@ use yii\helpers\Url;
                                             </div>
                                             <div class="panel-body">
                                                 <img src="<?= $pool_new['src'] ? $pool_new['src'] : '/image/tp_image.png' ?>" alt="pool" class="pool_image">
-                                                <p class="style-pull-card pull-description"><?=$pool_new['description'];?></p>
-                                                <p class="style-pull-card pull-start">Сбор средств до: <strong><?=$pool_new['date_start'];?></strong></p>
-                                                <p class="style-pull-card pull-end">Окончание пула: <strong><?=$pool_new['date_end'];?></strong></p>
-                                                <p class="style-pull-card pull-profit">Процент: <strong><?= $pool_new['profit']?></strong>%</p>
+                                                <p class="style-pull-card pull-type">Тип: <?=$pool_new['type'] == 'API' ? 'API' : 'прямой';?></p>
+                                                <p class="style-pull-card pull-form">Форма: <?=$pool_new['form'] == 'Крипто' ? '': 'FOREX TRADING';?></p>
+                                                <p class="style-pull-card pull-form">Тип пула валюты: <?=$pool_new['invest_method'];?></p>
+                                                <p class="style-pull-card pull-type_percent">Тип процентирования: <?=$pool_new['type_percent'] == 'fixed' ? 'фиксированный' : 'плавающий';?></p>
+                                                <p class="style-pull-card pull-period">Работа пулла: <?=$pool_new['period'];?> мес.</p>
+                                                <p class="style-pull-card pull-float_profit">Процент выплаты: <?=$pool_new['profit'];?>%</p>
+                                                <?php if ($pool_new['type_percent'] == 'float') :?>
+                                                    <p class="style-pull-card pull-float_profit">Процент выплаты (плавающий): <?=$pool_new['float_profit'];?>%</p>
+                                                <?php endif;?>
+                                                <p class="style-pull-card pull-description">Описание: <?=$pool_new['description'];?></p>
                                                 <p class="style-pull-card pull-diversification">Количество выплат: <strong><?= $pool_new['diversification']?></strong></p>
                                                 <p class="style-pull-card pull-invest">Минимальный вклад: <strong><?=(double)$pool_new['min_invest'];?></strong><?=$pool_new['invest_method']?></p>
-                                                <p class="style-pull-card">Уже в пуле всего: <strong><?php if(isset($info_pools[$pool_new['id']]['sum_invest'])) echo (double)$info_pools[$pool_new['id']]['sum_invest'].' '.$pool_new['invest_method']?></strong></p>
-                                                <p class="style-pull-card pull-invest-min">Минимальная общая сумма: <strong><?= (double)$pool_new['min_size_invest']?></strong><?=$pool_new['invest_method']?></p>
-                                                <p class="style-pull-card pull-invest-max">Максимальная общая сумма: <strong><?= (double)$pool_new['max_size_invest']?></strong><?=$pool_new['invest_method']?></p>
+<!--                                                <p class="style-pull-card">Уже в пуле всего: <strong>--><?php //if(isset($info_pools[$pool_new['id']]['sum_invest'])) echo (double)$info_pools[$pool_new['id']]['sum_invest'].' '.$pool_new['invest_method']?><!--</strong></p>-->
+<!--                                                <p class="style-pull-card pull-invest-min">Минимальная общая сумма: <strong>--><?//= (double)$pool_new['min_size_invest']?><!--</strong>--><?//=$pool_new['invest_method']?><!--</p>-->
+<!--                                                <p class="style-pull-card pull-invest-max">Максимальная общая сумма: <strong>--><?//= (double)$pool_new['max_size_invest']?><!--</strong>--><?//=$pool_new['invest_method']?><!--</p>-->
                                                 <ul class="list-group">
                                                     <?php foreach ($pool_new['comments'] as $comment):?>
                                                         <li class="list-group-item">

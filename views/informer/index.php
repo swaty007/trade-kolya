@@ -57,17 +57,21 @@ $this->title = 'Информер';
                             <div class="ibox-content">
                                 <div class="row">
                                     <div class="col-lg-12" style="margin-bottom: 10px">
-                                        <select id="informer_filter_category"
-                                                data-placeholder="Выбор категорий"
-                                                multiple
-                                                class="chosen-select"
-                                                tabindex="2"
-                                        >
-                                            <?php foreach ($full_categories as $category) : ?>
-                                                <option value="<?= $category['id'] ?>" <?php if (isset($select->category)) if (in_array($category['id'], $select->category)) echo 'selected' ?>><?= $category['cat_name'] ?></option>
-                                            <?php endforeach; ?>
+                                        <ul>
+                                        <?php foreach ($categories as $main_category) :?>
+                                            <li>
+                                                <a onclick="informerCatFilter(<?=$main_category->id?>)"><?= $main_category->cat_name ?></a>
+                                                <ul>
+                                                    <?php foreach ($sub_categories as $sub_category) :?>
+                                                    <?php if ($sub_category->parent_id == $main_category->id):?>
+                                                    <li><a onclick="informerCatFilter(<?=$sub_category->id?>)"><?= $sub_category->cat_name ?></a></li>
+                                                    <? endif; ?>
+                                                    <?php endforeach; ?>
+                                                </ul>
 
-                                        </select>
+                                            </li>
+                                        <?php endforeach; ?>
+                                        </ul>
                                     </div>
                                     <div class="col-lg-12">
                                         <select id="informer_filter_tags"

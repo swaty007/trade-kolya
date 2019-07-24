@@ -318,29 +318,47 @@ class PoolController extends UserAccessController
         if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = 'json';
             $id              = Yii::$app->user->getId();
+            $type          = (string)Yii::$app->request->post('type', '');
+            $form          = (string)Yii::$app->request->post('form', '');
             $profit          = (int)Yii::$app->request->post('profit', '');
+            $float_profit          = (int)Yii::$app->request->post('float_profit', '');
             $min_invest      = (double)Yii::$app->request->post('min_invest', '');
             $pool_method     = (string)Yii::$app->request->post('pool_method', '');
-            $diversification = (int)Yii::$app->request->post('diversification', 1);
+            $diversification = (int)Yii::$app->request->post('diversification', '');
             $name            = (string)Yii::$app->request->post('name', '');
             $desc            = (string)Yii::$app->request->post('description', '');
-            $date_start      = Yii::$app->request->post('date_start', '');
-            $date_end        = Yii::$app->request->post('date_end', '');
-            $min_size        = (double)Yii::$app->request->post('min_size', '');
-            $max_size        = (double)Yii::$app->request->post('max_size', '');
+            $full_desc            = (string)Yii::$app->request->post('full_description', '');
+            $period            = (int)Yii::$app->request->post('month', '');
+            $type_percent            = (string)Yii::$app->request->post('type_percent', '');
+//            $date_start      = Yii::$app->request->post('date_start', '');
+//            $date_end        = Yii::$app->request->post('date_end', '');
+//            $min_size        = (double)Yii::$app->request->post('min_size', '');
+//            $max_size        = (double)Yii::$app->request->post('max_size', '');
             $file            = UploadedFile::getInstanceByName('file');
 
-            $pool                  = new InvestPools();
-            $pool->min_invest      = $min_invest;
-            $pool->invest_method   = $pool_method;
-            $pool->diversification = $diversification;
-            $pool->profit          = $profit;
-            $pool->name            = $name;
-            $pool->description     = $desc;
-            $pool->date_start      = $date_start;
-            $pool->date_end        = $date_end;
-            $pool->min_size_invest = $min_size;
-            $pool->max_size_invest = $max_size;
+
+            $today = date('Y-m-d');
+            $date_start = $today;
+//            $date_end = date("Y-m-d", strtotime("+".$period." month", $today));
+
+            $pool                   = new InvestPools();
+            $pool->type             = $type;
+            $pool->form             = $form;
+            $pool->type_percent             = $type_percent;
+            $pool->min_invest       = $min_invest;
+            $pool->invest_method    = $pool_method;
+            $pool->diversification  = $diversification;
+            $pool->profit           = $profit;
+            $pool->float_profit     = $float_profit;
+            $pool->period           = $period;
+            $pool->name             = $name;
+            $pool->description      = $desc;
+            $pool->full_description = $full_desc;
+            $pool->date_start       = $date_start;
+            //$pool->status           = 'new';
+//            $pool->date_end        = $date_end;
+//            $pool->min_size_invest = $min_size;
+//            $pool->max_size_invest = $max_size;
 
             if ($file) {
                 if (!is_null($pool->src)) {
@@ -353,9 +371,9 @@ class PoolController extends UserAccessController
             }
 
             if ($pool->save()) {
-                return ['msg' => 'ok', 'pool' => $pool];
+                return ['msg' => 'ok', 'pool' => $pool, 'status' => 'Pull created'];
             } else {
-                return ['msg' => 'error', 'pool' => $pool];
+                return ['msg' => 'error', 'pool' => $pool, 'status' => 'Pull dont created'];
             }
         }
     }

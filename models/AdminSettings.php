@@ -13,7 +13,13 @@ use Yii;
  */
 class AdminSettings extends \yii\db\ActiveRecord
 {
-    const MinWithdraw = 13;
+//    const MinWithdraw = 13;
+    const MinWithdrawBTC = 18;
+    const MaxWithdrawBTC = 19;
+    const MinWithdrawETH = 24;
+    const MaxWithdrawETH = 25;
+    const MinWithdrawUSDT = 22;
+    const MaxWithdrawUSDT = 23;
     /**
      * {@inheritdoc}
      */

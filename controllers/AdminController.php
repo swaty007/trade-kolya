@@ -80,6 +80,7 @@ class AdminController extends UserAccessController
                 ->all();
 
             $data['users'] = User::find()->all();
+            $data['user_roles'] = User::ROLES;
             $data['user_single'] = User::find()->where(['id'=>$user_id])->one();
             $data['admin_settings'] = AdminSettings::find()->all();
 
@@ -151,6 +152,31 @@ class AdminController extends UserAccessController
                     return ['msg' => 'ok','status'=>'Настройка сохранена', 'setting' => $setting];
                 } else {
                     return ['msg' => 'error','status'=>'При сохранении произошла ошибка', 'setting' => $setting];
+                }
+
+            } else {
+                return ['msg' => 'error', 'status' => "Dont have asses"];
+            }
+        }
+    }
+    public function actionChangeUserRole()
+    {
+        if (Yii::$app->request->isAjax) {
+            if (User::canAdmin()) {
+                Yii::$app->response->format = 'json';
+
+                $user_id = (int)Yii::$app->request->post('user_id', '');
+                $value = (string)Yii::$app->request->post('value', '');
+
+                if (!($user = User::findOne(['id'=>$user_id]) )) {
+                    return ['msg' => 'error', 'status' => "No user finded"];
+                }
+                $user->user_role = $value;
+
+                if ($user->save()) {
+                    return ['msg' => 'ok','status'=>'Настройка сохранена', 'setting' => $user];
+                } else {
+                    return ['msg' => 'error','status'=>'При сохранении произошла ошибка', 'setting' => $user];
                 }
 
             } else {

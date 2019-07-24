@@ -101,7 +101,13 @@ $this->title = 'Админка';
                                                 <tr class="">
                                                     <td><?=$user->id?></td>
                                                     <td><?=$user->username?></td>
-                                                    <td><?=$user->user_role?></td>
+                                                    <td>
+                                                        <select class="user-role-change" data-id="<?=$user->id?>">
+                                                            <?php foreach ($user_roles as $role):?>
+                                                                <option <?php if ($role == $user->user_role) echo "selected" ?> value="<?=$role?>"><?=$role?></option>
+                                                            <?php endforeach;?>
+                                                        </select>
+                                                    </td>
                                                     <td><?=$user->email?></td>
 <!--                                                    <td>--><?//=(double)$user->USDT_money?><!--</td>-->
 <!--                                                    <td>--><?//=(double)$user->ETH_money?><!--</td>-->
@@ -567,6 +573,25 @@ $this->title = 'Админка';
             }
         })
     }
+    $(document).on("change", ".user-role-change", function (e) {
+        event.preventDefault();
+        let data = {
+                user_id: Number($(this).attr("data-id")),
+                value: $(this).val(),
+            };
+        console.log(data);
+
+        $.ajax({
+            type: "POST",
+            url: "/admin/change-user-role",
+            data: data,
+            success: function (msg) {
+                console.log(msg);
+                showToastr(msg);
+            }
+        })
+    });
+
 </script>
 
 <?php echo $this->render('../informer/modals', [

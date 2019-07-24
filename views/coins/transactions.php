@@ -13,7 +13,7 @@ $this->title = 'Транзакции';
         <h2><strong>Транзакции</strong></h2>
     </div>
     <div class="col-lg-10 btn-block-style">
-        <button type="button" class="btn btn-w-m btn-primary" data-toggle="modal" data-target="#switchRate"><strong>Обмен средств</strong></button>
+<!--        <button type="button" class="btn btn-w-m btn-primary" data-toggle="modal" data-target="#switchRate"><strong>Обмен средств</strong></button>-->
         <button type="button" class="btn btn-w-m btn-primary" data-toggle="modal" data-target="#withdraw"><strong>Вывести</strong></button>
     </div>
 </div>

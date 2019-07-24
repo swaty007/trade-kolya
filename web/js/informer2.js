@@ -215,10 +215,13 @@ function deleteInfCategory(id,_this) {
         }
     })
 }
+function informerCatFilter(id) {
+    console.log(id);
+    informerPostParametrs(undefined, id);
+}
+function informerPostParametrs(pagi_n, category_id) {
 
-function informerPostParametrs(pagi_n) {
-
-    let category_filter = $('#informer_filter_category').val(),
+    let category_filter,
         tag_filter = $('#informer_filter_tags').val(),
         link = $('#informer_pjax_link'),
         pagination = 0,
@@ -226,12 +229,19 @@ function informerPostParametrs(pagi_n) {
 
     if (pagi_n == undefined) {
         pagination = $('#pagination .active a').attr('data-page');
+        pagination = 0;
     } else {
         pagination = pagi_n;
     }
 
+    if (category_id == undefined) {
+       var forwardUrl = new URL(window.location.href);
+       category_filter = forwardUrl.searchParams.get("category");
+    } else {
+        category_filter = category_id;
+    }
 
-    if(category_filter.length > 0) {
+    if(category_filter) {
         href += 'category='+category_filter+'&';
     }
     if(tag_filter.length > 0) {
@@ -243,12 +253,9 @@ function informerPostParametrs(pagi_n) {
 
     link.attr('href',href);
     link.click();
-}
-$(document).on('change','#informer_filter_category,#informer_filter_tags',function(){
+};
+$(document).on('change','#informer_filter_tags',function(){
     informerPostParametrs();
-});
-$(document).on('click','#pagination a',function () {
-    // informerPostParametrs();
 });
 
 function filterSubCategoies(parent_select,children_select) {

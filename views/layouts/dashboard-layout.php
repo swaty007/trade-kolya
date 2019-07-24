@@ -100,18 +100,18 @@ AppAsset::register($this);
                                         </a>
                                     </li>
                                     <li class="divider"></li>
-                                    <li>
-                                        <div class="text-center link-block">
-                                            <button id="switchRateInit"
-                                                    type="button"
-                                                    class="btn btn-w-m btn-primary"
-                                                    data-toggle="modal"
-                                                    data-target="#switchRate"
-                                            >
-                                                Обмен средств
-                                            </button>
-                                        </div>
-                                    </li>
+<!--                                    <li>-->
+<!--                                        <div class="text-center link-block">-->
+<!--                                            <button id="switchRateInit"-->
+<!--                                                    type="button"-->
+<!--                                                    class="btn btn-w-m btn-primary"-->
+<!--                                                    data-toggle="modal"-->
+<!--                                                    data-target="#switchRate"-->
+<!--                                            >-->
+<!--                                                Обмен средств-->
+<!--                                            </button>-->
+<!--                                        </div>-->
+<!--                                    </li>-->
                                     <li>
                                         <a href="<?= Url::to(['coins/transactions'])?>" class="link-btn" data-pjax=0>Транзакции</a>
                                     </li>
@@ -300,6 +300,15 @@ AppAsset::register($this);
                         <small class="font-bold">
                             Пополнением своего кошелька в нашей системе, вы получаете дополнительные возможности
                         </small>
+                        <div>
+                            <h4>Минимальные, максимальные суммы вывода</h4>
+                            <p><small>BTC (min): <?= AdminSettings::findOne(['id' => AdminSettings::MinWithdrawBTC])->value ?></small>
+                            <small>BTC (max): <?= AdminSettings::findOne(['id' => AdminSettings::MaxWithdrawBTC])->value ?></small></p>
+                            <p><small>ETH (min): <?= AdminSettings::findOne(['id' => AdminSettings::MinWithdrawETH])->value ?></small>
+                            <small>ETH (max): <?= AdminSettings::findOne(['id' => AdminSettings::MaxWithdrawETH])->value ?></small></p>
+                            <p><small>USDT (min): <?= AdminSettings::findOne(['id' => AdminSettings::MinWithdrawUSDT])->value ?></small>
+                            <small>USDT (max): <?= AdminSettings::findOne(['id' => AdminSettings::MaxWithdrawUSDT])->value ?></small></p>
+                        </div>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">

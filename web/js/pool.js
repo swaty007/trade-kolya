@@ -15,28 +15,41 @@ $(document).on('click',"#create_pool", function(e) {
         min_invest: $('#pool_min_invest').val(),
         pool_method: $('#pool_method').val(),
         name: $('#pool_name').val(),
-        pool_diversification: $('#pool_diversification').val(),
+        diversification: $('#pool_diversification').val(),
         description: $('#pool_description').val(),
-        date_start: $('#datepicker1').val(),
-        date_end: $('#datepicker2').val(),
-        min_size: $('#pool_min_size').val(),
-        max_size: $('#pool_max_size').val(),
+
+        type: $('#pool_type').val(),
+        form: $('#pool_form').val(),
+        float_profit: $('#pool_float_profit').val(),
+        full_description: $('#pool_full_description').val(),
+        month: $('#pool_month').val(),
+        type_percent: $('#type_percent').val(),
+        // date_start: $('#datepicker1').val(),
+        // date_end: $('#datepicker2').val(),
+        // min_size: $('#pool_min_size').val(),
+        // max_size: $('#pool_max_size').val(),
         file: $("#pool_file")[0].files[0]
     };
     console.log(data);
 
     let formData = new FormData();
 
+    formData.append("type", data.type);
+    formData.append("form", data.form);
+    formData.append("type_percent", data.type_percent);
     formData.append("profit", data.profit);
+    formData.append("float_profit", data.float_profit);
     formData.append("min_invest", data.min_invest);
     formData.append("pool_method", data.pool_method);
     formData.append("name", data.name);
-    formData.append("pool_diversification", data.pool_diversification);
+    formData.append("diversification", data.diversification);
     formData.append("description", data.description);
-    formData.append("date_start", data.date_start);
-    formData.append("date_end", data.date_end);
-    formData.append("min_size", data.min_size);
-    formData.append("max_size", data.max_size);
+    formData.append("full_description", data.full_description);
+    formData.append("month", data.month);
+    // formData.append("date_start", data.date_start);
+    // formData.append("date_end", data.date_end);
+    // formData.append("min_size", data.min_size);
+    // formData.append("max_size", data.max_size);
     formData.append("file", data.file);
 
     $.ajax({
@@ -52,7 +65,7 @@ $(document).on('click',"#create_pool", function(e) {
             showToastr(msg);
             finishPjax();
         }
-    })
+    });
 });
 
 $(document).on('click',"#update_pool", function(e) {

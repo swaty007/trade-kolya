@@ -201,12 +201,33 @@ class CoinsController extends UserAccessController
                 $cps                    = new CoinPayments();
                 $rates_btc              = $cps->GetRates();
 
-                $amountToUSD = ($amount*$rates_btc['result'][$curr1]['rate_btc'])
-                    /
-                    ($rates_btc['result']['USDT']['rate_btc']);
-                if (AdminSettings::findOne(['id' => AdminSettings::MinWithdraw])->value > $amountToUSD) {
-                    return ['msg' => 'error', 'status' => "Failed min Amount", 'result' => $amountToUSD];
+//                $amountToUSD = ($amount*$rates_btc['result'][$curr1]['rate_btc'])
+//                    /
+//                    ($rates_btc['result']['USDT']['rate_btc']);
+//                if (AdminSettings::findOne(['id' => AdminSettings::MinWithdraw])->value > $amountToUSD) {
+//                    return ['msg' => 'error', 'status' => "Failed min Amount", 'result' => $amountToUSD];
+//                }
+
+                switch ($curr1) {
+                    case "BTC":
+                        $min_value = AdminSettings::findOne(['id' => AdminSettings::MinWithdrawBTC])->value;
+                        $max_value = AdminSettings::findOne(['id' => AdminSettings::MaxWithdrawBTC])->value;
+                        break;
+                    case "USDT":
+                        $min_value = AdminSettings::findOne(['id' => AdminSettings::MinWithdrawUSDT])->value;
+                        $max_value = AdminSettings::findOne(['id' => AdminSettings::MaxWithdrawUSDT])->value;
+                        break;
+                    case "ETH":
+                        $min_value = AdminSettings::findOne(['id' => AdminSettings::MinWithdrawETH])->value;
+                        $max_value = AdminSettings::findOne(['id' => AdminSettings::MaxWithdrawETH])->value;
+                        break;
                 }
+
+
+                if ((int)$min_value >= (int)$amount || (int)$max_value <= (int)$amount) {
+                    return ['msg' => 'error', 'status' => "Failed min-max Amount", 'result' => $amount];
+                }
+
 //                $user->{$curr1.'_money'} -= $amount;
                 $user_update = $user->updateCounters([$curr1.'_money' => -$amount]);
                 $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();

@@ -36,6 +36,9 @@ class User extends ActiveRecord implements IdentityInterface {
     const STATUS_DELETED = 0;
     const STATUS_WAIT_ACTIVATION = 1;
     const STATUS_ACTIVE = 10;
+    const ROLES = [
+        'user','globalAdmin','admin','moderator','client-trader','client-ad'
+    ];
     public $file;
     /**
      * @inheritdoc

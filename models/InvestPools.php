@@ -10,13 +10,19 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $status
+ * @property string $type
+ * @property string $form
+ * @property string $type_percent
  * @property string $min_invest
  * @property string $min_size_invest
  * @property string $max_size_invest
  * @property string $invest_method
  * @property int $profit
+ * @property int $float_profit
+ * @property int $period
  * @property string $name
  * @property string $description
+ * @property string $full_description
  * @property int $diversification
  * @property string $date_start
  * @property string $date_end
@@ -39,14 +45,15 @@ class InvestPools extends ActiveRecord
     public function rules()
     {
         return [
-            [['status'], 'string'],
-            [['min_invest','diversification'], 'number'],
-            [['profit'], 'integer'],
-//            [['date_start', 'date_end'], 'safe'],
-            [['name'], 'string', 'max' => 50],
-            [['invest_method'], 'string', 'max' => 50],
-            [['description'], 'string', 'max' => 255],
-            [['file'], 'file', 'extensions' => 'png, jpg'],
+//            [['status','type','form', 'type_percent'], 'string'],
+//            [['min_invest','diversification'], 'number'],
+//            [['profit','float_profit','period'], 'integer'],
+////            [['date_start', 'date_end'], 'safe'],
+//            [['name'], 'string', 'max' => 50],
+//            [['invest_method'], 'string', 'max' => 50],
+//            [['description'], 'string', 'max' => 255],
+//            [['full_description'], 'string'],
+//            [['file'], 'file', 'extensions' => 'png, jpg'],
         ];
     }
 
