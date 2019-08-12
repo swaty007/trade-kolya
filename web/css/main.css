@@ -398,3 +398,6 @@ body.mini-navbar .copyright-block a {
 .notification-item.show {
     background-color: #f5f5f5;
 }
+input.form-control {
+    color: #676a6c;
+}

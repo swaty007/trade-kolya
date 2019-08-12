@@ -109,7 +109,7 @@ $this->title = 'Транзакции';
                                 </td>
                                 <td><?=$transaction->date_start?></td>
                                 <td><?=$transaction->date_last?></td>
-                                <?php if(Yii::$app->user->identity->user_role == "admin"):?>
+                                <?php if(User::canAdmin()):?>
                                     <td>
                                         <?php if($transaction->type === "coin" &&
                                             $transaction->sub_type === "withdraw" &&

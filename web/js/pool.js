@@ -24,6 +24,7 @@ $(document).on('click',"#create_pool", function(e) {
         full_description: $('#pool_full_description').val(),
         month: $('#pool_month').val(),
         type_percent: $('#type_percent').val(),
+        referral_percent: $('#pool_referral').val(),
         // date_start: $('#datepicker1').val(),
         // date_end: $('#datepicker2').val(),
         // min_size: $('#pool_min_size').val(),
@@ -41,6 +42,7 @@ $(document).on('click',"#create_pool", function(e) {
     formData.append("float_profit", data.float_profit);
     formData.append("min_invest", data.min_invest);
     formData.append("pool_method", data.pool_method);
+    formData.append("referral_percent", data.referral_percent);
     formData.append("name", data.name);
     formData.append("diversification", data.diversification);
     formData.append("description", data.description);
@@ -77,12 +79,20 @@ $(document).on('click',"#update_pool", function(e) {
         name: $('#pool_name_edit').val(),
         pool_diversification_edit: $('#pool_diversification_edit').val(),
         description: $('#pool_description_edit').val(),
-        date_start: $('#datepicker1_edit').val(),
-        date_end: $('#datepicker2_edit').val(),
-        min_size: $('#pool_min_size_edit').val(),
-        max_size: $('#pool_max_size_edit').val(),
+        // date_start: $('#datepicker1_edit').val(),
+        // date_end: $('#datepicker2_edit').val(),
+        // min_size: $('#pool_min_size_edit').val(),
+        // max_size: $('#pool_max_size_edit').val(),
         pool_id: Number($(this).attr('data-id')),
         file: $("#pool_file_update")[0].files[0],
+
+        type: $('#pool_type_edit').val(),
+        form: $('#pool_form_edit').val(),
+        float_profit: $('#pool_float_profit_edit').val(),
+        full_description: $('#pool_full_description_edit').val(),
+        month: $('#pool_month_edit').val(),
+        type_percent: $('#type_percent_edit').val(),
+        referral_percent: $('#pool_referral_edit').val(),
     };
 
     let formData = new FormData();
@@ -93,12 +103,22 @@ $(document).on('click',"#update_pool", function(e) {
     formData.append("name", data.name);
     formData.append("diversification_edit", data.pool_diversification_edit);
     formData.append("description", data.description);
-    formData.append("date_start", data.date_start);
-    formData.append("date_end", data.date_end);
-    formData.append("min_size", data.min_size);
-    formData.append("max_size", data.max_size);
+    // formData.append("date_start", data.date_start);
+    // formData.append("date_end", data.date_end);
+    // formData.append("min_size", data.min_size);
+    // formData.append("max_size", data.max_size);
     formData.append("file", data.file);
     formData.append("pool_id", data.pool_id);
+
+    formData.append("type", data.pool_id);
+    formData.append("form", data.pool_id);
+    formData.append("float_profit", data.pool_id);
+    formData.append("full_description", data.pool_id);
+    formData.append("month", data.pool_id);
+    formData.append("type_percent", data.pool_id);
+    formData.append("referral_percent", data.pool_id);
+
+
 
     console.log(data);
 
@@ -120,29 +140,46 @@ $(document).on('click',"#update_pool", function(e) {
 
 
 function editPool(id,_this) {
-    let block = $(_this).parent().parent('.pool_block'),
+    let block = $(_this).closest('.pool_block'),
         title = block.find('.pull-title').text(),
         description = block.find('.pull-description').text(),
-        start = block.find('.pull-start strong').text(),
+        // start = block.find('.pull-start strong').text(),
         diversification = block.find('.pull-diversification strong').text(),
-        end = block.find('.pull-end strong').text(),
+        // end = block.find('.pull-end strong').text(),
         min_value = block.find('.pull-invest strong').text(),
-        min_value_invest = block.find('.pull-invest-min strong').text(),
-        max_value_invest = block.find('.pull-invest-max strong').text(),
+        // min_value_invest = block.find('.pull-invest-min strong').text(),
+        // max_value_invest = block.find('.pull-invest-max strong').text(),
         profit = block.find('.pull-profit strong').text(),
-        src = block.find('.pool_image').attr('src');
+        src = block.find('.pool_image').attr('src'),
+
+        type = block.find('.pull-type').attr('data-value'),
+        form = block.find('.pull-form strong').text(),
+        float_profit = block.find('.pull-float_profit strong').text(),
+        full_description = block.find('.pull-full_description strong').text(),
+        month = block.find('.pull-period strong').text(),
+        type_percent = block.find('.pull-type_percent').attr('data-value'),
+        referral_percent = block.find('.pull-referral strong').text();
 
     $('#pull-edit').find('#pool_profit_edit').val(profit);
     $('#pull-edit').find('#pool_name_edit').val(title);
     $('#pull-edit').find('#pool_description_edit').val(description);
     $('#pull-edit').find('#pool_diversification_edit').val(diversification);
-    $('#pull-edit').find('#datepicker1_edit').val(start);
-    $('#pull-edit').find('#datepicker2_edit').val(end);
+    // $('#pull-edit').find('#datepicker1_edit').val(start);
+    // $('#pull-edit').find('#datepicker2_edit').val(end);
     $('#pull-edit').find('#pool_min_invest_edit').val(min_value);
-    $('#pull-edit').find('#pool_min_size_edit').val(min_value_invest);
-    $('#pull-edit').find('#pool_max_size_edit').val(max_value_invest);
+    // $('#pull-edit').find('#pool_min_size_edit').val(min_value_invest);
+    // $('#pull-edit').find('#pool_max_size_edit').val(max_value_invest);
     $('#update_pool').attr('data-id', id);
     $('#image_pool_src').attr('src', src);
+
+    $('#pool_type_edit').val(type);
+    $('#pool_form_edit').val(form);
+    $('#pool_float_profit_edit').val(float_profit);
+    $('#pool_full_description_edit').val(full_description);
+    $('#pool_month_edit').val(month);
+    $('#type_percent_edit').val(type_percent);
+    $('#pool_referral_edit').val(referral_percent);
+
     $('#pull-edit').modal('show');
 }
 

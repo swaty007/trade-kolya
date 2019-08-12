@@ -53,4 +53,8 @@ class UserPools extends ActiveRecord
             'status' => 'Status',
         ];
     }
+    public function getPool()
+    {
+        return $this->hasOne(InvestPools::className(), ['id' => 'pool_id']);
+    }
 }

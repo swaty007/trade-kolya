@@ -18,6 +18,7 @@ use yii\db\ActiveRecord;
  * @property string $max_size_invest
  * @property string $invest_method
  * @property int $profit
+ * @property int $referral_percent
  * @property int $float_profit
  * @property int $period
  * @property string $name

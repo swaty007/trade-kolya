@@ -2,6 +2,7 @@
 
 namespace app\widgets;
 
+use app\models\User;
 use Yii;
 use app\models\UserMarketplace;
 use yii\helpers\Url;
@@ -166,7 +167,7 @@ class MainMenu extends Widget
             );
 //        }
 
-        if (Yii::$app->user->identity->user_role == "admin") {
+        if (User::canAdmin()) {
 
             $this->menu[] = array(
                 'label' => 'Админка',

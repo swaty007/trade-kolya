@@ -7,12 +7,13 @@
  */
 
 $this->title = 'Магазин';
+use app\models\User;
 ?>
 <div class="row wrapper border-bottom grey-bg">
     <div class="col-lg-10">
         <h2><strong>Магазин</strong></h2>
     </div>
-<?php if( Yii::$app->user->identity->user_role == "admin"):?>
+<?php if( User::canAdmin()):?>
     <div class="col-lg-10 btn-block-style">
         <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#market-create"><strong>Создать продукт</strong></button>
     </div>
@@ -69,7 +70,7 @@ $this->title = 'Магазин';
                                                     </li>
                                                     <li style="margin-top: 20px">
                                                         <button class="btn btn-success" type="button" onclick="buyMarket(<?=$market->id;?>,this)">Купить</button>
-                                                        <?php if( Yii::$app->user->identity->user_role == "admin"):?>
+                                                        <?php if( User::canAdmin()):?>
                                                             <button class="btn btn-warning" type="button" onclick="editMarket(<?=$market->id;?>,this)">Редактировать</button>
                                                             <button class="btn btn-danger" type="button" onclick="deleteMarket(<?=$market->id;?>,this)">Удалить</button>
                                                         <?php endif;?>
@@ -114,7 +115,7 @@ $this->title = 'Магазин';
                                                     <?= $market->count_api?>
                                                 </li>
                                                 <li style="margin-top: 20px">
-                                                    <?php if( Yii::$app->user->identity->user_role == "admin"):?>
+                                                    <?php if( User::canAdmin()):?>
                                                         <button class="btn btn-danger" type="button" onclick="deleteMarket(<?=$market->id;?>,this)">Удалить</button>
                                                     <?php endif;?>
                                                 </li>

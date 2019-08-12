@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use app\models\User;
 $this->title = 'Информер';
 ?>
 
@@ -8,7 +9,7 @@ $this->title = 'Информер';
         <h2><strong><?=$this->title?></strong></h2>
     </div>
     <div class="col-lg-10">
-        <?php if (Yii::$app->user->identity->user_role == "admin") : ?>
+        <?php if (User::canAdmin()) : ?>
             <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#informer-create"
                     style="margin-bottom: 10px"><strong>Создать новость</strong></button>
         <?php endif; ?>
