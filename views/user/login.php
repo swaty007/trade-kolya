@@ -14,7 +14,11 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="middle-box text-center loginscreen  animated fadeInDown">
     <div>
         <div>
-            <h1 class="logo-name"><?= Html::img('@web/image/logo6.png', ['class' => '']); ?></h1>
+<!--            <h1 class="logo-name">-->
+<!--<!--                LOGO-->-->
+<!--                <?//= Html::img('@web/image/logo6.png', ['class' => '']); ?>-->
+<!--            </h1>-->
+            <h2>logo</h2>
         </div>
         <h3><?= Html::encode($this->title) ?></h3>
         

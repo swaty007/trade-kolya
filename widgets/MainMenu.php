@@ -36,14 +36,27 @@ class MainMenu extends Widget
     public function run()
     {
 
+//        $this->menu[] = array(
+//            'label' => 'TAKE',
+//            'class' => Url::to(['cabinet/index']),
+//            'template' => '<div class="dropdown profile-element"><a href="{url}">
+//                             <img alt="image" class="user-icon" src="../image/logo6.png" />
+//                            </a></div>
+//                            <div class="logo-element">
+//                                 <a href="{url}"><img alt="image" class="user-icon" src="../image/logo4.png" /></a>
+//                            </div>',
+//            'url' => Url::to(['cabinet/index']),
+//
+//        );
+
         $this->menu[] = array(
             'label' => 'TAKE',
             'class' => Url::to(['cabinet/index']),
             'template' => '<div class="dropdown profile-element"><a href="{url}">                             
-                                <img alt="image" class="user-icon" src="../image/logo6.png" />      
+                             logo     
                             </a></div>
                             <div class="logo-element">
-                                 <a href="{url}"><img alt="image" class="user-icon" src="../image/logo4.png" /></a>
+                                 LG
                             </div>',
             'url' => Url::to(['cabinet/index']),
 

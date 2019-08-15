@@ -12,7 +12,7 @@ use app\models\AdminSettings; ?>
 <div class="wrapper wrapper-content animated fadeIn">
 
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-10 col-lg-offset-1">
             <div class="ibox float-e-margins">
                 <div class="ibox-content article">
                     <?= AdminSettings::findOne(['id' => 15])->value?>

@@ -20,12 +20,10 @@ $this->title = 'FAQ';
 
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-10 col-lg-offset-1">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
-
                     <?= AdminSettings::findOne(['id' => 15])->value?>
-
                 </div>
             </div>
 
