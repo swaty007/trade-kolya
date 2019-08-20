@@ -14,10 +14,14 @@ use yii\db\ActiveRecord;
  * @property double $invest
  * @property int $diversification
  * @property string $date
- * @property string $status
+ * @property int $status
  */
 class UserPools extends ActiveRecord
 {
+    const STATUS_DEPOSIT = 10;
+    const STATUS_WITHDRAW = -1;
+    const STATUS_WAIT_ACTIVATION = -100;
+    const STATUS_API = -10;
     /**
      * {@inheritdoc}
      */

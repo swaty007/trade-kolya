@@ -53,7 +53,6 @@ $(document).on('click',"#create_pool", function(e) {
     // formData.append("min_size", data.min_size);
     // formData.append("max_size", data.max_size);
     formData.append("file", data.file);
-
     $.ajax({
         type: "POST",
         url: "/pool/create-pool",
@@ -63,6 +62,7 @@ $(document).on('click',"#create_pool", function(e) {
         contentType: false,
         data: formData,
         success: function (msg) {
+            closeModal($("#pull"));
             console.log(msg);
             showToastr(msg);
             finishPjax();
@@ -172,16 +172,32 @@ function editPool(id,_this) {
     $('#update_pool').attr('data-id', id);
     $('#image_pool_src').attr('src', src);
 
+
     $('#pool_type_edit').val(type);
     $('#pool_form_edit').val(form);
     $('#pool_float_profit_edit').val(float_profit);
     $('#pool_full_description_edit').val(full_description);
     $('#pool_month_edit').val(month);
-    $('#type_percent_edit').val(type_percent);
+    if (type_percent !== "float") {
+        $('#type_percent_edit').parent('div').hide();
+    } else {
+        $('#type_percent_edit').parent('div').show();
+        $('#type_percent_edit').val(type_percent);
+    }
+
     $('#pool_referral_edit').val(referral_percent);
 
     $('#pull-edit').modal('show');
 }
+
+$(document).on('change', "#type_percent_edit, #type_percent", function (e) {
+    var type_percent = $(this).val();
+    if (type_percent !== "float") {
+        $('#pool_float_profit, #pool_float_profit_edit').parent('div').hide();
+    } else {
+        $('#pool_float_profit, #pool_float_profit_edit').parent('div').show();
+    }
+});
 
 function deletePool(id,_this) {
     let el = $(_this).closest('.pool_block.col-flex'),
@@ -237,6 +253,24 @@ function returnUserMoney(id,_this) {
     $.ajax({
         type: "POST",
         url: "/pool/return-user-money",
+        data: data,
+        success: function (msg) {
+            console.log(msg);
+            showToastr(msg);
+            finishPjax();
+        }
+    })
+}
+function confirmPoolApi(id,_this) {
+    let el = $(_this).closest('.pool_block'),
+        data = {
+            user_pool_id: Number(id),
+        };
+    console.log(data);
+
+    $.ajax({
+        type: "POST",
+        url: "/pool/confirm-pool-api",
         data: data,
         success: function (msg) {
             console.log(msg);

@@ -45,7 +45,7 @@
                     <label class="main-label">Тип процентирования</label>
                     <select class="form-control m-b main-select" id="type_percent">
                         <option value="fixed">фиксированный</option>
-                        <option value="float">плавающий</option>
+                        <option value="float" selected>плавающий</option>
                     </select>
                 </div>
                 <div class="form-group">

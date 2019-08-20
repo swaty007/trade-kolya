@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div>
         <div>
 <!--            <h1 class="logo-name">-->
-<!--<!--                LOGO-->-->
+<!--                LOGO-->
 <!--                <?//= Html::img('@web/image/logo6.png', ['class' => '']); ?>-->
 <!--            </h1>-->
             <h2>logo</h2>

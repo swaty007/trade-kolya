@@ -33,6 +33,7 @@ use yii\helpers\Url;
 class Transactions extends ActiveRecord
 {
     const STATUS_REFUND = -1;
+    const STATUS_API = -100; //отчет для вида
     const STATUS_CANCEL = -10;
     const STATUS_WAIT_ACTIVATION = 0;
     const STATUS_WAIT_EMAIL_ACTIVATION = -5;

@@ -50,22 +50,17 @@ class PoolController extends UserAccessController
      */
     public function actionCron()
     {
-        foreach ( UserPools::find()->with('pool')->where(['status'=>'deposit'])->all() as $u_pool) {
+        foreach ( UserPools::find()->with('pool')->where(['status'=> UserPools::STATUS_DEPOSIT ])->orWhere(['status'=> UserPools::STATUS_API ])->all() as $u_pool) {
 
-            switch ($u_pool->type) {
+            $today = date('Y-m-d');
+            $pool = $u_pool->pool;
+            $day_end = date('Y-m-d', strtotime("+".$pool->period." months", strtotime($today)));
+
+            $all_period      = (int)((strtotime($day_end) - strtotime($u_pool->date))/(60*60*24));
+//                    $today = date('Y-m-d', strtotime("+1 months", strtotime($today)));
+            $days_from_start = (int)((strtotime($today) - strtotime($u_pool->date))/(60*60*24));
+            switch ($u_pool->pool->type) {
                 case "direct":
-
-                    $today = date('Y-m-d');
-
-                    $pool = $u_pool->pool;
-                    $day_end = date('Y-m-d', strtotime("+".$pool->period." months", strtotime($today)));
-
-
-                    $all_period      = (int)((strtotime($day_end) - strtotime($u_pool->date))/(60*60*24));
-                    $today = date('Y-m-d', strtotime("+1 months", strtotime($today)));
-                    $days_from_start = (int)((strtotime($today) - strtotime($u_pool->date))/(60*60*24));
-
-
                     if (((int)($all_period/$pool->diversification)*$u_pool->diversification <= $days_from_start)) {
                         $user = User::find()->where(['id' => $u_pool->user_id])->one();
 
@@ -83,12 +78,10 @@ class PoolController extends UserAccessController
                             }
 
                             if ($u_pool->diversification == $pool->diversification) {
-                                $u_pool->status = 'withdraw';
+                                $u_pool->status = UserPools::STATUS_WITHDRAW;
 //                                $user->{$pool->invest_method.'_money'} +=  $u_pool->invest;
                                 $user_update2 = $user->updateCounters([$pool->invest_method.'_money' => $u_pool->invest]);
                                 $transaction_pay_val += $u_pool->invest;
-
-
                             }
 
                             $u_pool->diversification += 1;
@@ -141,12 +134,72 @@ class PoolController extends UserAccessController
                         }
 
 //                    if ($today > $pool->date_end
-//                        && !UserPools::find()->where(['pool_id' => $pool->id])->andWhere(['status'=>'deposit'])->count()
+//                        && !UserPools::find()->where(['pool_id' => $pool->id])->andWhere(['status'=>UserPools::STATUS_DEPOSIT])->count()
 //                    ) {
 //                        $pool->status = "archive";
 //                    }
                     break;
                 case "API":
+
+                    if (((int)($all_period/$pool->diversification)*$u_pool->diversification <= $days_from_start)) {
+                        $user = User::find()->where(['id' => $u_pool->user_id])->one();
+
+                        if (User::allowedCurrency($pool->invest_method)) {
+                            if ($pool->type_percent == "float" && $u_pool->diversification != 1) {
+                                $transaction_pay_val = (($u_pool->invest*$pool->float_profit)/100)/$pool->diversification;
+                            } else {
+                                $transaction_pay_val = (($u_pool->invest*$pool->profit)/100)/$pool->diversification;
+                            }
+
+                        } else {
+                            Yii::error("Failed invest method");
+                        }
+
+                        if ($u_pool->diversification == $pool->diversification) {
+                            $u_pool->status = UserPools::STATUS_WITHDRAW;
+                            $transaction_pay_val += $u_pool->invest;
+                        }
+
+                        $u_pool->diversification += 1;
+
+                        if ($u_pool->save()) {
+                            $transaction              = new Transactions();
+                            $transaction->type        = 'pool';
+                            $transaction->sub_type    = 'withdraw';
+                            $transaction->comment     = 'Начисление % за пул API';
+                            $transaction->user_id     = $user->id;
+                            $transaction->status      = Transactions::STATUS_API;
+                            $transaction->amount1     = $transaction_pay_val;
+                            $transaction->currency1   = $pool->invest_method;
+                            $transaction->buyer_name  = $user->username;
+                            $transaction->buyer_email = $user->email;
+
+                            $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
+                            $transaction_admin = new Transactions();
+                            $transaction_admin->amount1     = -1*$transaction_pay_val;
+                            $transaction_admin->currency1   = $pool->invest_method;
+                            $transaction_admin->type        = 'pool';
+                            $transaction_admin->sub_type    = 'withdraw';
+                            $transaction_admin->comment     = 'Начисление % за пул API';
+                            $transaction_admin->status      = Transactions::STATUS_API;
+                            $transaction_admin->user_id     = $global_admin->id;
+                            $transaction_admin->buyer_name  = $user->username;
+                            $transaction_admin->buyer_email = $user->email;
+
+                            $notification = new Notifications();
+                            $notification->createNotification($user->id,
+                                'success',
+                                'Вы успещно получили выплату % за API пул',
+                                $transaction->attributes);
+
+
+                            if (!$transaction->save() || !$transaction_admin->save()) {
+                                Yii::error("Транзакция не сохранилась");
+                            }
+                        } else {
+                            Yii::error("Don't save user pool status");
+                        }
+                    }
 
                     break;
             }
@@ -504,121 +557,136 @@ class PoolController extends UserAccessController
             if ($pool->status === 'archive' || $pool->status === 'active') {
                 return ['msg' => 'error', 'status' => "Archive/Active Pool"];
             }
-            if ($pool->type == "API") {
-                return ['msg' => 'ok', 'status' => 'API пулл ничего не произошло'];
-            } else {
-                $u_pool                  = new UserPools();
-                $u_pool->user_id         = $id;
-                $u_pool->pool_id         = $pool_id;
-                $u_pool->invest          = $value;
-                $u_pool->diversification = 1;
 
-                $invest_method           = $pool->invest_method;
+            $u_pool                  = new UserPools();
+            $u_pool->user_id         = $id;
+            $u_pool->pool_id         = $pool_id;
+            $u_pool->invest          = $value;
+            $u_pool->diversification = 1;
 
-                if (User::allowedCurrency($invest_method)) {
-                    if ($user->{$invest_method.'_money'} < $value) {
-                        return ['msg' => 'error', 'status' => "Don't have balance"];
-                    } elseif ($pool->min_invest > $value) {
-                        return ['msg' => 'error', 'status' => "Value lower than minimal invest"];
-                    }
+            $invest_method           = $pool->invest_method;
 
-                    $in_pool = InvestPools::haveInvest($pool_id);
+            $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
+            $transaction_admin              = new Transactions();
+            $transaction_admin->comment     = 'Покупка пула API';
+            $transaction                    = new Transactions();
+            $transaction->comment           = 'Покупка пула API';
+
+            if ($pool->min_invest > $value) {
+                return ['msg' => 'error', 'status' => "Value lower than minimal invest"];
+            }
+
+            switch ($pool->type) {
+                case "API":
+                    $transaction_admin->status      = Transactions::STATUS_API;
+                    $transaction->status            = Transactions::STATUS_API;
+
+                    $u_pool->status = UserPools::STATUS_WAIT_ACTIVATION;
+                    break;
+                case "direct":
+                    if (User::allowedCurrency($invest_method)) {
+                        if ($user->{$invest_method.'_money'} < $value) {
+                            return ['msg' => 'error', 'status' => "Don't have balance"];
+                        }
+
+                        $in_pool = InvestPools::haveInvest($pool_id);
 //                if ((($in_pool+$u_pool->invest) > $pool->max_size_invest)) {
 //                    return ['msg' => 'error', 'status' => "Bigger than max_pool_size"];
 //                }
 
 //                $user->{$invest_method.'_money'} -= $u_pool->invest;
-                    $user_update = $user->updateCounters([$invest_method.'_money' => -$u_pool->invest]);
-                } else {
-                    return ['msg' => 'error', 'status' => "Failed currency"];
-                }
-
-
-                // Начисления по рефералам тут
-                if (!!($parent_referral_id = ReferralsPromocode::findReferralId($user->promocode_id))) {
-                    if (!!($user_referral = User::findOne(['id'=>$parent_referral_id]) )) {
-
-//                                        $referral_bonus_percent = (($u_pool->invest*(int)AdminSettings::findOne(['id' => 14])->value)/100);
-                        $referral_bonus_percent = $pool->referral_percent;
-//                                        $user_referral->{$pool->invest_method.'_money'} += $referral_bonus_percent;
-                        $referral_update = $user_referral->updateCounters([$pool->invest_method.'_money' => ($u_pool->invest*$referral_bonus_percent)/100]);
-
-                        $transaction_referral              = new Transactions();
-                        $transaction_referral->type        = 'pool';
-                        $transaction_referral->sub_type    = 'referral';
-//                                        $transaction_referral->comment     = 'Начисление '.AdminSettings::findOne(['id' => 14])->value.'% за пул (реферальный)';
-                        $transaction_referral->comment     = 'Начисление '.$referral_bonus_percent.'% за пул (реферальный)';
-                        $transaction_referral->user_id     = $user_referral->id;
-                        $transaction_referral->status      = Transactions::STATUS_DONE;
-                        $transaction_referral->amount1     = $referral_bonus_percent;
-                        $transaction_referral->amount2     = $u_pool->invest;
-                        $transaction_referral->currency1   = $pool->invest_method;
-                        $transaction_referral->buyer_name  = $user->username;
-                        $transaction_referral->buyer_email = $user->email;
-
-                        $notification_referral = new Notifications();
-                        $notification_referral->createNotification($user_referral->id,
-                            'success',
-                            'Вы успещно получили выплату % за пул (реферальный)',
-                            $transaction_referral->attributes);
-
-//                                        if (!$user_referral->save()) {
-                        if (!$referral_update) {
-                            Yii::error("Don't save user balance");
-//                                            return ['msg' => 'error', 'status' => "Don't save user balance"];
-                        }
-                        if (!$transaction_referral->save()) {
-                            Yii::error("Транзакция реферала не сохранилась");
-                            return ['msg' => 'error', 'status' => "Транзакция реферала не сохранилась"];
-                        }
+                        $user_update = $user->updateCounters([$invest_method.'_money' => -$u_pool->invest]);
+                    } else {
+                        return ['msg' => 'error', 'status' => "Failed currency"];
                     }
-                }
-//                                конец реферальных начислений
-
-
-                if ($u_pool->save()) {
-
-                    $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
-//                $global_admin->{$invest_method.'_money'} += $u_pool->invest;
+                    //                $global_admin->{$invest_method.'_money'} += $u_pool->invest;
                     $admin_update = $global_admin->updateCounters([$invest_method.'_money' => $u_pool->invest]);
-                    $transaction_admin = new Transactions();
-                    $transaction_admin->amount1     = $u_pool->invest;
-                    $transaction_admin->currency1   = $invest_method;
-                    $transaction_admin->type        = 'pool';
-                    $transaction_admin->sub_type    = 'deposit';
-                    $transaction_admin->comment     = 'Покупка пула';
-                    $transaction_admin->status      = Transactions::STATUS_DONE;
-                    $transaction_admin->user_id     = $global_admin->id;
-                    $transaction_admin->buyer_name  = $user->username;
-                    $transaction_admin->buyer_email = $user->email;
 
-//                if (!$user->save() || !$global_admin->save()) {
+                    //                if (!$user->save() || !$global_admin->save()) {
                     if (!$user_update || !$admin_update) {
                         $u_pool->delete();
                         return ['msg' => 'error', 'status' => "User don't save"];
                     }
-
-                    $transaction              = new Transactions();
-                    $transaction->type        = 'pool';
-                    $transaction->sub_type    = 'deposit';
+                    $transaction_admin->status      = Transactions::STATUS_DONE;
+                    $transaction_admin->comment     = 'Покупка пула';
+                    $transaction->status            = Transactions::STATUS_DONE;
                     $transaction->comment     = 'Покупка пула';
-                    $transaction->user_id     = $id;
-                    $transaction->status      = Transactions::STATUS_DONE;
-                    $transaction->amount1     = -1*$u_pool->invest;
-//                $transaction->amount2 = $amount2;
-                    $transaction->currency1   = $invest_method;
-//                $transaction->currency2 = $curr2;
-                    $transaction->buyer_name  = Yii::$app->user->identity->username;
-                    $transaction->buyer_email = Yii::$app->user->identity->email;
 
-                    if (!$transaction->save() || !$transaction_admin->save()) {
-                        return ['msg' => 'error', 'status' => "Транзакция не сохранилась"];
+                    $u_pool->status = UserPools::STATUS_DEPOSIT;
+                    // Начисления по рефералам тут
+                    if (!!($parent_referral_id = ReferralsPromocode::findReferralId($user->promocode_id))) {
+                        if (!!($user_referral = User::findOne(['id'=>$parent_referral_id]) )) {
+
+//                                        $referral_bonus_percent = (($u_pool->invest*(int)AdminSettings::findOne(['id' => 14])->value)/100);
+                            $referral_bonus_percent = $pool->referral_percent;
+//                                        $user_referral->{$pool->invest_method.'_money'} += $referral_bonus_percent;
+                            $referral_update = $user_referral->updateCounters([$pool->invest_method.'_money' => ($u_pool->invest*$referral_bonus_percent)/100]);
+
+                            $transaction_referral              = new Transactions();
+                            $transaction_referral->type        = 'pool';
+                            $transaction_referral->sub_type    = 'referral';
+//                                        $transaction_referral->comment     = 'Начисление '.AdminSettings::findOne(['id' => 14])->value.'% за пул (реферальный)';
+                            $transaction_referral->comment     = 'Начисление '.$referral_bonus_percent.'% за пул (реферальный)';
+                            $transaction_referral->user_id     = $user_referral->id;
+                            $transaction_referral->status      = Transactions::STATUS_DONE;
+                            $transaction_referral->amount1     = $referral_bonus_percent;
+                            $transaction_referral->amount2     = $u_pool->invest;
+                            $transaction_referral->currency1   = $pool->invest_method;
+                            $transaction_referral->buyer_name  = $user->username;
+                            $transaction_referral->buyer_email = $user->email;
+
+                            $notification_referral = new Notifications();
+                            $notification_referral->createNotification($user_referral->id,
+                                'success',
+                                'Вы успещно получили выплату % за пул (реферальный)',
+                                $transaction_referral->attributes);
+
+//                                        if (!$user_referral->save()) {
+                            if (!$referral_update) {
+                                Yii::error("Don't save user balance");
+//                                            return ['msg' => 'error', 'status' => "Don't save user balance"];
+                            }
+                            if (!$transaction_referral->save()) {
+                                Yii::error("Транзакция реферала не сохранилась");
+                                return ['msg' => 'error', 'status' => "Транзакция реферала не сохранилась"];
+                            }
+                        }
                     }
+//                             конец реферальных начислений
+                    break;
+                default:
+                    return ['msg' => 'error', 'status' => "Not allowed type"];
+                    break;
+            }
 
-                    return ['msg' => 'ok', 'status' => 'Вы успещно вложили деньги', 'pool' => $u_pool];
-                } else {
-                    return ['msg' => 'error', 'status' => "Don't save pool"];
+            if ($u_pool->save()) {
+
+                $transaction_admin->amount1     = $u_pool->invest;
+                $transaction_admin->currency1   = $invest_method;
+                $transaction_admin->type        = 'pool';
+                $transaction_admin->sub_type    = 'deposit';
+                $transaction_admin->user_id     = $global_admin->id;
+                $transaction_admin->buyer_name  = $user->username;
+                $transaction_admin->buyer_email = $user->email;
+
+
+                $transaction->type        = 'pool';
+                $transaction->sub_type    = 'deposit';
+                $transaction->user_id     = $id;
+                $transaction->amount1     = -1*$u_pool->invest;
+//                $transaction->amount2 = $amount2;
+                $transaction->currency1   = $invest_method;
+//                $transaction->currency2 = $curr2;
+                $transaction->buyer_name  = Yii::$app->user->identity->username;
+                $transaction->buyer_email = Yii::$app->user->identity->email;
+
+                if (!$transaction->save() || !$transaction_admin->save()) {
+                    return ['msg' => 'error', 'status' => "Транзакция не сохранилась"];
                 }
+
+                return ['msg' => 'ok', 'status' => 'Вы успещно вложили деньги', 'pool' => $u_pool];
+            } else {
+                return ['msg' => 'error', 'status' => "Don't save pool"];
             }
 
         }
@@ -633,7 +701,7 @@ class PoolController extends UserAccessController
 
                 $user_pool_id = (int)Yii::$app->request->post('user_pool_id', '');
 
-                if (!($u_pool = UserPools::findOne(['id'=>$user_pool_id]) )) {
+                if (!($u_pool = UserPools::findOne(['id'=>$user_pool_id, 'status' => UserPools::STATUS_DEPOSIT]) )) {
                     return ['msg' => 'error', 'status' => "No User Pool finded"];
                 }
                 if (!($pool = InvestPools::findOne(['id'=>$u_pool->pool_id]) )) {
@@ -700,7 +768,46 @@ class PoolController extends UserAccessController
         }
     }
 
+    public function actionConfirmPoolApi()
+    {
+        if (Yii::$app->request->isAjax) {
+            $id = Yii::$app->user->getId();
+            if (User::canAdmin()) {
+                Yii::$app->response->format = 'json';
 
+                $user_pool_id = (int)Yii::$app->request->post('user_pool_id', '');
+
+                if (!($u_pool = UserPools::findOne(['id'=>$user_pool_id, 'status' => UserPools::STATUS_WAIT_ACTIVATION]) )) {
+                    return ['msg' => 'error', 'status' => "No User Pool finded"];
+                }
+                if (!($pool = InvestPools::findOne(['id'=>$u_pool->pool_id]) )) {
+                    return ['msg' => 'error', 'status' => "No Invest Pool finded"];
+                }
+                if ($pool->status === 'archive' || $pool->status === 'active') {
+                    return ['msg' => 'error', 'status' => "Archive/Active Pool"];
+                }
+                $timestamp = date('Y-m-d G:i:s');
+                $u_pool->status = UserPools::STATUS_API;
+                $u_pool->date = $timestamp;
+                $user          = User::find()->where(['id' => $u_pool->user_id])->one();
+                $invest_method = $pool->invest_method;
+                $invest        = $u_pool->invest;
+
+                $notification = new Notifications();
+                $notification->createNotification($u_pool->user_id,
+                    'success',
+                    'Вам успещно подвердили оплату АПИ пула');
+
+                if ($u_pool->save()) {
+                    return ['msg' => 'ok', 'status' => "User Pool API activated"];
+                } else {
+                    return ['msg' => 'error', 'status' => "User Pool don't save"];
+                }
+            } else {
+                return ['msg' => 'error', 'status' => "Dont have asses"];
+            }
+        }
+    }
 
     public function actionCreateComment()
     {

@@ -378,7 +378,7 @@ class CabinetController extends UserAccessController
             $transaction_buyer->type        = 'copy-trader';
             $transaction_buyer->sub_type    = 'deposit';
             $transaction_buyer->comment     = 'Покупка копирования';
-            $transaction_buyer->status      = 1;
+            $transaction_buyer->status      = Transactions::STATUS_DONE;
             $transaction_buyer->user_id     = $userTrader->id;
             $transaction_buyer->buyer_name  = $userTrader->username;
             $transaction_buyer->buyer_email = $userTrader->email;
@@ -397,7 +397,7 @@ class CabinetController extends UserAccessController
             $transaction_trader->type        = 'copy-trader';
             $transaction_trader->sub_type    = 'deposit';
             $transaction_trader->comment     = 'Покупка копирования';
-            $transaction_trader->status      = 1;
+            $transaction_trader->status      = Transactions::STATUS_DONE;
             $transaction_trader->user_id     = $userAction;
             $transaction_trader->buyer_name  = $updateUser->username;
             $transaction_trader->buyer_email = $updateUser->email;

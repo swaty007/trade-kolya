@@ -99,8 +99,12 @@ use yii\helpers\Url;
                                                                     <tr>
                                                                         <td><?=$admin_pool['user_id']?></td>
                                                                         <td><?=$admin_pool['username']?></td>
-                                                                        <td><?=(double)$admin_pool['invest'].' '.$pool_new['invest_method']?></td>
-                                                                        <td><button class="btn btn-danger label label-danger" type="button" onclick="returnUserMoney(<?=$admin_pool['id']?>,this)">Вернуть</button></td>
+                                                                        <td><?=(double)$admin_pool['invest'].' '.$pool_new['invest_method'] ?></td>
+                                                                        <?php if ($pool_new['type'] === "direct"):?>
+                                                                            <td><button class="btn btn-danger label label-danger" type="button" onclick="event.preventDefault();returnUserMoney(<?=$admin_pool['id']?>,this)">Вернуть</button></td>
+                                                                        <?php elseif ($pool_new['type'] === "API" && (int)$admin_pool['status'] == \app\models\UserPools::STATUS_WAIT_ACTIVATION):?>
+                                                                            <td><button class="btn btn-primary label label-primary" type="button" onclick="event.preventDefault();confirmPoolApi(<?=$admin_pool['id']?>,this)">Подвердить API</button></td>
+                                                                        <?php endif; ?>
                                                                     </tr>
                                                                 <?php endforeach;?>
                                                                 </tbody>
