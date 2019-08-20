@@ -573,12 +573,11 @@ $this->title = 'Админка';
             }
         })
     }
-    $(document).on("change", ".user-role-change", function (e) {
-        event.preventDefault();
+    function changeUserRole(user_id, value) {
         let data = {
-                user_id: Number($(this).attr("data-id")),
-                value: $(this).val(),
-            };
+            user_id: user_id,
+            value: value,
+        };
         console.log(data);
 
         $.ajax({
@@ -590,6 +589,11 @@ $this->title = 'Админка';
                 showToastr(msg);
             }
         })
+    }
+    $(document).on("change", ".user-role-change", function (e) {
+        event.preventDefault();
+        $(this).parent().find('a').remove();
+        $(this).parent().append('<a onclick="changeUserRole('+$(this).attr("data-id")+', '+$(this).val()+')" href="#" class="btn label label-primary">Save</a>');
     });
 
 </script>
