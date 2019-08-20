@@ -812,9 +812,9 @@ class PoolController extends UserAccessController
     public function actionCreateComment()
     {
         if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = 'json';
             $id = Yii::$app->user->getId();
             if (User::canAdmin()) {
-                Yii::$app->response->format = 'json';
 
                 $pool_id = (int)Yii::$app->request->post('pool_id', '');
                 $comment = (string)Yii::$app->request->post('comment', '');

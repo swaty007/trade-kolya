@@ -64,7 +64,16 @@ use yii\helpers\Url;
                                         <?php endforeach;?>
                                     </ul>
                                     <?php if( User::canAdmin()):?>
-
+                                        <div class="comment_block m-t">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control value comment" placeholder="Комментарий">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button onclick="createPoolComment(<?=$pool['id'];?>,this)" type="button" class="btn btn-w-m btn-primary">Комментировать</button>
+                                        </div>
                                         <?php if(isset($admin_pools[$pool['id']])):?>
                                             <table class="table">
                                                 <thead>
@@ -91,19 +100,6 @@ use yii\helpers\Url;
                                                 </tbody>
                                             </table>
                                         <?php endif;?>
-                                    <?php else:;?>
-                                        <p class="style-pull-card pull-type">
-                                            <?=$pool['type'] == 'API' ? 'API' : 'прямой';?>,
-                                            <?=$pool['invest_method'];?>,
-                                            <?=$pool['type_percent'] == 'fixed' ? 'фиксированный' : 'плавающий';?>,
-                                            <?=$pool['period'];?> мес., <?=$pool['profit'];?>%,
-                                            <?php if ($pool['type_percent'] == 'float') :?>
-                                                <?=$pool['float_profit'];?>%,
-                                            <?php endif;?>
-                                            <?= $pool['diversification'] ?>выпл.
-                                        </p>
-                                        <p class="style-pull-card pull-description">Описание: <?=$pool['description'];?></p>
-
                                     <?php endif;?>
                                 </div>
                            <div class="panel-footer">
@@ -115,20 +111,11 @@ use yii\helpers\Url;
                                     </div>
                                 </div>
                                 <button onclick="investPool(<?=$pool['id'];?>,this)" type="button" class="btn btn-w-m btn-primary">Вложить</button>
-
+                               <?php if( User::canAdmin()):?>
                                 <button class="btn btn-info" type="button" onclick="editPool(<?=$pool['id'];?>,this)">Редактировать</button>
                                 <button class="btn btn-danger" type="button" onclick="deletePool(<?=$pool['id'];?>,this)">Удалить</button>
+                               <?php endif;?>
 
-                                <div class="comment_block m-t">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control value comment" placeholder="Комментарий">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button onclick="createPoolComment(<?=$pool['id'];?>,this)" type="button" class="btn btn-w-m btn-primary">Комментировать</button>
-                                </div>
                            </div>
                 </div>
 
