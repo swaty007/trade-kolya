@@ -155,6 +155,50 @@ class PoolController extends UserAccessController
                             Yii::error("Failed invest method");
                         }
 
+
+                        // Начисления по рефералам тут
+                        if (!!($parent_referral_id = ReferralsPromocode::findReferralId($user->promocode_id))) {
+                            if (!!($user_referral = User::findOne(['id'=>$parent_referral_id]) )) {
+
+//                                        $referral_bonus_percent = (($u_pool->invest*(int)AdminSettings::findOne(['id' => 14])->value)/100);
+                                $referral_bonus_percent = $pool->referral_percent;
+//                                        $user_referral->{$pool->invest_method.'_money'} += $referral_bonus_percent;
+                                $referral_value = ($transaction_pay_val*$referral_bonus_percent)/100;
+                                $referral_update = $user_referral->updateCounters([$pool->invest_method.'_money' => $referral_value]);
+
+                                $transaction_referral              = new Transactions();
+                                $transaction_referral->type        = 'pool';
+                                $transaction_referral->sub_type    = 'referral';
+//                                        $transaction_referral->comment     = 'Начисление '.AdminSettings::findOne(['id' => 14])->value.'% за пул (реферальный)';
+                                $transaction_referral->comment     = 'Начисление '.$referral_bonus_percent.'% за пул (реферальный)';
+                                $transaction_referral->user_id     = $user_referral->id;
+                                $transaction_referral->status      = Transactions::STATUS_DONE;
+                                $transaction_referral->amount1     = $referral_value;
+                                $transaction_referral->amount2     = $transaction_pay_val;
+                                $transaction_referral->currency1   = $pool->invest_method;
+                                $transaction_referral->buyer_name  = $user->username;
+                                $transaction_referral->buyer_email = $user->email;
+
+                                $notification_referral = new Notifications();
+                                $notification_referral->createNotification($user_referral->id,
+                                    'success',
+                                    'Вы успещно получили выплату % за пул (реферальный)',
+                                    $transaction_referral->attributes);
+
+//                                        if (!$user_referral->save()) {
+                                if (!$referral_update) {
+                                    Yii::error("Don't save user balance");
+//                                            return ['msg' => 'error', 'status' => "Don't save user balance"];
+                                }
+                                if (!$transaction_referral->save()) {
+                                    Yii::error("Транзакция реферала не сохранилась");
+                                    return ['msg' => 'error', 'status' => "Транзакция реферала не сохранилась"];
+                                }
+                            }
+                        }
+//                             конец реферальных начислений
+
+
                         if ($u_pool->diversification == $pool->diversification) {
                             $u_pool->status = UserPools::STATUS_WITHDRAW;
                             $transaction_pay_val += $u_pool->invest;
@@ -620,7 +664,8 @@ class PoolController extends UserAccessController
 //                                        $referral_bonus_percent = (($u_pool->invest*(int)AdminSettings::findOne(['id' => 14])->value)/100);
                             $referral_bonus_percent = $pool->referral_percent;
 //                                        $user_referral->{$pool->invest_method.'_money'} += $referral_bonus_percent;
-                            $referral_update = $user_referral->updateCounters([$pool->invest_method.'_money' => ($u_pool->invest*$referral_bonus_percent)/100]);
+                            $referral_value = ($u_pool->invest*$referral_bonus_percent)/100;
+                            $referral_update = $user_referral->updateCounters([$pool->invest_method.'_money' => $referral_value]);
 
                             $transaction_referral              = new Transactions();
                             $transaction_referral->type        = 'pool';
@@ -629,7 +674,7 @@ class PoolController extends UserAccessController
                             $transaction_referral->comment     = 'Начисление '.$referral_bonus_percent.'% за пул (реферальный)';
                             $transaction_referral->user_id     = $user_referral->id;
                             $transaction_referral->status      = Transactions::STATUS_DONE;
-                            $transaction_referral->amount1     = $referral_bonus_percent;
+                            $transaction_referral->amount1     = $referral_value;
                             $transaction_referral->amount2     = $u_pool->invest;
                             $transaction_referral->currency1   = $pool->invest_method;
                             $transaction_referral->buyer_name  = $user->username;
@@ -797,6 +842,49 @@ class PoolController extends UserAccessController
                 $notification->createNotification($u_pool->user_id,
                     'success',
                     'Вам успещно подвердили оплату АПИ пула');
+
+
+                // Начисления по рефералам тут
+                if (!!($parent_referral_id = ReferralsPromocode::findReferralId($user->promocode_id))) {
+                    if (!!($user_referral = User::findOne(['id'=>$parent_referral_id]) )) {
+
+//                                        $referral_bonus_percent = (($u_pool->invest*(int)AdminSettings::findOne(['id' => 14])->value)/100);
+                        $referral_bonus_percent = $pool->referral_percent;
+//                                        $user_referral->{$pool->invest_method.'_money'} += $referral_bonus_percent;
+                        $referral_value = ($u_pool->invest*$referral_bonus_percent)/100;
+                        $referral_update = $user_referral->updateCounters([$pool->invest_method.'_money' => $referral_value]);
+
+                        $transaction_referral              = new Transactions();
+                        $transaction_referral->type        = 'pool';
+                        $transaction_referral->sub_type    = 'referral';
+//                                        $transaction_referral->comment     = 'Начисление '.AdminSettings::findOne(['id' => 14])->value.'% за пул (реферальный)';
+                        $transaction_referral->comment     = 'Начисление '.$referral_bonus_percent.'% за пул (реферальный)';
+                        $transaction_referral->user_id     = $user_referral->id;
+                        $transaction_referral->status      = Transactions::STATUS_DONE;
+                        $transaction_referral->amount1     = $referral_value;
+                        $transaction_referral->amount2     = $u_pool->invest;
+                        $transaction_referral->currency1   = $pool->invest_method;
+                        $transaction_referral->buyer_name  = $user->username;
+                        $transaction_referral->buyer_email = $user->email;
+
+                        $notification_referral = new Notifications();
+                        $notification_referral->createNotification($user_referral->id,
+                            'success',
+                            'Вы успещно получили выплату % за пул (реферальный)',
+                            $transaction_referral->attributes);
+
+//                                        if (!$user_referral->save()) {
+                        if (!$referral_update) {
+                            Yii::error("Don't save user balance");
+//                                            return ['msg' => 'error', 'status' => "Don't save user balance"];
+                        }
+                        if (!$transaction_referral->save()) {
+                            Yii::error("Транзакция реферала не сохранилась");
+                            return ['msg' => 'error', 'status' => "Транзакция реферала не сохранилась"];
+                        }
+                    }
+                }
+//                             конец реферальных начислений
 
                 if ($u_pool->save()) {
                     return ['msg' => 'ok', 'status' => "User Pool API activated"];
