@@ -295,7 +295,11 @@ body.mini-navbar .navbar-default .nav>li>a {
     -webkit-transition: ease 0.7s; /* Safari */
     transition: ease 0.7s;
 }
-
+@media(max-width:768px) {
+    .fixed-navbar {
+        position: static;
+    }
+}
 body.mini-navbar .fixed-navbar {
     left: 85px;
     -webkit-transition: ease 0.7s; /* Safari */

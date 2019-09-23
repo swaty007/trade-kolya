@@ -11,7 +11,7 @@ $this->title = 'Инвестпул';
 use app\models\User;
 use yii\helpers\Url;
 ?>
-<div class="row wrapper border-bottom white-bg">
+<div class="row wrapper border-bottom grey-bg">
     <div class="col-lg-10">
         <h2><strong>Инвестпул</strong></h2>
     </div>
@@ -101,7 +101,11 @@ use yii\helpers\Url;
                                                                         <td><?=$admin_pool['username']?></td>
                                                                         <td><?=(double)$admin_pool['invest'].' '.$pool_new['invest_method'] ?></td>
                                                                         <?php if ($pool_new['type'] === "direct"):?>
-                                                                            <td><button class="btn btn-danger label label-danger" type="button" onclick="event.preventDefault();returnUserMoney(<?=$admin_pool['id']?>,this)">Вернуть</button></td>
+                                                                            <?php if ((int)$admin_pool['status'] == \app\models\UserPools::STATUS_DEPOSIT):?>
+                                                                                <td><button class="btn btn-danger label label-danger" type="button" onclick="event.preventDefault();returnUserMoney(<?=$admin_pool['id']?>,this)">Вернуть</button></td>
+                                                                            <?php elseif((int)$admin_pool['status'] == \app\models\UserPools::STATUS_WITHDRAW):?>
+                                                                                <td>Выплачен</td>
+                                                                            <?php endif;?>
                                                                         <?php elseif ($pool_new['type'] === "API" && (int)$admin_pool['status'] == \app\models\UserPools::STATUS_WAIT_ACTIVATION):?>
                                                                             <td><button class="btn btn-primary label label-primary" type="button" onclick="event.preventDefault();confirmPoolApi(<?=$admin_pool['id']?>,this)">Подвердить API</button></td>
                                                                         <?php endif; ?>

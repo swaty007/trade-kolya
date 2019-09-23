@@ -781,7 +781,7 @@ class PoolController extends UserAccessController
                 $transaction_admin->buyer_email = $user->email;
 
 //                if ($user->save() && $global_admin->save()) {
-                if ($user_update->save() && $admin_update->save()) {
+                if ($user_update && $admin_update) {
                     if ($u_pool->delete()) {
                         $transaction              = new Transactions();
                         $transaction->type        = 'pool';
