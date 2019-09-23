@@ -352,11 +352,12 @@ body.mini-navbar .copyright-block a {
     margin-bottom: 0px;
 }
 .market_image, .pool_image {
-    width: 100%;
+    width: calc(100% + 30px);
 
-    max-width: 100px;
     display: block;
-    margin: 0 auto 25px;
+    margin: -15px -15px 25px;
+    object-fit: cover;
+    height: 200px;
 }
 .main-li {
     color: white;
