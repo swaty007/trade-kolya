@@ -126,13 +126,14 @@ $(document).on('click',"#update_pool", function(e) {
         type: "POST",
         url: "/pool/update-pool",
         cache : false,
-        processData: false,
+        processData: false, 
         dataType: 'json',
         contentType: false,
         data: formData,
         success: function (msg) {
             console.log(msg);
             showToastr(msg);
+            closeModal($('#pull-edit'));
             finishPjax();
         }
     })

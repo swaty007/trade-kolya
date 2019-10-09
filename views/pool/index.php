@@ -100,9 +100,10 @@ use yii\helpers\Url;
                                                                         <td><?=$admin_pool['user_id']?></td>
                                                                         <td><?=$admin_pool['username']?></td>
                                                                         <td><?=(double)$admin_pool['invest'].' '.$pool_new['invest_method'] ?></td>
+                                                                        <td><button class="btn btn-danger label label-danger" type="button" onclick="event.preventDefault();returnUserMoney(<?=$admin_pool['id']?>,this)">Вернуть</button></td>
                                                                         <?php if ($pool_new['type'] === "direct"):?>
                                                                             <?php if ((int)$admin_pool['status'] == \app\models\UserPools::STATUS_DEPOSIT):?>
-                                                                                <td><button class="btn btn-danger label label-danger" type="button" onclick="event.preventDefault();returnUserMoney(<?=$admin_pool['id']?>,this)">Вернуть</button></td>
+
                                                                             <?php elseif((int)$admin_pool['status'] == \app\models\UserPools::STATUS_WITHDRAW):?>
                                                                                 <td>Выплачен</td>
                                                                             <?php endif;?>

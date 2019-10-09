@@ -49,11 +49,11 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="main-label">Процент выплаты</label>
+                    <label class="main-label">Процент выплаты При каждой выплате, если плавающий то только первый раз</label>
                     <input id="pool_profit" type="text" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label class="main-label">Процент выплаты (плавающий)</label>
+                    <label class="main-label">Процент выплаты (плавающий) От каждой выплаты кроме первой</label>
                     <input id="pool_float_profit" type="text" class="form-control">
                 </div>
                 <div class="form-group">
@@ -69,24 +69,24 @@
                     <input id="pool_min_invest" type="text" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label class="main-label">Временной промежуток работы пулла</label>
+                    <label class="main-label">Временной промежуток работы пулла (мес)</label>
                     <select id="pool_month" class="form-control">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
+                        <option value="1">1 мес.</option>
+                        <option value="2">2 мес.</option>
+                        <option value="3">3 мес.</option>
+                        <option value="4">4 мес.</option>
+                        <option value="5">5 мес.</option>
+                        <option value="6">6 мес.</option>
+                        <option value="7">7 мес.</option>
+                        <option value="8">8 мес.</option>
+                        <option value="9">9 мес.</option>
+                        <option value="10">10 мес.</option>
+                        <option value="11">11 мес.</option>
+                        <option value="12">12 мес.</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="main-label">Картинка</label>
+                    <label class="main-label">Картинка. Пропорция 2 к 1 например 600width x 300height</label>
                     <input id="pool_file" type="file" class="form-control">
                 </div>
 <!--                <div class="form-group">-->
@@ -169,11 +169,11 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="main-label">Процент выплаты</label>
+                    <label class="main-label">Процент выплаты При каждой выплате, если плавающий то только первый раз</label>
                     <input id="pool_profit_edit" type="text" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label class="main-label">Процент выплаты (плавающий)</label>
+                    <label class="main-label">Процент выплаты (плавающий) От каждой выплаты кроме первой</label>
                     <input id="pool_float_profit_edit" type="text" class="form-control">
                 </div>
                 <div class="form-group">
@@ -189,27 +189,27 @@
                     <input id="pool_min_invest_edit" type="text" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label class="main-label">Временной промежуток работы пулла</label>
+                    <label class="main-label">Временной промежуток работы пулла (мес)</label>
                     <select id="pool_month_edit" class="form-control">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
+                        <option value="1">1 мес.</option>
+                        <option value="2">2 мес.</option>
+                        <option value="3">3 мес.</option>
+                        <option value="4">4 мес.</option>
+                        <option value="5">5 мес.</option>
+                        <option value="6">6 мес.</option>
+                        <option value="7">7 мес.</option>
+                        <option value="8">8 мес.</option>
+                        <option value="9">9 мес.</option>
+                        <option value="10">10 мес.</option>
+                        <option value="11">11 мес.</option>
+                        <option value="12">12 мес.</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <div class="text-center">
                         <img id="image_pool_src" alt="image" class="m-t-xs img-responsive" src="" style="width: 200px; margin-left: calc(50% - 100px);">
                     </div>
-                    <label class="main-label">Картинка</label>
+                    <label class="main-label">Картинка. Пропорция 2 к 1 например 600width x 300height</label>
                     <input id="pool_file_update" type="file" class="form-control">
                 </div>
 <!--                <div class="form-group">-->

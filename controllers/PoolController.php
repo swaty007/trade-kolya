@@ -509,6 +509,18 @@ class PoolController extends UserAccessController
                 }
 
                 if (InvestPools::haveInvest($pool->id)) {
+                    if ($file) {
+                        if (!is_null($pool->src)) {
+                            unlink(Yii::getAlias('@webroot') . $pool->src);
+                        }
+                        $filePath = '/image/pool/' . time(). $file->baseName . '.' .$file->extension;
+                        if ($file->saveAs(Yii::getAlias('@webroot') . $filePath)) {
+                            $pool->src = $filePath;
+                        }
+                    }
+                    if ($pool->save()) {
+                        return ['msg' => 'ok', 'status' => "Pool updated"];
+                    }
                     return ['msg' => 'error', 'status' => 'Have money in invest'];
                 }
 
@@ -553,6 +565,36 @@ class PoolController extends UserAccessController
         }
     }
     public function actionDeletePool()
+    {
+        if (Yii::$app->request->isAjax) {
+            $id = Yii::$app->user->getId();
+            if (User::canAdmin()) {
+                Yii::$app->response->format = 'json';
+
+                $pool_id = (int)Yii::$app->request->post('pool_id', '');
+
+                if (!($pool = InvestPools::findOne(['id'=>$pool_id]) )) {
+                    return ['msg' => 'error', 'status' => "No Invest Pool finded"];
+                }
+
+                if (InvestPools::haveInvest($pool->id)) {
+                    return ['msg' => 'error', 'status' => 'Have money in invest'];
+                }
+
+
+                $pool->status = "archive";
+                if ($pool->save()) {
+                    return ['msg' => 'ok', 'status' => "Pool archived"];
+                } else {
+                    return ['msg' => 'error', 'status' => "Pool don't archived"];
+                }
+            } else {
+                return ['msg' => 'error', 'status' => "Dont have asses"];
+            }
+        }
+    }
+
+    public function actionDeletePoolOld()
     {
         if (Yii::$app->request->isAjax) {
             $id = Yii::$app->user->getId();
@@ -746,7 +788,7 @@ class PoolController extends UserAccessController
 
                 $user_pool_id = (int)Yii::$app->request->post('user_pool_id', '');
 
-                if (!($u_pool = UserPools::findOne(['id'=>$user_pool_id, 'status' => UserPools::STATUS_DEPOSIT]) )) {
+                if (!($u_pool = UserPools::findOne(['id'=>$user_pool_id, 'status' => [UserPools::STATUS_DEPOSIT, UserPools::STATUS_API]] ) )) {
                     return ['msg' => 'error', 'status' => "No User Pool finded"];
                 }
                 if (!($pool = InvestPools::findOne(['id'=>$u_pool->pool_id]) )) {
@@ -759,36 +801,52 @@ class PoolController extends UserAccessController
                 $invest_method = $pool->invest_method;
                 $invest        = $u_pool->invest;
 
-                if (User::allowedCurrency($invest_method)) {
-//                    $user->{$invest_method.'_money'} += $invest;
-                    $user_update = $user->updateCounters([$invest_method.'_money' => $invest]);
-                } else {
-                    return ['msg' => 'error', 'status' => "Failed currency"];
-                }
 
                 $global_admin = User::find()->where(['id' => Yii::$app->params['globalAdminId']])->one();
-//                $global_admin->{$invest_method.'_money'} -= $invest;
-                $admin_update = $global_admin->updateCounters([$invest_method.'_money' => -$invest]);
                 $transaction_admin = new Transactions();
+                $transaction              = new Transactions();
+
+                if ($u_pool->status === UserPools::STATUS_DEPOSIT) {
+                    if (User::allowedCurrency($invest_method)) {
+//                    $user->{$invest_method.'_money'} += $invest;
+                        $user_update = $user->updateCounters([$invest_method.'_money' => $invest]);
+                    } else {
+                        return ['msg' => 'error', 'status' => "Failed currency"];
+                    }
+                    $admin_update = $global_admin->updateCounters([$invest_method.'_money' => -$invest]);
+
+                    $transaction_admin->status      = Transactions::STATUS_DONE;
+                    $transaction->status      = Transactions::STATUS_DONE;
+                    if (!($user_update && $admin_update)) {
+                        return ['msg' => 'error', 'status' => "User balance don't saved"];
+                    }
+                } else {
+                    $transaction_admin->status      = Transactions::STATUS_API;
+                    $transaction->status      = Transactions::STATUS_API;
+                }
+
+
+
+//                $global_admin->{$invest_method.'_money'} -= $invest;
+
+
                 $transaction_admin->amount1     = -1*$invest;
                 $transaction_admin->currency1   = $invest_method;
                 $transaction_admin->type        = 'pool';
                 $transaction_admin->sub_type    = 'refund';
                 $transaction_admin->comment     = 'Возврат с пула';
-                $transaction_admin->status      = Transactions::STATUS_DONE;
+
                 $transaction_admin->user_id     = $global_admin->id;
                 $transaction_admin->buyer_name  = $user->username;
                 $transaction_admin->buyer_email = $user->email;
 
-//                if ($user->save() && $global_admin->save()) {
-                if ($user_update && $admin_update) {
                     if ($u_pool->delete()) {
-                        $transaction              = new Transactions();
+
                         $transaction->type        = 'pool';
                         $transaction->sub_type    = 'refund';
                         $transaction->comment     = 'Возврат с пула';
                         $transaction->user_id     = $user->id;
-                        $transaction->status      = Transactions::STATUS_DONE;
+
                         $transaction->amount1     = $invest;
 //                $transaction->amount2 = $amount2;
                         $transaction->currency1   = $invest_method;
@@ -804,9 +862,7 @@ class PoolController extends UserAccessController
                     } else {
                         return ['msg' => 'error', 'status' => "User Pool don't deleted"];
                     }
-                } else {
-                    return ['msg' => 'error', 'status' => "User balance don't saved"];
-                }
+
             } else {
                 return ['msg' => 'error', 'status' => "Dont have asses"];
             }
